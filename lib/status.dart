@@ -33,8 +33,6 @@ class Status {
 }
 
 Widget statusBuilder(Status status) {
-  print(status.author.toString());
-
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 16.0),
     child: Row(

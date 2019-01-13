@@ -3,6 +3,9 @@ import 'status.dart';
 import 'user.dart';
 
 class TimeLine extends StatelessWidget {
+  final Function setauth;
+  TimeLine(this.setauth);
+
   static const String lipsum =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus erat sed dui eleifend fermentum feugiat at augue. Nulla eget ullamcorper tellus. Cras nec varius ex, id ultricies nisi. Nullam at porta tortor, at vehicula est. Maecenas convallis est eu sodales laoreet. Phasellus consectetur varius velit ac pulvinar. Nulla mi augue, sagittis sed sollicitudin eu, consectetur posuere diam. Nam dapibus metus purus, eget porttitor enim hendrerit eget. Nunc tempus justo eu ante ullamcorper, eget dignissim orci commodo. Etiam ac libero orci. Curabitur at venenatis elit. Donec ultricies urna et rhoncus bibendum.";
 
@@ -36,16 +39,29 @@ class TimeLine extends StatelessWidget {
       }),
     ];
 
-    return ListView.builder(
-      itemBuilder: (context, i) {
-        if (i.isOdd) return Divider();
+    return Scaffold(
+      body: ListView.builder(
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
 
-        final index = i ~/ 2; /*3*/
-        if (index >= statuses.length) {
-          return null;
-        }
-        return statusBuilder(statuses[index]);
-      },
+          final index = i ~/ 2; /*3*/
+          if (index >= statuses.length) {
+            return null;
+          }
+          return statusBuilder(statuses[index]);
+        },
+      ),
+      drawer: Drawer(),
+      appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              setauth(false);
+            },
+          )
+        ],
+      ),
     );
   }
 }
