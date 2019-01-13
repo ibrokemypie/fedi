@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'status.dart';
-import 'user.dart';
+import 'package:fedi/fragments/status.dart';
+import 'package:fedi/fragments/user.dart';
 
 class TimeLine extends StatelessWidget {
   final Function setauth;

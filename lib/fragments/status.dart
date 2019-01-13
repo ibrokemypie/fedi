@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recase/recase.dart';
-import 'user.dart';
+import 'package:fedi/fragments/user.dart';
 
 class Status {
   String id;
