@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
+import 'package:fedi/api/authentication.dart';
+import 'package:fedi/fragments/instance.dart';
 
 class LogIn extends StatefulWidget {
   final Function setauth;
@@ -11,11 +13,13 @@ class LogIn extends StatefulWidget {
 
 class LogInState extends State<LogIn> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Form(
         key: _formKey,
         child: Container(
@@ -43,7 +47,14 @@ class LogInState extends State<LogIn> {
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
                     print(this._instance);
-                    widget.setauth(true);
+                    getInstance(this._instance).then((instance) {
+                      print(instance.toJson());
+                      widget.setauth(true);
+                    }).catchError((error) {
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: Text(error.toString()),
+                      ));
+                    });
                   }
                 },
                 child: Text('Submit'),
