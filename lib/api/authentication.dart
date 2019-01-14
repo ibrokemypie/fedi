@@ -19,6 +19,22 @@ instanceLogin(String instanceUrl) async {
 }
 
 misskeyAuth(Instance instance) async {
+  // First register the app and get appId and appSecret
+  Map<String, dynamic> appAuth = await misskeyAppRegister(instance);
+  String appId = appAuth["id"];
+  String appSecret = appAuth["secret"];
+
+  // The generate a session to get the app token and the url to show the user
+  Map<String, dynamic> appSession =
+      await misskeySessionGenerate(instance, appId, appSecret);
+  String sessionToken = appSession["token"];
+  String sessionUrl = appSession["url"];
+
+  print(sessionToken);
+  print(sessionUrl);
+}
+
+misskeyAppRegister(Instance instance) async {
   String actionPath = "/api/app/create";
   Map<String, dynamic> params = Map.from({
     "name": appName,
@@ -33,10 +49,25 @@ misskeyAuth(Instance instance) async {
 
   if (response.statusCode == 200) {
     Map<String, dynamic> returned = json.decode(response.body);
-    String appId = returned["id"];
-    String appSecret = returned["secret"];
-    print(appId);
-    print(appSecret);
+    return returned;
+  } else {
+    throw Exception('Failed to load post');
+  }
+}
+
+misskeySessionGenerate(
+    Instance instance, String appId, String appSecret) async {
+  String actionPath = "/api/auth/session/generate";
+  Map<String, dynamic> params = Map.from({
+    "appSecret": appSecret,
+  });
+
+  final response =
+      await http.post(instance.uri + actionPath, body: json.encode(params));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+    return returned;
   } else {
     throw Exception('Failed to load post');
   }
