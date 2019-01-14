@@ -24,43 +24,45 @@ class LogInState extends State<LogIn> {
         key: _formKey,
         child: Container(
           padding: const EdgeInsets.all(48.0),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                  decoration: InputDecoration(labelText: 'Instance URL:'),
-                  validator: (String value) {
-                    if (value.length < 1) {
-                      return 'Instance cannot be null';
-                    }
-                    if (!isURL(value)) {
-                      return 'Instance must be a URL';
-                    }
-                    return null;
-                  },
-                  onSaved: (String value) {
-                    this._instance = value;
-                  }),
-              RaisedButton(
-                onPressed: () {
-                  // Validate will return true if the form is valid, or false if
-                  // the form is invalid.
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
-                    print(this._instance);
-                    getInstance(this._instance).then((instance) {
-                      print(instance.toJson());
-                      widget.setauth(true);
-                    }).catchError((error) {
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        content: Text(error.toString()),
-                      ));
-                    });
+          child: Column(children: <Widget>[
+            TextFormField(
+                decoration: InputDecoration(labelText: 'Instance URL:'),
+                keyboardType: TextInputType.url,
+                textInputAction: TextInputAction.send,
+                validator: (String value) {
+                  if (value.length < 1) {
+                    return 'Instance cannot be null';
                   }
+                  if (!isURL(value)) {
+                    return 'Instance must be a URL';
+                  }
+                  return null;
                 },
-                child: Text('Submit'),
-              )
-            ],
-          ),
+                onSaved: (String value) {
+                  this._instance = value;
+                }),
+            RaisedButton(
+              onPressed: () async {
+                // Validate will return true if the form is valid, or false if
+                // the form is invalid.
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  print(this._instance);
+                  try {
+                    Instance instance = await Instance.fromUrl(this._instance);
+                    await instanceLogin(instance);
+                    widget.setauth(true);
+                  } catch (e) {
+                    print(e.toString());
+                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      content: Text(e.toString()),
+                    ));
+                  }
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ]),
         ),
       ),
       appBar: AppBar(),

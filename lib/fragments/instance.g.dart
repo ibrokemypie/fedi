@@ -9,6 +9,8 @@ part of 'instance.dart';
 Instance _$InstanceFromJson(Map<String, dynamic> json) {
   return Instance(
       json['uri'] as String,
+      json['protocol'] as String,
+      json['host'] as String,
       json['title'] as String,
       json['description'] as String,
       json['version'] as String,
@@ -20,5 +22,7 @@ Map<String, dynamic> _$InstanceToJson(Instance instance) => <String, dynamic>{
       'uri': instance.uri,
       'title': instance.title,
       'description': instance.description,
-      'version': instance.version
+      'version': instance.version,
+      'protocol': instance.protocol,
+      'host': instance.host
     };
