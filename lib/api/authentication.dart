@@ -1,7 +1,8 @@
 import 'package:fedi/fragments/instance.dart';
 import 'package:http/http.dart' as http;
 
-instanceLogin(Instance instance) async {
+instanceLogin(String instanceUrl) async {
+  Instance instance = await Instance.fromUrl(instanceUrl);
   print(instance.toJson());
   switch (instance.type) {
     case "misskey":

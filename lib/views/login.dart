@@ -47,10 +47,8 @@ class LogInState extends State<LogIn> {
                 // the form is invalid.
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  print(this._instance);
                   try {
-                    Instance instance = await Instance.fromUrl(this._instance);
-                    await instanceLogin(instance);
+                    await instanceLogin(this._instance);
                     widget.setauth(true);
                   } catch (e) {
                     print(e.toString());
