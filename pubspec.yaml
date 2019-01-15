@@ -25,6 +25,7 @@ dependencies:
   http: ^0.12.0+1
   json_serializable: ^2.0.1
   json_annotation: ^2.0.0
+  fluro: "^1.4.0"
 
 dev_dependencies:
   flutter_test:

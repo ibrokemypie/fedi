@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 import 'package:fedi/api/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogIn extends StatefulWidget {
-  final Function setauth;
-  LogIn(this.setauth);
-
   @override
   LogInState createState() => new LogInState();
 }
@@ -15,8 +13,27 @@ class LogInState extends State<LogIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _instance;
   var _clickLogin;
+  bool authenticated;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadauth();
+    _clickLogin = _loginAction;
+    if (authenticated == true) {
+      Navigator.pushReplacementNamed(context, "/timeline");
+    }
+  }
+
+  _loadauth() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      authenticated = (prefs.getBool('authenticated') ?? false);
+    });
+  }
 
   void _loginAction() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (_formKey.currentState.validate()) {
       setState(() {
         _clickLogin = null;
@@ -24,7 +41,6 @@ class LogInState extends State<LogIn> {
       _formKey.currentState.save();
       try {
         await instanceLogin(this._instance);
-        widget.setauth(true);
       } catch (e) {
         print(e.toString());
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -32,15 +48,12 @@ class LogInState extends State<LogIn> {
         ));
       }
       setState(() {
+        authenticated = true;
+        prefs.setBool('authenticated', true);
+        Navigator.pushReplacementNamed(context, "/timeline");
         _clickLogin = _loginAction;
       });
     }
-  }
-
-  @override
-  initState() {
-    super.initState();
-    _clickLogin = _loginAction;
   }
 
   @override

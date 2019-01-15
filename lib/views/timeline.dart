@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fedi/fragments/status.dart';
 import 'package:fedi/fragments/user.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class TimeLine extends StatelessWidget {
-  final Function setauth;
-  TimeLine(this.setauth);
+  void _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('authenticated', false);
+    Navigator.pushReplacementNamed(context, "/login");
+  }
 
   static const String lipsum =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus erat sed dui eleifend fermentum feugiat at augue. Nulla eget ullamcorper tellus. Cras nec varius ex, id ultricies nisi. Nullam at porta tortor, at vehicula est. Maecenas convallis est eu sodales laoreet. Phasellus consectetur varius velit ac pulvinar. Nulla mi augue, sagittis sed sollicitudin eu, consectetur posuere diam. Nam dapibus metus purus, eget porttitor enim hendrerit eget. Nunc tempus justo eu ante ullamcorper, eget dignissim orci commodo. Etiam ac libero orci. Curabitur at venenatis elit. Donec ultricies urna et rhoncus bibendum.";
@@ -57,7 +62,7 @@ class TimeLine extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              setauth(false);
+              _logout(context);
             },
           )
         ],

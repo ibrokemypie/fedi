@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:fedi/views/login.dart';
+import 'package:fluro/fluro.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,48 +14,44 @@ class MyApp extends StatelessWidget {
 }
 
 class FediState extends State<Fedi> {
-  bool authenticated;
+  final router = Router();
+
+  var loginHandler =
+      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return LogIn();
+  });
+  var timelineHandler =
+      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return TimeLine();
+  });
+
+  void defineRoutes(Router router) {
+    router.define("/login", handler: loginHandler);
+    router.define("/timeline", handler: timelineHandler);
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadauth();
+    defineRoutes(router);
   }
 
-  _loadauth() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      authenticated = (prefs.getBool('authenticated') ?? false);
-    });
-  }
-
-  _setauth(value) async {
-    if (value != authenticated) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        prefs.setBool('authenticated', value);
-        authenticated = value;
-        print("authenticated: " + authenticated.toString());
-      });
-    }
+  Route<dynamic> genRoute(RouteSettings route) {
+    Route<dynamic> returned = router.generator(route);
+    return returned;
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
-    if (authenticated == true) {
-      body = TimeLine(_setauth);
-    } else {
-      body = LogIn(_setauth);
-    }
-
     return MaterialApp(
+      // onGenerateRoute: router.generator,
+      onGenerateRoute: genRoute,
       title: 'fedi',
       theme: ThemeData(
         primaryColor: Colors.red,
         brightness: Brightness.dark,
       ),
-      home: body,
+      home: LogIn(),
     );
   }
 }
