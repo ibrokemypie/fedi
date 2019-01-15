@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fedi/views/timeline.dart';
 import 'package:fedi/views/login.dart';
 import 'package:fluro/fluro.dart';
+import 'package:fedi/fragments/routes.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,20 +14,6 @@ class MyApp extends StatelessWidget {
 
 class FediState extends State<Fedi> {
   final router = Router();
-
-  var loginHandler =
-      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return LogIn();
-  });
-  var timelineHandler =
-      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return TimeLine();
-  });
-
-  void defineRoutes(Router router) {
-    router.define("/login", handler: loginHandler);
-    router.define("/timeline", handler: timelineHandler);
-  }
 
   @override
   void initState() {
