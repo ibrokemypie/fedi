@@ -21,16 +21,10 @@ class FediState extends State<Fedi> {
     defineRoutes(router);
   }
 
-  Route<dynamic> genRoute(RouteSettings route) {
-    Route<dynamic> returned = router.generator(route);
-    return returned;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // onGenerateRoute: router.generator,
-      onGenerateRoute: genRoute,
+      onGenerateRoute: router.generator,
       title: 'fedi',
       theme: ThemeData(
         primaryColor: Colors.red,
