@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/views/login.dart';
 import 'package:fluro/fluro.dart';
-import 'package:fedi/fragments/routes.dart';
+import 'package:fedi/definitions/routes.dart';
 
 void main() => runApp(MyApp());
 

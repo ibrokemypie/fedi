@@ -1,7 +1,7 @@
-import 'package:fedi/fragments/instance.dart';
+import 'package:fedi/definitions/instance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:fedi/fragments/shared.dart';
+import 'package:fedi/definitions/shared.dart';
 
 instanceLogin(String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
