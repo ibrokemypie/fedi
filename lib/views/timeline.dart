@@ -5,7 +5,12 @@ import 'package:fedi/views/status.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TimeLine extends StatelessWidget {
+class TimeLine extends StatefulWidget {
+  @override
+  TimeLineState createState() => new TimeLineState();
+}
+
+class TimeLineState extends State {
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('authenticated', false);
@@ -13,6 +18,23 @@ class TimeLine extends StatelessWidget {
     prefs.setString('instance', null);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LogIn()));
+  }
+
+  void verifyAuth(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var auth = prefs.getBool('authenticated') ?? false;
+    var userAuth = prefs.getString('userAuth') ?? null;
+    var instance = prefs.getString('instance') ?? null;
+
+    if (auth == false || userAuth == null || instance == null) {
+      _logout(context);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    verifyAuth(context);
   }
 
   static const String lipsum =
