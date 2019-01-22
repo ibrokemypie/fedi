@@ -34,14 +34,11 @@ misskeyAuth(BuildContext context, Instance instance) async {
   String sessionToken = appSession["token"];
   String sessionUrl = appSession["url"];
 
-  String authUrl = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => WebAuth(url: sessionUrl)));
-  if (authUrl.startsWith("fedi://appredirect")) {
-    print("authenticated " + sessionToken);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TimeLine()));
-  } else {
-    print(authUrl);
-  }
+  await misskeyAuthSession(context, sessionUrl, sessionToken);
+
+  
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => TimeLine()));
 }
 
 misskeyAppRegister(Instance instance) async {
@@ -80,5 +77,16 @@ misskeySessionGenerate(
     return returned;
   } else {
     throw Exception('Failed to load post');
+  }
+}
+
+misskeyAuthSession(
+    BuildContext context, String sessionUrl, String sessionToken) async {
+  String authUrl = await Navigator.push(context,
+      MaterialPageRoute(builder: (context) => WebAuth(url: sessionUrl)));
+  if (authUrl.startsWith("fedi://appredirect")) {
+    print("authenticated " + sessionToken);
+  } else {
+    throw Exception(authUrl);
   }
 }
