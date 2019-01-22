@@ -19,17 +19,19 @@ class LogInState extends State<LogIn> {
   @override
   void initState() {
     super.initState();
-    _loadauth();
     _clickLogin = _loginAction;
-    if (authenticated == true) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TimeLine()));
-    }
+    _loadauth();
   }
 
   _loadauth() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       authenticated = (prefs.getBool('authenticated') ?? false);
+
+      if (authenticated == true) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => TimeLine()));
+      }
     });
   }
 
@@ -41,18 +43,22 @@ class LogInState extends State<LogIn> {
       });
       _formKey.currentState.save();
       try {
-        await instanceLogin(context, this._instance);
+        List userAuth = await instanceLogin(context, this._instance);
+        setState(() {
+          authenticated = true;
+          prefs.setBool('authenticated', true);
+          prefs.setString('userAuth', userAuth[0]);
+          prefs.setString('instance', userAuth[1]);
+          _clickLogin = _loginAction;
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => TimeLine()));
+        });
       } catch (e) {
         print(e.toString());
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(e.toString()),
         ));
       }
-      setState(() {
-        authenticated = true;
-        prefs.setBool('authenticated', true);
-        _clickLogin = _loginAction;
-      });
     }
   }
 

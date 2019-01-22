@@ -8,12 +8,13 @@ import 'package:fedi/views/webauth.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:crypto/crypto.dart';
 
-Future<void> instanceLogin(BuildContext context, String instanceUrl) async {
+Future<List> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
+  String userAuth;
   switch (instance.type) {
     case "misskey":
       {
-        await misskeyAuth(context, instance);
+        userAuth = await misskeyAuth(context, instance);
         break;
       }
     default:
@@ -21,9 +22,10 @@ Future<void> instanceLogin(BuildContext context, String instanceUrl) async {
         throw Exception(instance.type + " isnt supported lol");
       }
   }
+  return [userAuth, instance.toString()];
 }
 
-Future<void> misskeyAuth(BuildContext context, Instance instance) async {
+Future<String> misskeyAuth(BuildContext context, Instance instance) async {
   // First register the app and get appId and appSecret
   Map<String, dynamic> appAuth = await misskeyAppRegister(instance);
   String appId = appAuth["id"];
@@ -42,8 +44,7 @@ Future<void> misskeyAuth(BuildContext context, Instance instance) async {
 
   var userAuth = await misskeyIGenerate(instance, accessToken, appSecret);
 
-  Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => TimeLine()));
+  return userAuth;
 }
 
 Future<Map<String, dynamic>> misskeyAppRegister(Instance instance) async {

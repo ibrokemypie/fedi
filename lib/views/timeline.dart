@@ -9,7 +9,10 @@ class TimeLine extends StatelessWidget {
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('authenticated', false);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogIn()));
+    prefs.setString('userAuth', null);
+    prefs.setString('instance', null);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LogIn()));
   }
 
   static const String lipsum =
