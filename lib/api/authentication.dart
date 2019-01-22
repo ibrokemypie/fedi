@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fedi/views/webauth.dart';
 import 'package:fedi/views/timeline.dart';
 
-instanceLogin(BuildContext context, String instanceUrl) async {
+Future<void> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
   switch (instance.type) {
     case "misskey":
@@ -22,7 +22,7 @@ instanceLogin(BuildContext context, String instanceUrl) async {
   }
 }
 
-misskeyAuth(BuildContext context, Instance instance) async {
+Future<void> misskeyAuth(BuildContext context, Instance instance) async {
   // First register the app and get appId and appSecret
   Map<String, dynamic> appAuth = await misskeyAppRegister(instance);
   String appId = appAuth["id"];
@@ -36,12 +36,11 @@ misskeyAuth(BuildContext context, Instance instance) async {
 
   await misskeyAuthSession(context, sessionUrl, sessionToken);
 
-  
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => TimeLine()));
+  Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => TimeLine()));
 }
 
-misskeyAppRegister(Instance instance) async {
+Future<Map<String, dynamic>> misskeyAppRegister(Instance instance) async {
   String actionPath = "/api/app/create";
   Map<String, dynamic> params = Map.from({
     "name": appName,
@@ -62,7 +61,7 @@ misskeyAppRegister(Instance instance) async {
   }
 }
 
-misskeySessionGenerate(
+Future<Map<String, dynamic>> misskeySessionGenerate(
     Instance instance, String appId, String appSecret) async {
   String actionPath = "/api/auth/session/generate";
   Map<String, dynamic> params = Map.from({
@@ -80,7 +79,7 @@ misskeySessionGenerate(
   }
 }
 
-misskeyAuthSession(
+Future<void> misskeyAuthSession(
     BuildContext context, String sessionUrl, String sessionToken) async {
   String authUrl = await Navigator.push(context,
       MaterialPageRoute(builder: (context) => WebAuth(url: sessionUrl)));
