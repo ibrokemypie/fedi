@@ -27,7 +27,9 @@ Widget statusBuilder(Status status) {
                 // Author
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Row(children: <Widget>[
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
                     // Nickname
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
@@ -41,6 +43,7 @@ Widget statusBuilder(Status status) {
 
                     // Account name
                     Text(status.author.acct),
+                    
                   ]),
                 ),
 
