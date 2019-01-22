@@ -41,7 +41,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode) async {
         User user = new User.fromJson({
           "username": v["user"]["username"],
           "nickname": v["user"]["name"] ?? "null",
-          "host": v["user"]["host"] ?? instance.uri,
+          "host": v["user"]["host"] ?? instance.host,
           "id": v["user"]["id"],
           "avatarUrl": v["user"]["avatarUrl"]
         });
