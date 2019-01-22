@@ -67,10 +67,9 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode) async {
             "url": v["uri"]
           });
         }
-        print(status.toJson());
         statuses.add(status);
       } catch (e) {
-        print(e);
+        throw Exception(e);
       }
     });
 
