@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 import 'package:fedi/api/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fedi/views/timeline.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class LogInState extends State<LogIn> {
     _loadauth();
     _clickLogin = _loginAction;
     if (authenticated == true) {
-      Navigator.pushReplacementNamed(context, "/timeline");
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TimeLine()));
     }
   }
 
@@ -40,7 +41,7 @@ class LogInState extends State<LogIn> {
       });
       _formKey.currentState.save();
       try {
-        await instanceLogin(this._instance);
+        await instanceLogin(context, this._instance);
       } catch (e) {
         print(e.toString());
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -50,7 +51,6 @@ class LogInState extends State<LogIn> {
       setState(() {
         authenticated = true;
         prefs.setBool('authenticated', true);
-        Navigator.pushReplacementNamed(context, "/timeline");
         _clickLogin = _loginAction;
       });
     }

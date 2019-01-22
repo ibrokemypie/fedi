@@ -25,7 +25,8 @@ dependencies:
   http: ^0.12.0+1
   json_serializable: ^2.0.1
   json_annotation: ^2.0.0
-  fluro: "^1.4.0"
+  navigate: ^1.0.0
+  flutter_webview_plugin: ^0.3.0+2
 
 dev_dependencies:
   flutter_test:

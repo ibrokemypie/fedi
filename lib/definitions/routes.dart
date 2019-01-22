@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:fluro/fluro.dart';
+import 'package:navigate/navigate.dart';
 import 'package:fedi/views/login.dart';
 import 'package:fedi/views/timeline.dart';
+import 'package:fedi/views/webauth.dart';
 
+var loginHandler = Handler(pageBuilder: (BuildContext context, arg) {
+  return LogIn();
+});
 
-  var loginHandler =
-      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return LogIn();
-  });
+var timelineHandler = Handler(pageBuilder: (BuildContext context, arg) {
+  return TimeLine();
+});
 
+var webauthHandler = Handler(pageBuilder: (BuildContext context, arg) {
+  return WebAuth(url: arg["url"]);
+});
 
-  var timelineHandler =
-      Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return TimeLine();
-  });
-
-  void defineRoutes(Router router) {
-    router.define("/login", handler: loginHandler);
-    router.define("/timeline", handler: timelineHandler);
-  }
+Map<String, Handler> routes = {
+  "login": loginHandler,
+  "timeline": timelineHandler,
+  "webauth": webauthHandler,
+};

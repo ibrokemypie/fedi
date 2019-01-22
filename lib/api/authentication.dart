@@ -1,14 +1,18 @@
 import 'package:fedi/definitions/instance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:fedi/definitions/shared.dart';
+import 'package:flutter/material.dart';
+import 'package:fedi/views/webauth.dart';
+import 'package:fedi/views/timeline.dart';
 
-instanceLogin(String instanceUrl) async {
+instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
   switch (instance.type) {
     case "misskey":
       {
-        await misskeyAuth(instance);
+        await misskeyAuth(context, instance);
         break;
       }
     default:
@@ -18,7 +22,7 @@ instanceLogin(String instanceUrl) async {
   }
 }
 
-misskeyAuth(Instance instance) async {
+misskeyAuth(BuildContext context, Instance instance) async {
   // First register the app and get appId and appSecret
   Map<String, dynamic> appAuth = await misskeyAppRegister(instance);
   String appId = appAuth["id"];
@@ -30,8 +34,14 @@ misskeyAuth(Instance instance) async {
   String sessionToken = appSession["token"];
   String sessionUrl = appSession["url"];
 
-  print(sessionToken);
-  print(sessionUrl);
+  String authUrl = await Navigator.push(context,
+      MaterialPageRoute(builder: (context) => WebAuth(url: sessionUrl)));
+  if (authUrl.startsWith("fedi://appredirect")) {
+    print("authenticated " + sessionToken);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TimeLine()));
+  } else {
+    print(authUrl);
+  }
 }
 
 misskeyAppRegister(Instance instance) async {

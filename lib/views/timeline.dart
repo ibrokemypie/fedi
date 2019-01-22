@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/user.dart';
 import 'package:fedi/views/status.dart';
-
+import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TimeLine extends StatelessWidget {
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('authenticated', false);
-    Navigator.pushReplacementNamed(context, "/login");
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogIn()));
   }
 
   static const String lipsum =

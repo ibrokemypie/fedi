@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/views/login.dart';
-import 'package:fluro/fluro.dart';
-import 'package:fedi/definitions/routes.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -13,18 +10,10 @@ class MyApp extends StatelessWidget {
 }
 
 class FediState extends State<Fedi> {
-  final router = Router();
-
-  @override
-  void initState() {
-    super.initState();
-    defineRoutes(router);
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateRoute: router.generator,
       title: 'fedi',
       theme: ThemeData(
         primaryColor: Colors.red,
