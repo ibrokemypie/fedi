@@ -36,6 +36,11 @@ Future<void> misskeyAuth(BuildContext context, Instance instance) async {
 
   await misskeyAuthSession(context, sessionUrl, sessionToken);
 
+  String accessToken = (await misskeyAccessTokenGenerate(
+      instance, appSecret, sessionToken))["accessToken"];
+  
+  print(accessToken);
+
   Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => TimeLine()));
 }
@@ -87,5 +92,24 @@ Future<void> misskeyAuthSession(
     print("authenticated " + sessionToken);
   } else {
     throw Exception(authUrl);
+  }
+}
+
+Future<Map<String, dynamic>> misskeyAccessTokenGenerate(
+    Instance instance, String appSecret, String sessionToken) async {
+  String actionPath = "/api/auth/session/userkey";
+  Map<String, dynamic> params = Map.from({
+    "appSecret": appSecret,
+    "token": sessionToken,
+  });
+
+  final response =
+      await http.post(instance.uri + actionPath, body: json.encode(params));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+    return returned;
+  } else {
+    throw Exception('Failed to load post');
   }
 }
