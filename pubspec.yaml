@@ -27,6 +27,7 @@ dependencies:
   json_annotation: ^2.0.0
   navigate: ^1.0.0
   flutter_webview_plugin: ^0.3.0+2
+  crypto: ^2.0.6
 
 dev_dependencies:
   flutter_test:

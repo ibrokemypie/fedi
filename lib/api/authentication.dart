@@ -6,6 +6,7 @@ import 'package:fedi/definitions/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/views/webauth.dart';
 import 'package:fedi/views/timeline.dart';
+import 'package:crypto/crypto.dart';
 
 Future<void> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
@@ -38,8 +39,8 @@ Future<void> misskeyAuth(BuildContext context, Instance instance) async {
 
   String accessToken = (await misskeyAccessTokenGenerate(
       instance, appSecret, sessionToken))["accessToken"];
-  
-  print(accessToken);
+
+  var userAuth = await misskeyIGenerate(instance, accessToken, appSecret);
 
   Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => TimeLine()));
@@ -109,6 +110,31 @@ Future<Map<String, dynamic>> misskeyAccessTokenGenerate(
   if (response.statusCode == 200) {
     Map<String, dynamic> returned = json.decode(response.body);
     return returned;
+  } else {
+    throw Exception('Failed to load post');
+  }
+}
+
+Future<String> misskeyIGenerate(
+    Instance instance, String accessToken, String appSecret) async {
+  List<int> bytes = utf8.encode(accessToken + appSecret);
+  String userI = sha256.convert(bytes).toString();
+
+  String actionPath = "/api/i";
+  Map<String, dynamic> params = Map.from({
+    "i": userI,
+  });
+
+  final response =
+      await http.post(instance.uri + actionPath, body: json.encode(params));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+    if (returned["username"] != null) {
+      return userI;
+    } else {
+      throw Exception('user code invalid');
+    }
   } else {
     throw Exception('Failed to load post');
   }
