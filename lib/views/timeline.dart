@@ -27,7 +27,7 @@ class TimeLineState extends State {
         context, MaterialPageRoute(builder: (context) => LogIn()));
   }
 
-  void verifyAuth(context) async {
+  Future<void> verifyAuth() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var auth = prefs.getBool('authenticated') ?? false;
     var userAuth = prefs.getString('userAuth') ?? null;
@@ -49,22 +49,25 @@ class TimeLineState extends State {
   @override
   void initState() {
     super.initState();
-    verifyAuth(context);
+    verifyAuth();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
+      body: new RefreshIndicator(
+        child: new ListView.builder(
+          itemBuilder: (context, i) {
+            if (i.isOdd) return Divider();
 
-          final index = i ~/ 2; /*3*/
-          if (index >= statuses.length) {
-            return null;
-          }
-          return statusBuilder(statuses[index]);
-        },
+            final index = i ~/ 2; /*3*/
+            if (index >= statuses.length) {
+              return null;
+            }
+            return statusBuilder(statuses[index]);
+          },
+        ),
+        onRefresh: verifyAuth,
       ),
       drawer: Drawer(),
       appBar: AppBar(
