@@ -3,7 +3,6 @@ import 'package:fedi/definitions/status.dart';
 
 Widget statusBuilder(Status status) {
   if (status != null) {
-    print(status.toJson());
     if (status.author != null) {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
