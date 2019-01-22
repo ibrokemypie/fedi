@@ -43,12 +43,12 @@ class LogInState extends State<LogIn> {
       });
       _formKey.currentState.save();
       try {
-        List userAuth = await instanceLogin(context, this._instance);
+        String userAuth = await instanceLogin(context, this._instance);
         setState(() {
           authenticated = true;
           prefs.setBool('authenticated', true);
-          prefs.setString('userAuth', userAuth[0]);
-          prefs.setString('instance', userAuth[1]);
+          prefs.setString('userAuth', userAuth);
+          prefs.setString('instance', this._instance);
           _clickLogin = _loginAction;
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => TimeLine()));

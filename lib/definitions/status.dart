@@ -1,6 +1,10 @@
 import 'package:recase/recase.dart';
 import 'package:fedi/definitions/user.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'status.g.dart';
+
+@JsonSerializable()
 class Status {
   String id;
   String date;
@@ -29,4 +33,6 @@ class Status {
     this.body = json['body'];
     this.visibility = ReCase(json['visibility']).titleCase;
   }
+
+  Map<String, dynamic> toJson() => _$StatusToJson(this);
 }

@@ -8,7 +8,7 @@ import 'package:fedi/views/webauth.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:crypto/crypto.dart';
 
-Future<List> instanceLogin(BuildContext context, String instanceUrl) async {
+Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
   String userAuth;
   switch (instance.type) {
@@ -22,7 +22,7 @@ Future<List> instanceLogin(BuildContext context, String instanceUrl) async {
         throw Exception(instance.type + " isnt supported lol");
       }
   }
-  return [userAuth, instance.toString()];
+  return userAuth;
 }
 
 Future<String> misskeyAuth(BuildContext context, Instance instance) async {

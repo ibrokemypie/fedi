@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/user.dart';
+import 'package:fedi/api/hometimeline.dart';
 import 'package:fedi/views/status.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fedi/definitions/instance.dart';
+import 'dart:convert';
 
 class TimeLine extends StatefulWidget {
   @override
@@ -11,6 +14,10 @@ class TimeLine extends StatefulWidget {
 }
 
 class TimeLineState extends State {
+  Instance instance;
+  String authCode;
+  List statuses = new List();
+
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('authenticated', false);
@@ -24,10 +31,18 @@ class TimeLineState extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var auth = prefs.getBool('authenticated') ?? false;
     var userAuth = prefs.getString('userAuth') ?? null;
-    var instance = prefs.getString('instance') ?? null;
+    var instanceUrl = prefs.getString('instance') ?? null;
 
-    if (auth == false || userAuth == null || instance == null) {
+    if (auth == false || userAuth == null || instanceUrl == null) {
       _logout(context);
+    } else {
+      Instance newInstance = await Instance.fromUrl(instanceUrl);
+      List statusList = await getHomeTimeline(newInstance, userAuth);
+      setState(() {
+        instance = newInstance;
+        authCode = userAuth;
+        statuses = statusList;
+      });
     }
   }
 
@@ -37,39 +52,8 @@ class TimeLineState extends State {
     verifyAuth(context);
   }
 
-  static const String lipsum =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus erat sed dui eleifend fermentum feugiat at augue. Nulla eget ullamcorper tellus. Cras nec varius ex, id ultricies nisi. Nullam at porta tortor, at vehicula est. Maecenas convallis est eu sodales laoreet. Phasellus consectetur varius velit ac pulvinar. Nulla mi augue, sagittis sed sollicitudin eu, consectetur posuere diam. Nam dapibus metus purus, eget porttitor enim hendrerit eget. Nunc tempus justo eu ante ullamcorper, eget dignissim orci commodo. Etiam ac libero orci. Curabitur at venenatis elit. Donec ultricies urna et rhoncus bibendum.";
-
   @override
   Widget build(BuildContext context) {
-    var me = User.fromJson({
-      "username": "ibrokemypie",
-      "nickname": "pie",
-      "host": "boopsnoot.gq",
-      "id": "smth",
-      "avatarUrl":
-          "https://boopsnoot.gq/files/5c2e16f3815ad75dc3c42a69?thumbnail"
-    });
-
-    var statuses = <Status>[
-      Status.fromJson({
-        "author": me,
-        "title": "one",
-        "body": lipsum,
-        "id": 1.toString(),
-        "date": "1/1/2000",
-        "visibility": "public"
-      }),
-      Status.fromJson({
-        "author": me,
-        "title": "two",
-        "body": "lol",
-        "id": 2.toString(),
-        "date": "1/1/2000",
-        "visibility": "direct"
-      }),
-    ];
-
     return Scaffold(
       body: ListView.builder(
         itemBuilder: (context, i) {
