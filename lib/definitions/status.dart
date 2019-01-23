@@ -1,6 +1,6 @@
-import 'package:recase/recase.dart';
 import 'package:fedi/definitions/user.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/material.dart';
 
 part 'status.g.dart';
 
@@ -21,7 +21,7 @@ class Status {
     this.url = url;
     this.title = title;
     this.body = body;
-    this.visibility = ReCase(visibility).titleCase;
+    this.visibility = visibility.toLowerCase();
   }
 
   Status.fromJson(Map json) {
@@ -31,7 +31,21 @@ class Status {
     this.url = json['url'];
     this.title = json['title'];
     this.body = json['body'];
-    this.visibility = ReCase(json['visibility']).titleCase;
+    this.visibility = json['visibility'].toString().toLowerCase();
+  }
+
+  IconData visIcon() {
+    switch (this.visibility) {
+      case "public":
+        return Icons.language;
+      case "home":
+        return Icons.home;
+      case "followers":
+        return Icons.group;
+      case "specified":
+        return Icons.message;
+    }
+    return Icons.language;
   }
 
   Map<String, dynamic> toJson() => _$StatusToJson(this);

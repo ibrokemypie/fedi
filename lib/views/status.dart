@@ -26,35 +26,37 @@ Widget statusBuilder(Status status) {
                 // Author
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                    // Nickname
-                    Container(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Text(
-                        status.author.nickname,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              // Nickname
+                              Container(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Text(
+                                  status.author.nickname,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
 
-                    // Account name
-                    Text(status.author.acct),
-                    
-                  ]),
+                              // Account name
+                              Text(status.author.acct),
+                            ]),
+                        Container(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: Icon(status.visIcon(), size: 16.0))
+                      ]),
                 ),
 
                 // Body
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(status.body),
-                ),
-
-                // Body
-                Container(
-                  child: Text(status.visibility),
                 ),
 
                 // Buttons
