@@ -47,8 +47,13 @@ class TimeLineState extends State {
   }
 
   Future<void> newStatuses() async {
-    List<Status> statusList = await getHomeTimeline(instance, authCode,
-        currentStatuses: statuses, sinceId: statuses[0].id);
+    List<Status> statusList;
+    if (statuses.length > 0) {
+      statusList = await getHomeTimeline(instance, authCode,
+          currentStatuses: statuses, sinceId: statuses[0].id);
+    } else {
+      statusList = await getHomeTimeline(instance, authCode);
+    }
     setState(() {
       statuses = statusList;
     });
