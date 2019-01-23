@@ -85,7 +85,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
             "body": "Renote from " +
                 v["renote"]["user"]["username"] +
                 ": " +
-                v["renote"]["text"],
+                v["renote"]["text"] ?? "",
             "id": v["renoteId"],
             "date": v["createdAt"],
             "visibility": v["visibility"],
@@ -96,7 +96,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
           status = Status.fromJson({
             "author": user,
             "title": "one",
-            "body": v["text"],
+            "body": v["text"] ?? "",
             "id": v["id"],
             "date": v["createdAt"],
             "visibility": v["visibility"],
