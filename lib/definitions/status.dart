@@ -1,4 +1,5 @@
 import 'package:fedi/definitions/user.dart';
+import 'package:fedi/definitions/file.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class Status {
   String title;
   String body;
   String visibility;
+  List<File> files;
 
   Status(id, date, author, url, title, body, visibility) {
     this.id = id;
@@ -22,6 +24,7 @@ class Status {
     this.title = title;
     this.body = body;
     this.visibility = visibility.toLowerCase();
+    this.files = files;
   }
 
   Status.fromJson(Map json) {
@@ -32,6 +35,7 @@ class Status {
     this.title = json['title'];
     this.body = json['body'];
     this.visibility = json['visibility'].toString().toLowerCase();
+    this.files = json['files'];
   }
 
   IconData visIcon() {

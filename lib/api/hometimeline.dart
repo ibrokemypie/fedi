@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/user.dart';
+import 'package:fedi/definitions/file.dart';
 
 getHomeTimeline(Instance instance, String authCode,
     {List<Status> currentStatuses, String sinceId}) async {
@@ -60,6 +61,23 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
           "avatarUrl": v["user"]["avatarUrl"]
         });
 
+        List<File> files = new List();
+        for (var fileJson in v["files"]) {
+          if (fileJson != null) {
+            File newFile = new File.fromJson({
+              "id": fileJson["id"],
+              "date": fileJson["createdAt"],
+              "name": fileJson["name"],
+              "type": fileJson["type"],
+              "authorId": fileJson["userId"],
+              "sensitive": fileJson["isSensitive"],
+              "thumbnailUrl": fileJson["thumbnailUrl"],
+              "fileUrl": fileJson["url"],
+            });
+            files.add(newFile);
+          }
+        }
+
         if (v["renoteId"] != null) {
           status = Status.fromJson({
             "author": user,
@@ -71,7 +89,8 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
             "id": v["renoteId"],
             "date": v["createdAt"],
             "visibility": v["visibility"],
-            "url": v["uri"]
+            "url": v["uri"],
+            "files": files,
           });
         } else {
           status = Status.fromJson({
@@ -81,7 +100,8 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
             "id": v["id"],
             "date": v["createdAt"],
             "visibility": v["visibility"],
-            "url": v["uri"]
+            "url": v["uri"],
+            "files": files,
           });
         }
         newStatuses.add(status);
