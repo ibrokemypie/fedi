@@ -16,7 +16,7 @@ class TimeLine extends StatefulWidget {
 class TimeLineState extends State {
   Instance instance;
   String authCode;
-  List statuses = new List();
+  List<Status> statuses = new List();
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,6 +46,14 @@ class TimeLineState extends State {
     }
   }
 
+  Future<void> newStatuses() async {
+    List<Status> statusList = await getHomeTimeline(instance, authCode,
+        currentStatuses: statuses, sinceId: statuses[0].id);
+    setState(() {
+      statuses = statusList;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,14 +68,14 @@ class TimeLineState extends State {
           itemBuilder: (context, i) {
             if (i.isOdd) return Divider();
 
-            final index = i ~/ 2; /*3*/
+            final index = i ~/ 2;
             if (index >= statuses.length) {
               return null;
             }
             return statusBuilder(statuses[index]);
           },
         ),
-        onRefresh: verifyAuth,
+        onRefresh: newStatuses,
       ),
       drawer: Drawer(),
       appBar: AppBar(

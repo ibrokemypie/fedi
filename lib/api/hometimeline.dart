@@ -5,12 +5,15 @@ import 'dart:async';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/user.dart';
 
-getHomeTimeline(Instance instance, String authCode) async {
-  List statuses;
+getHomeTimeline(Instance instance, String authCode,
+    {List<Status> currentStatuses, String sinceId}) async {
+  List<Status> statuses;
+
   switch (instance.type) {
     case "misskey":
       {
-        statuses = await getMisskeyHomeTimeline(instance, authCode);
+        statuses = await getMisskeyHomeTimeline(instance, authCode,
+            currentStatuses: currentStatuses, sinceId: sinceId);
         break;
       }
     default:
@@ -21,13 +24,24 @@ getHomeTimeline(Instance instance, String authCode) async {
   return statuses;
 }
 
-Future<List> getMisskeyHomeTimeline(Instance instance, String authCode) async {
-  List statuses = new List();
+Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
+    {List<Status> currentStatuses, String sinceId}) async {
+  List<Status> newStatuses = new List();
+  Map<String, dynamic> params;
   String actionPath = "/api/notes/timeline";
-  Map<String, dynamic> params = Map.from({
-    "limit": 40,
-    "i": authCode,
-  });
+
+  if (sinceId == null) {
+    params = Map.from({
+      "limit": 40,
+      "i": authCode,
+    });
+  } else {
+    params = Map.from({
+      "limit": 40,
+      "i": authCode,
+      "SinceId": sinceId,
+    });
+  }
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));
@@ -50,7 +64,10 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode) async {
           status = Status.fromJson({
             "author": user,
             "title": "one",
-            "body": "Renote from " + v["renote"]["user"]["username"] + ": " + v["renote"]["text"],
+            "body": "Renote from " +
+                v["renote"]["user"]["username"] +
+                ": " +
+                v["renote"]["text"],
             "id": v["renoteId"],
             "date": v["createdAt"],
             "visibility": v["visibility"],
@@ -67,13 +84,17 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode) async {
             "url": v["uri"]
           });
         }
-        statuses.add(status);
+        newStatuses.add(status);
       } catch (e) {
         throw Exception(e);
       }
     });
 
-    return statuses;
+    if (currentStatuses != null) {
+      return new List<Status>.from(newStatuses)..addAll(currentStatuses);
+    }
+
+    return newStatuses;
   } else {
     throw Exception('Failed to load post');
   }
