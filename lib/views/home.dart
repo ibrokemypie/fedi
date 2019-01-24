@@ -92,6 +92,12 @@ class HomeState extends State {
             Icon(Icons.language),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => {},
+          child: Icon(Icons.edit),
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }
