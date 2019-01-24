@@ -18,10 +18,11 @@ class Instance {
   Instance(this.uri, this.protocol, this.host, this.title, this.description,
       this.version,
       [this.type]) {
+    String version = this.version.toLowerCase();
     if (this.type == null) {
-      if (this.version.contains("misskey")) {
+      if (version.contains("misskey")) {
         this.type = "misskey";
-      } else if (this.version.contains("Pleroma")) {
+      } else if (version.contains("pleroma")) {
         this.type = "pleroma";
       } else {
         this.type = "mastodon";
