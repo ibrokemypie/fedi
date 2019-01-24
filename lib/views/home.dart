@@ -60,14 +60,15 @@ class HomeState extends State {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.directions_car)),
-              Tab(icon: Icon(Icons.directions_transit)),
-              Tab(icon: Icon(Icons.directions_bike)),
+              Tab(icon: Icon(Icons.home)),
+              Tab(icon: Icon(Icons.notifications)),
+              Tab(icon: Icon(Icons.message)),
+              Tab(icon: Icon(Icons.language)),
             ],
           ),
         ),
@@ -86,8 +87,9 @@ class HomeState extends State {
         body: TabBarView(
           children: [
             tabOne,
-            Icon(Icons.directions_transit),
-            Icon(Icons.directions_bike),
+            Icon(Icons.notifications),
+            Icon(Icons.message),
+            Icon(Icons.language),
           ],
         ),
       ),
