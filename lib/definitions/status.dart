@@ -18,10 +18,11 @@ class Status {
   bool favourited;
   int favCount;
   String myReaction;
+  int renoteCount;
   List<File> files;
 
   Status(id, date, author, url, title, body, visibility, favourited, favCount,
-      myReaction) {
+      myReaction, renoteCount, files) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -29,10 +30,11 @@ class Status {
     this.title = title;
     this.body = body;
     this.visibility = visibility.toLowerCase();
-    this.files = files;
     this.favourited = favourited;
     this.favCount = favCount;
     this.myReaction = myReaction;
+    this.renoteCount = renoteCount;
+    this.files = files;
   }
 
   Status.fromJson(Map json) {
@@ -43,21 +45,19 @@ class Status {
     this.title = json['title'];
     this.body = json['body'];
     this.visibility = json['visibility'].toString().toLowerCase();
-    this.files = json['files'];
     this.favourited = json['favourited'];
     this.favCount = json['favCount'];
     this.myReaction = json['reaction'];
+    this.renoteCount = json['renoteCount'];
+    this.files = json['files'];
   }
 
   Status.fromMisskey(Map v, Instance instance) {
     int countreacts(Map r) {
       int reactions = 0;
-      r.forEach((react,number) => 
-        reactions += number
-      );
+      r.forEach((react, number) => reactions += number);
       return reactions;
     }
-
 
     if (v["user"] != null && v["id"] != null) {
       try {
@@ -101,6 +101,7 @@ class Status {
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
           this.favCount = countreacts(v["reactionCounts"]);
+          this.renoteCount = v["renote"]["renoteCount"] ?? 0;
           this.myReaction = v["myReaction"] ?? null;
         } else {
           this.author = user;
@@ -113,6 +114,7 @@ class Status {
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
           this.favCount = countreacts(v["reactionCounts"]);
+          this.renoteCount = v["renoteCount"] ?? 0;
           this.myReaction = v["myReaction"] ?? null;
         }
       } catch (e) {

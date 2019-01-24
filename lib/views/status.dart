@@ -131,7 +131,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                       icon: Icon(Icons.repeat),
                       onPressed: null,
                     ),
-                    Text("0"),
+                    Text(widget.status.renoteCount.toString()),
                   ]),
 
                   // Favourite
