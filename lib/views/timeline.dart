@@ -48,7 +48,7 @@ class TimeLineState extends State<TimeLine> {
         if (index >= statuses.length) {
           return null;
         }
-        return statusBuilder(statuses[index]);
+        return StatusBuilder(widget.instance, widget.authCode, statuses[index]);
       },
     );
   }
