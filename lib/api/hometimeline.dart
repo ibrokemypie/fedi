@@ -51,10 +51,9 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-      if (v["id"] != null) {
-        Status status = Status.fromMisskey(v, instance);
-        newStatuses.add(status);
-      }
+        var status = Status.fromMisskey(v, instance);
+        if (status != null)
+          newStatuses.add(status);
     });
 
     if (currentStatuses != null) {

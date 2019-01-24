@@ -59,7 +59,7 @@ class Status {
       return reactions;
     }
 
-    if (v["user"] != null && v["id"] != null) {
+    if (v["user"] != null && v["id"] != null && v["deletedAt"] == null) {
       try {
         User user = new User.fromJson({
           "username": v["user"]["username"],
@@ -86,7 +86,7 @@ class Status {
           }
         }
 
-        if (v["renoteId"] != null) {
+        if (v["renoteId"] != null && v["deletedAt"] == null) {
           this.author = user;
           this.title = "one";
           this.body = "Renote from " +
