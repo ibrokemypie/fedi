@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/api/favourite.dart';
+import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
 
@@ -37,6 +38,17 @@ class StatusBuilderState extends State<StatusBuilder> {
           widget.status.favCount -= 1;
         });
       }
+    }
+  }
+
+  void _renote() async {
+    bool success;
+    success = await renotePost(widget.instance, widget.authCode, widget.status.id);
+    if (success) {
+      setState(() {
+        // widget.status.renoted = true;
+        widget.status.renoteCount += 1;
+      });
     }
   }
 
@@ -129,7 +141,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                   Row(children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.repeat),
-                      onPressed: null,
+                      onPressed: _renote,
                     ),
                     Text(widget.status.renoteCount.toString()),
                   ]),
