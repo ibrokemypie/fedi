@@ -63,23 +63,29 @@ class HomeState extends State {
               Tab(icon: Icon(Icons.directions_bike)),
             ],
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                _logout(context);
-              },
-            )
-          ],
         ),
-        drawer: Drawer(),
-        body: TabBarView(
-            children: [
-              TimeLine(instance:instance,authCode: authCode,),
-              Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              ListTile(
+                title: Text('Logout'),
+                onTap: () {
+                  _logout(context);
+                },
+              )
             ],
           ),
+        ),
+        body: TabBarView(
+          children: [
+            TimeLine(
+              instance: instance,
+              authCode: authCode,
+            ),
+            Icon(Icons.directions_transit),
+            Icon(Icons.directions_bike),
+          ],
+        ),
       ),
     );
   }
