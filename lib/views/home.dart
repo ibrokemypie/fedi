@@ -3,6 +3,7 @@ import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/user.dart';
 import 'package:fedi/api/hometimeline.dart';
 import 'package:fedi/views/status.dart';
+import 'package:fedi/views/post.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,7 +94,8 @@ class HomeState extends State {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Post())),
           child: Icon(Icons.edit),
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,

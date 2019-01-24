@@ -18,6 +18,9 @@ class FediState extends State<Fedi> {
       theme: ThemeData(
         primaryColor: Colors.red,
         brightness: Brightness.dark,
+        buttonTheme: ButtonThemeData(
+          minWidth: 4
+        )
       ),
       home: LogIn(),
     );
