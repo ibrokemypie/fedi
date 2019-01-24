@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 import 'package:fedi/api/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fedi/views/timeline.dart';
+import 'package:fedi/views/home.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -30,7 +30,7 @@ class LogInState extends State<LogIn> {
 
       if (authenticated == true) {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => TimeLine()));
+            context, MaterialPageRoute(builder: (context) => Home()));
       }
     });
   }
@@ -51,7 +51,7 @@ class LogInState extends State<LogIn> {
           prefs.setString('instance', this._instance);
           _clickLogin = _loginAction;
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => TimeLine()));
+              context, MaterialPageRoute(builder: (context) => Home()));
         });
       } catch (e) {
         print(e.toString());

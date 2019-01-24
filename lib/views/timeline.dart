@@ -9,50 +9,26 @@ import 'package:fedi/definitions/instance.dart';
 import 'dart:convert';
 
 class TimeLine extends StatefulWidget {
+  final Instance instance;
+  final String authCode;
+  // static Instance instance;
+
+  TimeLine({this.instance,this.authCode});
   @override
   TimeLineState createState() => new TimeLineState();
 }
 
-class TimeLineState extends State {
-  Instance instance;
-  String authCode;
+class TimeLineState extends State<TimeLine> {
   List<Status> statuses = new List();
 
-  void _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('authenticated', false);
-    prefs.setString('userAuth', null);
-    prefs.setString('instance', null);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LogIn()));
-  }
-
-  Future<void> verifyAuth() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth = prefs.getBool('authenticated') ?? false;
-    var userAuth = prefs.getString('userAuth') ?? null;
-    var instanceUrl = prefs.getString('instance') ?? null;
-
-    if (auth == false || userAuth == null || instanceUrl == null) {
-      _logout(context);
-    } else {
-      Instance newInstance = await Instance.fromUrl(instanceUrl);
-      List statusList = await getHomeTimeline(newInstance, userAuth);
-      setState(() {
-        instance = newInstance;
-        authCode = userAuth;
-        statuses = statusList;
-      });
-    }
-  }
 
   Future<void> newStatuses() async {
     List<Status> statusList;
     if (statuses.length > 0) {
-      statusList = await getHomeTimeline(instance, authCode,
+      statusList = await getHomeTimeline(widget.instance, widget.authCode,
           currentStatuses: statuses, sinceId: statuses[0].id);
     } else {
-      statusList = await getHomeTimeline(instance, authCode);
+      statusList = await getHomeTimeline(widget.instance, widget.authCode);
     }
     setState(() {
       statuses = statusList;
@@ -62,37 +38,24 @@ class TimeLineState extends State {
   @override
   void initState() {
     super.initState();
-    verifyAuth();
+    newStatuses();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: new RefreshIndicator(
-        child: new ListView.builder(
-          itemBuilder: (context, i) {
-            if (i.isOdd) return Divider();
+    return RefreshIndicator(
+      child: new ListView.builder(
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
 
-            final index = i ~/ 2;
-            if (index >= statuses.length) {
-              return null;
-            }
-            return statusBuilder(statuses[index]);
-          },
-        ),
-        onRefresh: newStatuses,
+          final index = i ~/ 2;
+          if (index >= statuses.length) {
+            return null;
+          }
+          return statusBuilder(statuses[index]);
+        },
       ),
-      drawer: Drawer(),
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              _logout(context);
-            },
-          )
-        ],
-      ),
+      onRefresh: newStatuses,
     );
   }
 }

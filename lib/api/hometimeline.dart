@@ -116,6 +116,6 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
 
     return newStatuses;
   } else {
-    throw Exception('Failed to load post');
+    throw Exception('Failed to load post ' + (instance.uri + actionPath + json.encode(params)));
   }
 }
