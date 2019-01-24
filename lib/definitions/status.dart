@@ -41,7 +41,7 @@ class Status {
   IconData visIcon() {
     switch (this.visibility) {
       case "public":
-        return Icons.language;
+        return Icons.public;
       case "home":
         return Icons.home;
       case "followers":

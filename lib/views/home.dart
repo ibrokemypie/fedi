@@ -68,7 +68,7 @@ class HomeState extends State {
               Tab(icon: Icon(Icons.home)),
               Tab(icon: Icon(Icons.notifications)),
               Tab(icon: Icon(Icons.message)),
-              Tab(icon: Icon(Icons.language)),
+              Tab(icon: Icon(Icons.public)),
             ],
           ),
         ),
@@ -89,7 +89,7 @@ class HomeState extends State {
             tabOne,
             Icon(Icons.notifications),
             Icon(Icons.message),
-            Icon(Icons.language),
+            Icon(Icons.public),
           ],
         ),
         floatingActionButton: FloatingActionButton(
