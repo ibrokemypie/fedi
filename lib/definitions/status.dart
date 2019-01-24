@@ -14,9 +14,11 @@ class Status {
   String title;
   String body;
   String visibility;
+  bool favourited;
+  String reaction;
   List<File> files;
 
-  Status(id, date, author, url, title, body, visibility) {
+  Status(id, date, author, url, title, body, visibility,favourited,reaction) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -25,6 +27,8 @@ class Status {
     this.body = body;
     this.visibility = visibility.toLowerCase();
     this.files = files;
+    this.favourited = favourited;
+    this.reaction = reaction;
   }
 
   Status.fromJson(Map json) {
@@ -36,6 +40,8 @@ class Status {
     this.body = json['body'];
     this.visibility = json['visibility'].toString().toLowerCase();
     this.files = json['files'];
+    this.favourited = json['favourited'];
+    this.reaction = json['reaction'];
   }
 
   IconData visIcon() {

@@ -7,8 +7,16 @@ part of 'status.dart';
 // **************************************************************************
 
 Status _$StatusFromJson(Map<String, dynamic> json) {
-  return Status(json['id'], json['date'], json['author'], json['url'],
-      json['title'], json['body'], json['visibility'])
+  return Status(
+      json['id'],
+      json['date'],
+      json['author'],
+      json['url'],
+      json['title'],
+      json['body'],
+      json['visibility'],
+      json['favourited'],
+      json['reaction'])
     ..files = (json['files'] as List)
         ?.map((e) => e == null ? null : File.fromJson(e as Map))
         ?.toList();
@@ -22,5 +30,7 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'title': instance.title,
       'body': instance.body,
       'visibility': instance.visibility,
+      'favourited': instance.favourited,
+      'reaction': instance.reaction,
       'files': instance.files
     };

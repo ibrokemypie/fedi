@@ -93,6 +93,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
               "visibility": v["visibility"],
               "url": v["uri"],
               "files": files,
+              "favourited": v["isFavorited"],
             });
           } else {
             status = Status.fromJson({
@@ -104,6 +105,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
               "visibility": v["visibility"],
               "url": v["uri"],
               "files": files,
+              "favourited": v["isFavorited"] || v["myReaction"]!=null,
             });
           }
           newStatuses.add(status);

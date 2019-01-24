@@ -20,8 +20,7 @@ class StatusBuilderState extends State<StatusBuilder> {
         await favouritePost(widget.instance, widget.authCode, widget.status.id);
     if (success) {
       setState(() {
-        favouriteColour = Colors.yellow;
-        // widget.status.
+        widget.status.favourited = true;
       });
     }
   }
@@ -29,13 +28,16 @@ class StatusBuilderState extends State<StatusBuilder> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      favouriteColour = Colors.white;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.status.favourited) {
+      favouriteColour = Colors.yellow;
+    } else {
+      favouriteColour = Colors.white;
+    }
+    print(widget.status.toJson());
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
