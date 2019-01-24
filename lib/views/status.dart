@@ -55,11 +55,12 @@ Widget statusBuilder(Status status) {
 
                 // Body
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: 8.0,right: 32.0),
                   child: Text(status.body),
                 ),
 
                 Container(
+                  padding: const EdgeInsets.only(bottom: 8.0,right: 32.0),
                   child: status.statusFiles(),
                 ),
 
