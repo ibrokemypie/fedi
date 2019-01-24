@@ -51,68 +51,8 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-      Status status;
-      if (v["user"] != null && v["id"] != null) {
-        try {
-          User user = new User.fromJson({
-            "username": v["user"]["username"],
-            "nickname": v["user"]["name"] ?? "null",
-            "host": v["user"]["host"] ?? instance.host,
-            "id": v["user"]["id"],
-            "avatarUrl": v["user"]["avatarUrl"]
-          });
-
-          List<File> files = new List();
-          for (var fileJson in v["files"]) {
-            if (fileJson != null) {
-              File newFile = new File.fromJson({
-                "id": fileJson["id"],
-                "date": fileJson["createdAt"],
-                "name": fileJson["name"],
-                "type": fileJson["type"],
-                "authorId": fileJson["userId"],
-                "sensitive": fileJson["isSensitive"],
-                "thumbnailUrl": fileJson["thumbnailUrl"],
-                "fileUrl": fileJson["url"],
-              });
-              files.add(newFile);
-            }
-          }
-
-          if (v["renoteId"] != null) {
-            status = Status.fromJson({
-              "author": user,
-              "title": "one",
-              "body": "Renote from " +
-                      v["renote"]["user"]["username"] +
-                      ": " +
-                      v["renote"]["text"] ??
-                  "",
-              "id": v["renoteId"],
-              "date": v["createdAt"],
-              "visibility": v["visibility"],
-              "url": v["uri"],
-              "files": files,
-              "favourited": v["isFavorited"],
-            });
-          } else {
-            status = Status.fromJson({
-              "author": user,
-              "title": "one",
-              "body": v["text"] ?? "",
-              "id": v["id"],
-              "date": v["createdAt"],
-              "visibility": v["visibility"],
-              "url": v["uri"],
-              "files": files,
-              "favourited": v["isFavorited"] || v["myReaction"]!=null,
-            });
-          }
-          newStatuses.add(status);
-        } catch (e) {
-          throw Exception(e);
-        }
-      }
+      Status status = Status.fromMisskey(v, instance);
+      newStatuses.add(status);
     });
 
     if (currentStatuses != null) {

@@ -2,6 +2,7 @@ import 'package:fedi/definitions/user.dart';
 import 'package:fedi/definitions/file.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:fedi/definitions/instance.dart';
 
 part 'status.g.dart';
 
@@ -18,7 +19,7 @@ class Status {
   String reaction;
   List<File> files;
 
-  Status(id, date, author, url, title, body, visibility,favourited,reaction) {
+  Status(id, date, author, url, title, body, visibility, favourited, reaction) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -42,6 +43,65 @@ class Status {
     this.files = json['files'];
     this.favourited = json['favourited'];
     this.reaction = json['reaction'];
+  }
+
+  Status.fromMisskey(Map v, Instance instance) {
+    if (v["user"] != null && v["id"] != null) {
+      try {
+        User user = new User.fromJson({
+          "username": v["user"]["username"],
+          "nickname": v["user"]["name"] ?? "null",
+          "host": v["user"]["host"] ?? instance.host,
+          "id": v["user"]["id"],
+          "avatarUrl": v["user"]["avatarUrl"]
+        });
+
+        List<File> files = new List();
+        for (var fileJson in v["files"]) {
+          if (fileJson != null) {
+            File newFile = new File.fromJson({
+              "id": fileJson["id"],
+              "date": fileJson["createdAt"],
+              "name": fileJson["name"],
+              "type": fileJson["type"],
+              "authorId": fileJson["userId"],
+              "sensitive": fileJson["isSensitive"],
+              "thumbnailUrl": fileJson["thumbnailUrl"],
+              "fileUrl": fileJson["url"],
+            });
+            files.add(newFile);
+          }
+        }
+
+        if (v["renoteId"] != null) {
+          this.author = user;
+          this.title = "one";
+          this.body = "Renote from " +
+                  v["renote"]["user"]["username"] +
+                  ": " +
+                  v["renote"]["text"] ??
+              "";
+          this.id = v["id"];
+          this.date = v["createdAt"];
+          this.visibility = v["visibility"];
+          this.url = v["uri"];
+          this.files = files;
+          this.favourited = v["isFavorited"] || v["myReaction"] != null;
+        } else {
+          this.author = user;
+          this.title = "one";
+          this.body = v["text"] ?? "";
+          this.id = v["id"];
+          this.date = v["createdAt"];
+          this.visibility = v["visibility"];
+          this.url = v["uri"];
+          this.files = files;
+          this.favourited = v["isFavorited"] || v["myReaction"] != null;
+        }
+      } catch (e) {
+        throw Exception(e);
+      }
+    }
   }
 
   IconData visIcon() {
