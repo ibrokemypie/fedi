@@ -52,61 +52,64 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
 
     returned.forEach((v) {
       Status status;
-      try {
-        User user = new User.fromJson({
-          "username": v["user"]["username"],
-          "nickname": v["user"]["name"] ?? "null",
-          "host": v["user"]["host"] ?? instance.host,
-          "id": v["user"]["id"],
-          "avatarUrl": v["user"]["avatarUrl"]
-        });
+      if (v["user"] != null && v["id"] != null) {
+        try {
+          User user = new User.fromJson({
+            "username": v["user"]["username"],
+            "nickname": v["user"]["name"] ?? "null",
+            "host": v["user"]["host"] ?? instance.host,
+            "id": v["user"]["id"],
+            "avatarUrl": v["user"]["avatarUrl"]
+          });
 
-        List<File> files = new List();
-        for (var fileJson in v["files"]) {
-          if (fileJson != null) {
-            File newFile = new File.fromJson({
-              "id": fileJson["id"],
-              "date": fileJson["createdAt"],
-              "name": fileJson["name"],
-              "type": fileJson["type"],
-              "authorId": fileJson["userId"],
-              "sensitive": fileJson["isSensitive"],
-              "thumbnailUrl": fileJson["thumbnailUrl"],
-              "fileUrl": fileJson["url"],
-            });
-            files.add(newFile);
+          List<File> files = new List();
+          for (var fileJson in v["files"]) {
+            if (fileJson != null) {
+              File newFile = new File.fromJson({
+                "id": fileJson["id"],
+                "date": fileJson["createdAt"],
+                "name": fileJson["name"],
+                "type": fileJson["type"],
+                "authorId": fileJson["userId"],
+                "sensitive": fileJson["isSensitive"],
+                "thumbnailUrl": fileJson["thumbnailUrl"],
+                "fileUrl": fileJson["url"],
+              });
+              files.add(newFile);
+            }
           }
-        }
 
-        if (v["renoteId"] != null) {
-          status = Status.fromJson({
-            "author": user,
-            "title": "one",
-            "body": "Renote from " +
-                v["renote"]["user"]["username"] +
-                ": " +
-                v["renote"]["text"] ?? "",
-            "id": v["renoteId"],
-            "date": v["createdAt"],
-            "visibility": v["visibility"],
-            "url": v["uri"],
-            "files": files,
-          });
-        } else {
-          status = Status.fromJson({
-            "author": user,
-            "title": "one",
-            "body": v["text"] ?? "",
-            "id": v["id"],
-            "date": v["createdAt"],
-            "visibility": v["visibility"],
-            "url": v["uri"],
-            "files": files,
-          });
+          if (v["renoteId"] != null) {
+            status = Status.fromJson({
+              "author": user,
+              "title": "one",
+              "body": "Renote from " +
+                      v["renote"]["user"]["username"] +
+                      ": " +
+                      v["renote"]["text"] ??
+                  "",
+              "id": v["renoteId"],
+              "date": v["createdAt"],
+              "visibility": v["visibility"],
+              "url": v["uri"],
+              "files": files,
+            });
+          } else {
+            status = Status.fromJson({
+              "author": user,
+              "title": "one",
+              "body": v["text"] ?? "",
+              "id": v["id"],
+              "date": v["createdAt"],
+              "visibility": v["visibility"],
+              "url": v["uri"],
+              "files": files,
+            });
+          }
+          newStatuses.add(status);
+        } catch (e) {
+          throw Exception(e);
         }
-        newStatuses.add(status);
-      } catch (e) {
-        throw Exception(e);
       }
     });
 
@@ -116,6 +119,7 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
 
     return newStatuses;
   } else {
-    throw Exception('Failed to load post ' + (instance.uri + actionPath + json.encode(params)));
+    throw Exception('Failed to load post ' +
+        (instance.uri + actionPath + json.encode(params)));
   }
 }
