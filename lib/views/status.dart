@@ -21,6 +21,7 @@ class StatusBuilderState extends State<StatusBuilder> {
     if (success) {
       setState(() {
         widget.status.favourited = true;
+        widget.status.favCount += 1;
       });
     }
   }
@@ -126,7 +127,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                       onPressed: _favourite,
                       color: favouriteColour,
                     ),
-                    Text("0"),
+                    Text(widget.status.favCount.toString()),
                   ]),
                 ],
               ),

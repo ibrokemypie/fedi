@@ -16,10 +16,12 @@ class Status {
   String body;
   String visibility;
   bool favourited;
+  int favCount;
   String myReaction;
   List<File> files;
 
-  Status(id, date, author, url, title, body, visibility, favourited, myReaction) {
+  Status(id, date, author, url, title, body, visibility, favourited, favCount,
+      myReaction) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -29,6 +31,7 @@ class Status {
     this.visibility = visibility.toLowerCase();
     this.files = files;
     this.favourited = favourited;
+    this.favCount = favCount;
     this.myReaction = myReaction;
   }
 
@@ -42,10 +45,20 @@ class Status {
     this.visibility = json['visibility'].toString().toLowerCase();
     this.files = json['files'];
     this.favourited = json['favourited'];
+    this.favCount = json['favCount'];
     this.myReaction = json['reaction'];
   }
 
   Status.fromMisskey(Map v, Instance instance) {
+    int countreacts(Map r) {
+      int reactions = 0;
+      r.forEach((react,number) => 
+        reactions += number
+      );
+      return reactions;
+    }
+
+
     if (v["user"] != null && v["id"] != null) {
       try {
         User user = new User.fromJson({
@@ -87,6 +100,7 @@ class Status {
           this.url = v["uri"];
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
+          this.favCount = countreacts(v["reactionCounts"]);
           this.myReaction = v["myReaction"] ?? null;
         } else {
           this.author = user;
@@ -98,6 +112,7 @@ class Status {
           this.url = v["uri"];
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
+          this.favCount = countreacts(v["reactionCounts"]);
           this.myReaction = v["myReaction"] ?? null;
         }
       } catch (e) {
