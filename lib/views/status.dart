@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/api/favourite.dart';
+import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
 
 class StatusBuilder extends StatefulWidget {
@@ -15,14 +16,27 @@ class StatusBuilder extends StatefulWidget {
 
 class StatusBuilderState extends State<StatusBuilder> {
   Color favouriteColour = Colors.white;
-  void _favourite() async {
-    bool success =
-        await favouritePost(widget.instance, widget.authCode, widget.status.id);
-    if (success) {
-      setState(() {
-        widget.status.favourited = true;
-        widget.status.favCount += 1;
-      });
+
+  void _toggleFavourite() async {
+    bool success;
+    if (widget.status.favourited != true) {
+      success =
+          favouritePost(widget.instance, widget.authCode, widget.status.id);
+      if (success) {
+        setState(() {
+          widget.status.favourited = true;
+          widget.status.favCount += 1;
+        });
+      }
+    } else {
+      success =
+          unFavouritePost(widget.instance, widget.authCode, widget.status.id);
+      if (success) {
+        setState(() {
+          widget.status.favourited = false;
+          widget.status.favCount -= 1;
+        });
+      }
     }
   }
 
@@ -124,7 +138,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                   Row(children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.star),
-                      onPressed: _favourite,
+                      onPressed: _toggleFavourite,
                       color: favouriteColour,
                     ),
                     Text(widget.status.favCount.toString()),
