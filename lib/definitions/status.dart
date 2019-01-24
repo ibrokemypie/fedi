@@ -16,10 +16,10 @@ class Status {
   String body;
   String visibility;
   bool favourited;
-  String reaction;
+  String myReaction;
   List<File> files;
 
-  Status(id, date, author, url, title, body, visibility, favourited, reaction) {
+  Status(id, date, author, url, title, body, visibility, favourited, myReaction) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -29,7 +29,7 @@ class Status {
     this.visibility = visibility.toLowerCase();
     this.files = files;
     this.favourited = favourited;
-    this.reaction = reaction;
+    this.myReaction = myReaction;
   }
 
   Status.fromJson(Map json) {
@@ -42,7 +42,7 @@ class Status {
     this.visibility = json['visibility'].toString().toLowerCase();
     this.files = json['files'];
     this.favourited = json['favourited'];
-    this.reaction = json['reaction'];
+    this.myReaction = json['reaction'];
   }
 
   Status.fromMisskey(Map v, Instance instance) {
@@ -87,6 +87,7 @@ class Status {
           this.url = v["uri"];
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
+          this.myReaction = v["myReaction"] ?? null;
         } else {
           this.author = user;
           this.title = "one";
@@ -97,6 +98,7 @@ class Status {
           this.url = v["uri"];
           this.files = files;
           this.favourited = v["isFavorited"] || v["myReaction"] != null;
+          this.myReaction = v["myReaction"] ?? null;
         }
       } catch (e) {
         throw Exception(e);

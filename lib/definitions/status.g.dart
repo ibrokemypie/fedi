@@ -16,7 +16,7 @@ Status _$StatusFromJson(Map<String, dynamic> json) {
       json['body'],
       json['visibility'],
       json['favourited'],
-      json['reaction'])
+      json['myReaction'])
     ..files = (json['files'] as List)
         ?.map((e) => e == null ? null : File.fromJson(e as Map))
         ?.toList();
@@ -31,6 +31,6 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'body': instance.body,
       'visibility': instance.visibility,
       'favourited': instance.favourited,
-      'reaction': instance.reaction,
+      'myReaction': instance.myReaction,
       'files': instance.files
     };
