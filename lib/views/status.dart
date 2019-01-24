@@ -59,6 +59,10 @@ Widget statusBuilder(Status status) {
                   child: Text(status.body),
                 ),
 
+                Container(
+                  child: status.statusFiles(),
+                ),
+
                 // Buttons
                 Row(
                   children: <Widget>[
