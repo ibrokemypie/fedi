@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:fedi/definitions/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/views/webauth.dart';
-import 'package:fedi/views/timeline.dart';
 import 'package:crypto/crypto.dart';
 
 Future<String> instanceLogin(BuildContext context, String instanceUrl) async {

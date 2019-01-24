@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fedi/definitions/status.dart';
-import 'package:fedi/definitions/user.dart';
-import 'package:fedi/api/hometimeline.dart';
-import 'package:fedi/views/status.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
-import 'dart:convert';
+import 'dart:async';
 
 class Home extends StatefulWidget {
   @override
