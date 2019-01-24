@@ -91,7 +91,12 @@ class HomeState extends State {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Post())),
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Post(
+                        instance: instance,
+                        authCode: authCode,
+                      ))),
           child: Icon(Icons.edit),
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,

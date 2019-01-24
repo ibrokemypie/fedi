@@ -1,20 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:fedi/definitions/newpost.dart';
+import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/api/submitpost.dart';
 
 class Post extends StatefulWidget {
+  final Instance instance;
+  final String authCode;
+
+  Post({this.instance, this.authCode});
   @override
   PostState createState() => new PostState();
 }
 
 class PostState extends State<Post> {
+  var submitAction;
   int maxLines = 10;
   int chars = 0;
+  String currentContent;
+  String visibility = "public";
 
   textUpdated(String currentText) {
     int currentLines = 1 + '\n'.allMatches(currentText).length;
     setState(() {
       maxLines = currentLines + 10;
       chars = currentText.length;
+      currentContent = currentText;
     });
+  }
+
+  void newPost() async {
+    setState(() {
+      submitAction = null;
+    });
+    try {
+      NewPost post = NewPost(visibility, content: currentContent);
+      var createdNote =
+          await submitPost(widget.instance, widget.authCode, post);
+      Navigator.pop(context);
+    } catch (e) {
+      submitAction = newPost;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    submitAction = newPost;
   }
 
   @override
@@ -86,7 +117,7 @@ class PostState extends State<Post> {
                 padding: const EdgeInsets.only(right: 16),
                 child: RaisedButton(
                   child: Text("Submit"),
-                  onPressed: () => {},
+                  onPressed: submitAction,
                 ),
               )
             ],
