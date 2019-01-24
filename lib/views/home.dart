@@ -17,6 +17,9 @@ class Home extends StatefulWidget {
 class HomeState extends State {
   Instance instance;
   String authCode;
+  Widget tabOne = new Center(
+    child: CircularProgressIndicator(),
+  );
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,6 +43,10 @@ class HomeState extends State {
       setState(() {
         instance = newInstance;
         authCode = userAuth;
+        tabOne = TimeLine(
+          instance: instance,
+          authCode: authCode,
+        );
       });
     }
   }
@@ -78,10 +85,7 @@ class HomeState extends State {
         ),
         body: TabBarView(
           children: [
-            TimeLine(
-              instance: instance,
-              authCode: authCode,
-            ),
+            tabOne,
             Icon(Icons.directions_transit),
             Icon(Icons.directions_bike),
           ],

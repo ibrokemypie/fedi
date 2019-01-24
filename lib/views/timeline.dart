@@ -13,14 +13,14 @@ class TimeLine extends StatefulWidget {
   final String authCode;
   // static Instance instance;
 
-  TimeLine({this.instance,this.authCode});
+  TimeLine({this.instance, this.authCode});
   @override
   TimeLineState createState() => new TimeLineState();
 }
 
 class TimeLineState extends State<TimeLine> {
   List<Status> statuses = new List();
-
+  Widget contents = new Center(child: CircularProgressIndicator());
 
   Future<void> newStatuses() async {
     List<Status> statusList;
@@ -32,6 +32,7 @@ class TimeLineState extends State<TimeLine> {
     }
     setState(() {
       statuses = statusList;
+      contents = statusListView();
     });
   }
 
@@ -41,20 +42,24 @@ class TimeLineState extends State<TimeLine> {
     newStatuses();
   }
 
+  Widget statusListView() {
+    return new ListView.builder(
+      itemBuilder: (context, i) {
+        if (i.isOdd) return Divider();
+
+        final index = i ~/ 2;
+        if (index >= statuses.length) {
+          return null;
+        }
+        return statusBuilder(statuses[index]);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      child: new ListView.builder(
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= statuses.length) {
-            return null;
-          }
-          return statusBuilder(statuses[index]);
-        },
-      ),
+      child: contents,
       onRefresh: newStatuses,
     );
   }
