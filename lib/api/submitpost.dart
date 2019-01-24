@@ -10,7 +10,7 @@ submitPost(Instance instance, String authCode, NewPost post) async {
   switch (instance.type) {
     case "misskey":
       {
-        createdNote = await getMisskeyHomeTimeline(instance, authCode, post);
+        createdNote = await submitMisskeyPost(instance, authCode, post);
         break;
       }
     default:
@@ -21,7 +21,7 @@ submitPost(Instance instance, String authCode, NewPost post) async {
   return createdNote;
 }
 
-Future<dynamic> getMisskeyHomeTimeline(
+Future<dynamic> submitMisskeyPost(
     Instance instance, String authCode, NewPost post) async {
   Map<String, dynamic> params;
   String actionPath = "/api/notes/create";
