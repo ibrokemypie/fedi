@@ -88,7 +88,7 @@ class Status {
         this.visibility = v["visibility"];
         this.url = v["uri"];
         this.files = files;
-        this.favourited = v["isFavorited"] || v["myReaction"] != null;
+        this.favourited = v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
         this.favCount = countreacts(v["reactionCounts"]);
         this.author = user;
         this.title = "one";
