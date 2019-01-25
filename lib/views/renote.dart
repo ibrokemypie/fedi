@@ -161,12 +161,14 @@ class RenoteBuilderState extends State<RenoteBuilder> {
                     ]),
               ),
 
+// TODO: content warning
               // Body
               Container(
                 padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
                 child: Text(widget.status.renote.body),
               ),
 
+// TODO: sensitive media
               Container(
                 padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
                 child: widget.status.renote.statusFiles(),

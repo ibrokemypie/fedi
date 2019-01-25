@@ -135,12 +135,14 @@ class StatusBuilderState extends State<StatusBuilder> {
                       ]),
                 ),
 
+// TODO: content warning
                 // Body
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
                   child: Text(widget.status.body),
                 ),
 
+// TODO: sensitive media
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
                   child: widget.status.statusFiles(),
