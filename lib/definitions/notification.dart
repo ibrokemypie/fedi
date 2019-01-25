@@ -1,0 +1,47 @@
+import 'package:fedi/definitions/user.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/material.dart';
+import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/status.dart';
+
+part 'notification.g.dart';
+
+@JsonSerializable()
+class FediNotification {
+  String id;
+  String date;
+  User author;
+  String notificationType;
+  bool isRead;
+  Status note;
+
+  FediNotification(id, date, author, notificationType, isRead, note) {
+    this.id = id;
+    this.date = date;
+    this.author = author;
+    this.notificationType = notificationType;
+    this.isRead = isRead;
+    this.note = note;
+  }
+
+  FediNotification.fromJson(Map json) {
+    this.id = json['id'];
+    this.date = json['date'];
+    this.author = json['author'];
+    this.notificationType = json['notificationType'];
+    this.isRead = json['isRead'];
+    this.note = json['note'];
+  }
+
+// TODO: notification from mastodon return
+  FediNotification.fromMisskey(Map v, Instance instance) {
+    this.id = v["id"];
+    this.date = v["createdAt"];
+    this.notificationType = v["notificationType"];
+    this.isRead = v["isRead"];
+    this.author = User.fromMisskey(v["user"], instance) ?? null;
+    this.note = Status.fromMisskey(v["note"], instance) ?? null;
+  }
+
+  Map<String, dynamic> toJson() => _$FediNotificationToJson(this);
+}

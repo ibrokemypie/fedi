@@ -66,7 +66,7 @@ class Status {
     if (v["user"] != null && v["id"] != null && v["deletedAt"] == null) {
       try {
         List<File> files = new List();
-        User user = new User.fromMisskey(v, instance);
+        User user = new User.fromMisskey(v["user"], instance);
 
         for (var fileJson in v["files"]) {
           if (fileJson != null) {

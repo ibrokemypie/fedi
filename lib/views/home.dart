@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/timeline.dart';
+import 'package:fedi/views/notifications.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
@@ -15,6 +16,9 @@ class HomeState extends State {
   Instance instance;
   String authCode;
   Widget tabOne = new Center(
+    child: CircularProgressIndicator(),
+  );
+  Widget tabTwo = new Center(
     child: CircularProgressIndicator(),
   );
 
@@ -41,6 +45,10 @@ class HomeState extends State {
         instance = newInstance;
         authCode = userAuth;
         tabOne = TimeLine(
+          instance: instance,
+          authCode: authCode,
+        );
+        tabTwo = Notifications(
           instance: instance,
           authCode: authCode,
         );
@@ -86,7 +94,7 @@ class HomeState extends State {
         body: TabBarView(
           children: [
             tabOne,
-            Icon(Icons.notifications),
+            tabTwo,
             Icon(Icons.message),
             Icon(Icons.public),
           ],
