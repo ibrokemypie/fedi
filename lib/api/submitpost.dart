@@ -31,6 +31,7 @@ Future<dynamic> submitMisskeyPost(
     "i": authCode,
     "text": post.content,
     "visibility": post.visiblity,
+    "viaMobile": true,
   });
 
   if (post.replyTo != null)
