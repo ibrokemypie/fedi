@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/newpost.dart';
+import 'package:fedi/definitions/status.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/api/submitpost.dart';
 
@@ -60,12 +61,19 @@ class PostState extends State<Post> {
     }
   }
 
+  _setVisibility(String newVisibility) {
+    setState(() {
+      visibility = newVisibility;
+    });
+  }
+
   void newPost() async {
     setState(() {
       submitAction = null;
     });
     try {
-      NewPost post = NewPost(visibility, content: currentContent, contentWarning: contentWarning);
+      NewPost post = NewPost(visibility,
+          content: currentContent, contentWarning: contentWarning);
       var createdNote =
           await submitPost(widget.instance, widget.authCode, post);
       Navigator.pop(context);
@@ -120,12 +128,40 @@ class PostState extends State<Post> {
                   )),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: RaisedButton(
-                    child: Icon(
-                      Icons.public,
-                      size: 16,
+                  child: PopupMenuButton<String>(
+                    child: Material(
+                      elevation: 3,
+                      type: MaterialType.button,
+                      color: Colors.blue,
+                      child: Container(
+                        child: Icon(
+                          visIcon(visibility),
+                          size: 16,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 16),
+                      ),
                     ),
-                    onPressed: () => {},
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: "public",
+                            child: Text('Public'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: "home",
+                            child: Text('Home'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: "followers",
+                            child: Text('Followers only'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: "specified",
+                            child: Text('Direct'),
+                          ),
+                        ],
+                    onSelected: _setVisibility,
                   )),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
