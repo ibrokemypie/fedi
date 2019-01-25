@@ -123,20 +123,6 @@ class Status {
     }
   }
 
-  IconData visIcon() {
-    switch (this.visibility) {
-      case "public":
-        return Icons.public;
-      case "home":
-        return Icons.home;
-      case "followers":
-        return Icons.group;
-      case "specified":
-        return Icons.message;
-    }
-    return Icons.language;
-  }
-
   Widget statusFiles() {
     switch (this.files.length) {
       case 0:
@@ -267,3 +253,17 @@ class Status {
 
   Map<String, dynamic> toJson() => _$StatusToJson(this);
 }
+
+    IconData visIcon(String visibility) {
+    switch (visibility) {
+      case "public":
+        return Icons.public;
+      case "home":
+        return Icons.home;
+      case "followers":
+        return Icons.group;
+      case "specified":
+        return Icons.message;
+    }
+    return Icons.language;
+  }

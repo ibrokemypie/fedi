@@ -4,6 +4,7 @@ import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/status.dart';
 
 class StatusBuilder extends StatefulWidget {
   final Instance instance;
@@ -64,7 +65,6 @@ class StatusBuilderState extends State<StatusBuilder> {
     } else {
       favouriteColour = Colors.white;
     }
-    print(widget.status.toJson());
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -110,7 +110,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                           ]),
                       Container(
                           padding: const EdgeInsets.only(right: 16.0),
-                          child: Icon(widget.status.visIcon(), size: 16.0))
+                          child: Icon(visIcon(widget.status.visibility), size: 16.0))
                     ]),
               ),
 
