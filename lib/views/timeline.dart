@@ -42,8 +42,6 @@ class TimeLineState extends State<TimeLine> {
   Widget statusListView() {
     return new ListView.builder(
       itemBuilder: (context, i) {
-        if (i.isOdd) return Divider();
-
         final index = i ~/ 2;
         if (index >= statuses.length) {
           return null;

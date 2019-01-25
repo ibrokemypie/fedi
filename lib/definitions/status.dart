@@ -20,9 +20,10 @@ class Status {
   String myReaction;
   int renoteCount;
   List<File> files;
+  Status renote;
 
   Status(id, date, author, url, title, body, visibility, favourited, favCount,
-      myReaction, renoteCount, files) {
+      myReaction, renoteCount, files, renote) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -35,6 +36,7 @@ class Status {
     this.myReaction = myReaction;
     this.renoteCount = renoteCount;
     this.files = files;
+    this.renote = renote;
   }
 
   Status.fromJson(Map json) {
@@ -50,6 +52,7 @@ class Status {
     this.myReaction = json['reaction'];
     this.renoteCount = json['renoteCount'];
     this.files = json['files'];
+    this.renote = json['renote'];
   }
 
 // TODO: status from mastodon return
@@ -65,29 +68,19 @@ class Status {
         List<File> files = new List();
         User user = new User.fromMisskey(v, instance);
 
-        if (v["renoteId"] != null && v["deletedAt"] == null) {
-          this.body = "Renote from " +
-                  v["renote"]["user"]["username"] +
-                  ": " +
-                  v["renote"]["text"] ??
-              "";
-          this.renoteCount = v["renote"]["renoteCount"] ?? 0;
-          for (var fileJson in v["renote"]["files"]) {
-            if (fileJson != null) {
-              File newFile = File.fromMisskey(fileJson);
-              files.add(newFile);
-            }
-          }
-        } else {
-          this.body = v["text"] ?? "";
-          this.renoteCount = v["renoteCount"] ?? 0;
-          for (var fileJson in v["files"]) {
-            if (fileJson != null) {
-              File newFile = File.fromMisskey(fileJson);
-              files.add(newFile);
-            }
+        for (var fileJson in v["files"]) {
+          if (fileJson != null) {
+            File newFile = File.fromMisskey(fileJson);
+            files.add(newFile);
           }
         }
+
+        if (v["renoteId"] != null && v["deletedAt"] == null) {
+          this.renote = Status.fromMisskey(v["renote"], instance);
+        }
+
+        this.body = v["text"] ?? "";
+        this.renoteCount = v["renoteCount"] ?? 0;
         this.files = files;
         this.myReaction = v["myReaction"] ?? null;
         this.id = v["id"];

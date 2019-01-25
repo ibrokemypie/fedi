@@ -19,7 +19,8 @@ Status _$StatusFromJson(Map<String, dynamic> json) {
       json['favCount'],
       json['myReaction'],
       json['renoteCount'],
-      json['files']);
+      json['files'],
+      json['renote']);
 }
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
@@ -34,5 +35,6 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'favCount': instance.favCount,
       'myReaction': instance.myReaction,
       'renoteCount': instance.renoteCount,
-      'files': instance.files
+      'files': instance.files,
+      'renote': instance.renote
     };
