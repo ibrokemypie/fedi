@@ -83,144 +83,9 @@ class StatusBuilderState extends State<StatusBuilder> {
     });
 
     Widget statusTile;
-    if (widget.status.renote == null) {
-      statusTile = Container(
-          child: Column(
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              // Avatar
-              Container(
-                alignment: FractionalOffset.topCenter,
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
-                child: CircleAvatar(
-                  backgroundImage: new CachedNetworkImageProvider(
-                      widget.status.author.avatarUrl),
-                ),
-              ),
-
-              // Content
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Author
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                // Nickname
-                                Container(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text(
-                                    widget.status.author.nickname,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-
-                                // Account name
-                                Text(widget.status.author.acct),
-                              ]),
-                          Container(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Icon(visIcon(widget.status.visibility),
-                                  size: 16.0))
-                        ]),
-                  ),
-
-                  // Body
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                    child: Text(widget.status.body),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                    child: widget.status.statusFiles(),
-                  ),
-
-                  // Buttons
-                  Row(
-                    children: <Widget>[
-                      // Reply
-                      Row(children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.reply),
-                          onPressed: _reply,
-                        ),
-                        Text("0"),
-                      ]),
-
-                      // Boost
-                      Row(children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.repeat),
-                          onPressed: _renote,
-                        ),
-                        Text(widget.status.renoteCount.toString()),
-                      ]),
-
-                      // Favourite
-                      Row(children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.star),
-                          onPressed: _toggleFavourite,
-                          color: favouriteColour,
-                        ),
-                        Text(widget.status.favCount.toString()),
-                      ]),
-                    ],
-                  ),
-                ],
-              )),
-            ],
-          ),
-          Divider(
-            height: 4,
-          ),
-        ],
-      ));
-    } else {
-      statusTile = Container(
-          child: Column(children: <Widget>[
-        Material(
-          elevation: 1,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            color: Colors.red,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  alignment: FractionalOffset.topCenter,
-                  padding: const EdgeInsets.only(left: 16.0, right: 4),
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundImage: new CachedNetworkImageProvider(
-                        widget.status.author.avatarUrl),
-                  ),
-                ),
-                Expanded(
-                    child: Row(
-                  children: <Widget>[
-                    Icon(Icons.repeat),
-                    Text("renoted by " + widget.status.author.nickname),
-                  ],
-                )),
-                Container(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Icon(visIcon(widget.status.visibility), size: 16.0))
-              ],
-            ),
-          ),
-        ),
+    statusTile = Container(
+        child: Column(
+      children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -230,7 +95,7 @@ class StatusBuilderState extends State<StatusBuilder> {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
               child: CircleAvatar(
                 backgroundImage: new CachedNetworkImageProvider(
-                    widget.status.renote.author.avatarUrl),
+                    widget.status.author.avatarUrl),
               ),
             ),
 
@@ -253,7 +118,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                               Container(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Text(
-                                  widget.status.renote.author.nickname,
+                                  widget.status.author.nickname,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -261,20 +126,24 @@ class StatusBuilderState extends State<StatusBuilder> {
                               ),
 
                               // Account name
-                              Text(widget.status.renote.author.acct),
+                              Text(widget.status.author.acct),
                             ]),
+                        Container(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: Icon(visIcon(widget.status.visibility),
+                                size: 16.0))
                       ]),
                 ),
 
                 // Body
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                  child: Text(widget.status.renote.body),
+                  child: Text(widget.status.body),
                 ),
 
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                  child: widget.status.renote.statusFiles(),
+                  child: widget.status.statusFiles(),
                 ),
 
                 // Buttons
@@ -295,7 +164,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                         icon: Icon(Icons.repeat),
                         onPressed: _renote,
                       ),
-                      Text(widget.status.renote.renoteCount.toString()),
+                      Text(widget.status.renoteCount.toString()),
                     ]),
 
                     // Favourite
@@ -305,7 +174,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                         onPressed: _toggleFavourite,
                         color: favouriteColour,
                       ),
-                      Text(widget.status.renote.favCount.toString()),
+                      Text(widget.status.favCount.toString()),
                     ]),
                   ],
                 ),
@@ -316,8 +185,9 @@ class StatusBuilderState extends State<StatusBuilder> {
         Divider(
           height: 4,
         ),
-      ]));
-    }
+      ],
+    ));
+
     return statusTile;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/api/hometimeline.dart';
 import 'package:fedi/views/status.dart';
+import 'package:fedi/views/renote.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'dart:async';
 
@@ -46,7 +47,13 @@ class TimeLineState extends State<TimeLine> {
         if (index >= statuses.length) {
           return null;
         }
-        return StatusBuilder(widget.instance, widget.authCode, statuses[index]);
+        if (statuses[index].renote != null) {
+          return RenoteBuilder(
+              widget.instance, widget.authCode, statuses[index]);
+        } else {
+          return StatusBuilder(
+              widget.instance, widget.authCode, statuses[index]);
+        }
       },
     );
   }
