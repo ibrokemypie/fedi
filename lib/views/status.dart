@@ -88,6 +88,7 @@ class StatusBuilderState extends State<StatusBuilder> {
             alignment: FractionalOffset.topCenter,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: CircleAvatar(
+              // TODO: cache avatars
               backgroundImage: NetworkImage(widget.status.author.avatarUrl),
             ),
           ),
