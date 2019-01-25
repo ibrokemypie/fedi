@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:fedi/definitions/instance.dart';
 
 part 'user.g.dart';
 
@@ -30,6 +31,16 @@ class User {
     this.avatarUrl = json['avatarUrl'];
     this.url = this.host + "/@" + this.username;
     this.acct = this.username + "@" + this.host;
+  }
+
+  User.fromMisskey(Map v, Instance instance) {
+    this.username = v["user"]["username"];
+    this.nickname = v["user"]["name"] ?? "null";
+    this.host = v["user"]["host"] ?? instance.host;
+    this.acct = this.username + "@" + this.host;
+    this.id = v["user"]["id"];
+    this.url = this.host + "/@" + this.username;
+    this.avatarUrl = v["user"]["avatarUrl"];
   }
 
   Map<String, dynamic> toJson() => _$UserToJson(this);

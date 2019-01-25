@@ -62,13 +62,7 @@ class Status {
     if (v["user"] != null && v["id"] != null && v["deletedAt"] == null) {
       try {
         List<File> files = new List();
-        User user = new User.fromJson({
-          "username": v["user"]["username"],
-          "nickname": v["user"]["name"] ?? "null",
-          "host": v["user"]["host"] ?? instance.host,
-          "id": v["user"]["id"],
-          "avatarUrl": v["user"]["avatarUrl"]
-        });
+        User user = new User.fromMisskey(v, instance);
 
         if (v["renoteId"] != null && v["deletedAt"] == null) {
           this.body = "Renote from " +
