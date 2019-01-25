@@ -14,7 +14,8 @@ Instance _$InstanceFromJson(Map<String, dynamic> json) {
       json['title'] as String,
       json['description'] as String,
       json['version'] as String,
-      json['type'] as String);
+      json['type'] as String)
+    ..maxChars = json['maxChars'] as int;
 }
 
 Map<String, dynamic> _$InstanceToJson(Instance instance) => <String, dynamic>{
@@ -24,5 +25,6 @@ Map<String, dynamic> _$InstanceToJson(Instance instance) => <String, dynamic>{
       'description': instance.description,
       'version': instance.version,
       'protocol': instance.protocol,
-      'host': instance.host
+      'host': instance.host,
+      'maxChars': instance.maxChars
     };

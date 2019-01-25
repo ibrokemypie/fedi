@@ -14,6 +14,7 @@ class Instance {
   String version;
   String protocol;
   String host;
+  int maxChars;
 
   Instance(this.uri, this.protocol, this.host, this.title, this.description,
       this.version,
@@ -49,7 +50,8 @@ class Instance {
         returned.addAll({
           "protocol": instanceUri.scheme,
           "uri": instanceUri.toString(),
-          "host": instanceUri.host
+          "host": instanceUri.host,
+          "maxChars": returned["max_toot_chars"] ?? returned["maxNoteTextLength"] ?? 500,
         });
         // If server returns an OK response, parse the JSON
         return Instance.fromJson(returned);
