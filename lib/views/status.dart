@@ -74,11 +74,14 @@ class StatusBuilderState extends State<StatusBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.status.favourited) {
-      favouriteColour = Colors.yellow;
-    } else {
-      favouriteColour = Colors.white;
-    }
+    setState(() {
+      if (widget.status.favourited || widget.status.myReaction != null) {
+        favouriteColour = Colors.yellow;
+      } else {
+        favouriteColour = Colors.white;
+      }
+    });
+
     Widget statusTile;
     if (widget.status.renote == null) {
       statusTile = Container(
