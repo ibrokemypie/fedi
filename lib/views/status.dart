@@ -4,7 +4,7 @@ import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/views/post.dart';
 
 class StatusBuilder extends StatefulWidget {
   final Instance instance;
@@ -44,13 +44,26 @@ class StatusBuilderState extends State<StatusBuilder> {
 
   void _renote() async {
     bool success;
-    success = await renotePost(widget.instance, widget.authCode, widget.status.id);
+    success =
+        await renotePost(widget.instance, widget.authCode, widget.status.id);
     if (success) {
       setState(() {
         // widget.status.renoted = true;
         widget.status.renoteCount += 1;
       });
     }
+  }
+
+  void _reply() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Post(
+                  instance: widget.instance,
+                  authCode: widget.authCode,
+                  replyTo: widget.status.id,
+                  preFill: "@"+widget.status.author.acct,
+                )));
   }
 
   @override
@@ -110,7 +123,8 @@ class StatusBuilderState extends State<StatusBuilder> {
                           ]),
                       Container(
                           padding: const EdgeInsets.only(right: 16.0),
-                          child: Icon(visIcon(widget.status.visibility), size: 16.0))
+                          child: Icon(visIcon(widget.status.visibility),
+                              size: 16.0))
                     ]),
               ),
 
@@ -132,7 +146,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                   Row(children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.reply),
-                      onPressed: null,
+                      onPressed: _reply,
                     ),
                     Text("0"),
                   ]),

@@ -26,12 +26,16 @@ Future<dynamic> submitMisskeyPost(
   Map<String, dynamic> params;
   String actionPath = "/api/notes/create";
 
-  params = Map.from(
-      {"i": authCode, "text": post.content, "visibility": post.visiblity, "cw": post.contentWarning});
+  params = Map.from({
+    "i": authCode,
+    "text": post.content,
+    "visibility": post.visiblity,
+    "cw": post.contentWarning,
+    "replyId": post.replyTo
+  });
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));
-
 
   if (response.statusCode == 200) {
     var returned = json.decode(response.body);
