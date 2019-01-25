@@ -5,6 +5,7 @@ import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class StatusBuilder extends StatefulWidget {
   final Instance instance;
@@ -62,7 +63,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                   instance: widget.instance,
                   authCode: widget.authCode,
                   replyTo: widget.status.id,
-                  preFill: "@"+widget.status.author.acct + " ",
+                  preFill: "@" + widget.status.author.acct + " ",
                 )));
   }
 
@@ -88,8 +89,8 @@ class StatusBuilderState extends State<StatusBuilder> {
             alignment: FractionalOffset.topCenter,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: CircleAvatar(
-              // TODO: cache avatars
-              backgroundImage: NetworkImage(widget.status.author.avatarUrl),
+              backgroundImage: new CachedNetworkImageProvider(
+                  widget.status.author.avatarUrl),
             ),
           ),
 
