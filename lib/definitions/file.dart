@@ -12,7 +12,7 @@ class File {
   String thumbnailUrl;
   String fileUrl;
 
-  File(id, date, name, type, authorId, sensitive, thumbnailUrl,fileUrl) {
+  File(id, date, name, type, authorId, sensitive, thumbnailUrl, fileUrl) {
     this.id = id;
     this.date = date;
     this.name = name;
@@ -32,6 +32,17 @@ class File {
     this.sensitive = json['sensitive'];
     this.thumbnailUrl = json['thumbnailUrl'];
     this.fileUrl = json['fileUrl'];
+  }
+
+  File.fromMisskey(Map v) {
+    this.id = v["id"];
+    this.date = v["createdAt"];
+    this.name = v["name"];
+    this.type = v["type"];
+    this.authorId = v["userId"];
+    this.sensitive = v["isSensitive"];
+    this.thumbnailUrl = v["thumbnailUrl"];
+    this.fileUrl = v["url"];
   }
 
   Map<String, dynamic> toJson() => _$FileToJson(this);

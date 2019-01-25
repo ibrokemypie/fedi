@@ -61,6 +61,7 @@ class Status {
 
     if (v["user"] != null && v["id"] != null && v["deletedAt"] == null) {
       try {
+        List<File> files = new List();
         User user = new User.fromJson({
           "username": v["user"]["username"],
           "nickname": v["user"]["name"] ?? "null",
@@ -76,44 +77,23 @@ class Status {
                   v["renote"]["text"] ??
               "";
           this.renoteCount = v["renote"]["renoteCount"] ?? 0;
-          List<File> files = new List();
           for (var fileJson in v["renote"]["files"]) {
             if (fileJson != null) {
-              File newFile = new File.fromJson({
-                "id": fileJson["id"],
-                "date": fileJson["createdAt"],
-                "name": fileJson["name"],
-                "type": fileJson["type"],
-                "authorId": fileJson["userId"],
-                "sensitive": fileJson["isSensitive"],
-                "thumbnailUrl": fileJson["thumbnailUrl"],
-                "fileUrl": fileJson["url"],
-              });
+              File newFile = File.fromMisskey(fileJson);
               files.add(newFile);
             }
           }
-          this.files = files;
         } else {
           this.body = v["text"] ?? "";
           this.renoteCount = v["renoteCount"] ?? 0;
-          List<File> files = new List();
           for (var fileJson in v["files"]) {
             if (fileJson != null) {
-              File newFile = new File.fromJson({
-                "id": fileJson["id"],
-                "date": fileJson["createdAt"],
-                "name": fileJson["name"],
-                "type": fileJson["type"],
-                "authorId": fileJson["userId"],
-                "sensitive": fileJson["isSensitive"],
-                "thumbnailUrl": fileJson["thumbnailUrl"],
-                "fileUrl": fileJson["url"],
-              });
+              File newFile = File.fromMisskey(fileJson);
               files.add(newFile);
             }
           }
-          this.files = files;
         }
+        this.files = files;
         this.myReaction = v["myReaction"] ?? null;
         this.id = v["id"];
         this.date = v["createdAt"];
