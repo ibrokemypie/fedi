@@ -74,14 +74,20 @@ class PostState extends State<Post> {
       submitAction = null;
     });
     try {
-      NewPost post = NewPost(visibility,
-          content: textController.text,
-          contentWarning: contentWarning,
-          replyTo: replyTo);
-      // TODO: add createdNote to timeline
-      var createdNote =
-          await submitPost(widget.instance, widget.authCode, post);
-      Navigator.pop(context);
+      if (chars <= widget.instance.maxChars) {
+        NewPost post = NewPost(visibility,
+            content: textController.text,
+            contentWarning: contentWarning,
+            replyTo: replyTo);
+        // TODO: add createdNote to timeline
+        var createdNote =
+            await submitPost(widget.instance, widget.authCode, post);
+        Navigator.pop(context);
+      } else {
+        setState(() {
+          submitAction = newPost;
+        });
+      }
     } catch (e) {
       submitAction = newPost;
     }
@@ -113,6 +119,7 @@ class PostState extends State<Post> {
             child: FormField(
                 builder: (FormFieldState<int> state) => TextField(
                       autofocus: true,
+                      maxLength: widget.instance.maxChars,
                       controller: textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: maxLines,
@@ -194,8 +201,9 @@ class PostState extends State<Post> {
                   )),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  // TODO: get max characters from instance
-                  child: Text(chars.toString() + "/2000")),
+                  child: Text(chars.toString() +
+                      "/" +
+                      widget.instance.maxChars.toString())),
               Spacer(),
               Container(
                 padding: const EdgeInsets.only(right: 16),
