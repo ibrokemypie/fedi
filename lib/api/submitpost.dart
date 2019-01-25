@@ -13,6 +13,7 @@ submitPost(Instance instance, String authCode, NewPost post) async {
         createdNote = await submitMisskeyPost(instance, authCode, post);
         break;
       }
+    // TODO: submit post on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");

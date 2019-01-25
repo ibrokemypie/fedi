@@ -78,6 +78,7 @@ class PostState extends State<Post> {
           content: textController.text,
           contentWarning: contentWarning,
           replyTo: replyTo);
+      // TODO: add createdNote to timeline
       var createdNote =
           await submitPost(widget.instance, widget.authCode, post);
       Navigator.pop(context);
@@ -132,6 +133,7 @@ class PostState extends State<Post> {
                       Icons.image,
                       size: 16,
                     ),
+                    // TODO: media uploading
                     onPressed: () => {},
                   )),
               Container(
@@ -187,10 +189,12 @@ class PostState extends State<Post> {
                       Icons.face,
                       size: 16,
                     ),
+                    // TODO: emoji selection
                     onPressed: () => {},
                   )),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
+                  // TODO: get max characters from instance
                   child: Text(chars.toString() + "/2000")),
               Spacer(),
               Container(

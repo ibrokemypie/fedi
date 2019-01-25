@@ -12,6 +12,7 @@ favouritePost(Instance instance, String authCode, String postId) async {
         favourited = await favouriteMisskeyPost(instance, authCode, postId);
         break;
       }
+    // TODO: favourite on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");

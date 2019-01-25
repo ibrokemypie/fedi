@@ -72,6 +72,8 @@ class HomeState extends State {
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
+              // TODO: rest of the drawer
+              // TODO: user header
               ListTile(
                 title: Text('Logout'),
                 onTap: () {

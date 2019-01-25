@@ -12,6 +12,7 @@ renotePost(Instance instance, String authCode, String postId) async {
         renoted = await renoteMisskeyPost(instance, authCode, postId);
         break;
       }
+    // TODO: renote on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");

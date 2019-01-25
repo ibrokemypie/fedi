@@ -52,6 +52,7 @@ class Status {
     this.files = json['files'];
   }
 
+// TODO: status from mastodon return
   Status.fromMisskey(Map v, Instance instance) {
     int countreacts(Map r) {
       int reactions = 0;

@@ -12,6 +12,7 @@ unFavouritePost(Instance instance, String authCode, String postId) async {
         favourited = await unFavouriteMisskeyPost(instance, authCode, postId);
         break;
       }
+    // TODO: unfavourite on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");

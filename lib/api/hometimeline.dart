@@ -17,6 +17,7 @@ getHomeTimeline(Instance instance, String authCode,
             currentStatuses: currentStatuses, sinceId: sinceId);
         break;
       }
+    // TODO: get hometimeline on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");

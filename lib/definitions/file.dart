@@ -34,6 +34,7 @@ class File {
     this.fileUrl = json['fileUrl'];
   }
 
+// TODO: file from mastodon return
   File.fromMisskey(Map v) {
     this.id = v["id"];
     this.date = v["createdAt"];

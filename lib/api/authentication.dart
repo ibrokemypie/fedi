@@ -16,6 +16,7 @@ Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
         userAuth = await misskeyAuth(context, instance);
         break;
       }
+    // TODO: authenticate mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");
