@@ -7,8 +7,10 @@ import 'package:fedi/api/submitpost.dart';
 class Post extends StatefulWidget {
   final Instance instance;
   final String authCode;
+  final String preFill;
+  final String replyTo;
 
-  Post({this.instance, this.authCode});
+  Post({this.instance, this.authCode, this.preFill, this.replyTo});
   @override
   PostState createState() => new PostState();
 }
@@ -17,18 +19,18 @@ class PostState extends State<Post> {
   var submitAction;
   int maxLines = 10;
   int chars = 0;
-  String currentContent;
   String visibility = "public";
   Widget contentWarningField;
   bool hasCw;
   String contentWarning;
+  String replyTo;
+  TextEditingController textController;
 
   textUpdated(String currentText) {
     int currentLines = 1 + '\n'.allMatches(currentText).length;
     setState(() {
       maxLines = currentLines + 10;
       chars = currentText.length;
-      currentContent = currentText;
     });
   }
 
@@ -73,7 +75,9 @@ class PostState extends State<Post> {
     });
     try {
       NewPost post = NewPost(visibility,
-          content: currentContent, contentWarning: contentWarning);
+          content: textController.text,
+          contentWarning: contentWarning,
+          replyTo: replyTo);
       var createdNote =
           await submitPost(widget.instance, widget.authCode, post);
       Navigator.pop(context);
@@ -87,6 +91,8 @@ class PostState extends State<Post> {
     super.initState();
     submitAction = newPost;
     contentWarningField = new Container();
+    replyTo = widget.replyTo;
+    textController.text = widget.preFill;
   }
 
   @override
@@ -105,6 +111,7 @@ class PostState extends State<Post> {
             padding: const EdgeInsets.all(16),
             child: FormField(
                 builder: (FormFieldState<int> state) => TextField(
+                      controller: textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: maxLines,
                       onChanged: textUpdated,
