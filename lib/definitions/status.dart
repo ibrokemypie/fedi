@@ -69,54 +69,61 @@ class Status {
           "avatarUrl": v["user"]["avatarUrl"]
         });
 
-        List<File> files = new List();
-        for (var fileJson in v["files"]) {
-          if (fileJson != null) {
-            File newFile = new File.fromJson({
-              "id": fileJson["id"],
-              "date": fileJson["createdAt"],
-              "name": fileJson["name"],
-              "type": fileJson["type"],
-              "authorId": fileJson["userId"],
-              "sensitive": fileJson["isSensitive"],
-              "thumbnailUrl": fileJson["thumbnailUrl"],
-              "fileUrl": fileJson["url"],
-            });
-            files.add(newFile);
-          }
-        }
-
         if (v["renoteId"] != null && v["deletedAt"] == null) {
-          this.author = user;
-          this.title = "one";
           this.body = "Renote from " +
                   v["renote"]["user"]["username"] +
                   ": " +
                   v["renote"]["text"] ??
               "";
-          this.id = v["id"];
-          this.date = v["createdAt"];
-          this.visibility = v["visibility"];
-          this.url = v["uri"];
-          this.files = files;
-          this.favourited = v["isFavorited"] || v["myReaction"] != null;
-          this.favCount = countreacts(v["reactionCounts"]);
           this.renoteCount = v["renote"]["renoteCount"] ?? 0;
-          this.myReaction = v["myReaction"] ?? null;
-        } else {
-          this.author = user;
-          this.title = "one";
-          this.body = v["text"] ?? "";
-          this.id = v["id"];
-          this.date = v["createdAt"];
-          this.visibility = v["visibility"];
-          this.url = v["uri"];
+          List<File> files = new List();
+          for (var fileJson in v["renote"]["files"]) {
+            if (fileJson != null) {
+              File newFile = new File.fromJson({
+                "id": fileJson["id"],
+                "date": fileJson["createdAt"],
+                "name": fileJson["name"],
+                "type": fileJson["type"],
+                "authorId": fileJson["userId"],
+                "sensitive": fileJson["isSensitive"],
+                "thumbnailUrl": fileJson["thumbnailUrl"],
+                "fileUrl": fileJson["url"],
+              });
+              files.add(newFile);
+            }
+          }
           this.files = files;
-          this.favourited = v["isFavorited"] || v["myReaction"] != null;
-          this.favCount = countreacts(v["reactionCounts"]);
+        } else {
+          this.body = v["text"] ?? "";
           this.renoteCount = v["renoteCount"] ?? 0;
-          this.myReaction = v["myReaction"] ?? null;
+          List<File> files = new List();
+          for (var fileJson in v["files"]) {
+            if (fileJson != null) {
+              File newFile = new File.fromJson({
+                "id": fileJson["id"],
+                "date": fileJson["createdAt"],
+                "name": fileJson["name"],
+                "type": fileJson["type"],
+                "authorId": fileJson["userId"],
+                "sensitive": fileJson["isSensitive"],
+                "thumbnailUrl": fileJson["thumbnailUrl"],
+                "fileUrl": fileJson["url"],
+              });
+              files.add(newFile);
+            }
+          }
+          this.files = files;
         }
+        this.myReaction = v["myReaction"] ?? null;
+        this.id = v["id"];
+        this.date = v["createdAt"];
+        this.visibility = v["visibility"];
+        this.url = v["uri"];
+        this.files = files;
+        this.favourited = v["isFavorited"] || v["myReaction"] != null;
+        this.favCount = countreacts(v["reactionCounts"]);
+        this.author = user;
+        this.title = "one";
       } catch (e) {
         throw Exception(e);
       }
@@ -254,16 +261,16 @@ class Status {
   Map<String, dynamic> toJson() => _$StatusToJson(this);
 }
 
-    IconData visIcon(String visibility) {
-    switch (visibility) {
-      case "public":
-        return Icons.public;
-      case "home":
-        return Icons.home;
-      case "followers":
-        return Icons.group;
-      case "specified":
-        return Icons.message;
-    }
-    return Icons.language;
+IconData visIcon(String visibility) {
+  switch (visibility) {
+    case "public":
+      return Icons.public;
+    case "home":
+      return Icons.home;
+    case "followers":
+      return Icons.group;
+    case "specified":
+      return Icons.message;
   }
+  return Icons.language;
+}
