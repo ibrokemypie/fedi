@@ -27,7 +27,7 @@ Future<dynamic> submitMisskeyPost(
   String actionPath = "/api/notes/create";
 
   params = Map.from(
-      {"i": authCode, "text": post.content, "visibility": post.visiblity});
+      {"i": authCode, "text": post.content, "visibility": post.visiblity, "cw": post.contentWarning});
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));

@@ -18,6 +18,9 @@ class PostState extends State<Post> {
   int chars = 0;
   String currentContent;
   String visibility = "public";
+  Widget contentWarningField;
+  bool hasCw;
+  String contentWarning;
 
   textUpdated(String currentText) {
     int currentLines = 1 + '\n'.allMatches(currentText).length;
@@ -28,12 +31,41 @@ class PostState extends State<Post> {
     });
   }
 
+  _contentWarningUpdated(String currentCw) {
+    setState(() {
+      contentWarning = currentCw;
+    });
+  }
+
+  _toggleContentWarning() {
+    if (hasCw != true) {
+      setState(() {
+        hasCw = true;
+        contentWarningField = new Container(
+            child: FormField(
+          builder: (FormFieldState<int> state) => TextField(
+                onChanged: _contentWarningUpdated,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(16),
+                    hintText: "Content Warning"),
+              ),
+        ));
+      });
+    } else {
+      setState(() {
+        hasCw = false;
+        contentWarning = null;
+        contentWarningField = new Container();
+      });
+    }
+  }
+
   void newPost() async {
     setState(() {
       submitAction = null;
     });
     try {
-      NewPost post = NewPost(visibility, content: currentContent);
+      NewPost post = NewPost(visibility, content: currentContent, contentWarning: contentWarning);
       var createdNote =
           await submitPost(widget.instance, widget.authCode, post);
       Navigator.pop(context);
@@ -46,6 +78,7 @@ class PostState extends State<Post> {
   void initState() {
     super.initState();
     submitAction = newPost;
+    contentWarningField = new Container();
   }
 
   @override
@@ -58,16 +91,19 @@ class PostState extends State<Post> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: FormField(
-              builder: (FormFieldState<int> state) => TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLines: maxLines,
-                    onChanged: textUpdated,
-                    decoration: InputDecoration(
-                        border: InputBorder.none, hintText: 'Write away!'),
-                  ))),
+      body: Column(children: <Widget>[
+        contentWarningField,
+        SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: FormField(
+                builder: (FormFieldState<int> state) => TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: maxLines,
+                      onChanged: textUpdated,
+                      decoration: InputDecoration(
+                          border: InputBorder.none, hintText: 'Write away!'),
+                    )))
+      ]),
       bottomNavigationBar: BottomAppBar(
           color: Colors.red,
           child: Container(
@@ -98,7 +134,7 @@ class PostState extends State<Post> {
                       "CW",
                       style: TextStyle(fontSize: 10),
                     ),
-                    onPressed: () => {},
+                    onPressed: _toggleContentWarning,
                   )),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
