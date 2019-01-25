@@ -62,7 +62,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                   instance: widget.instance,
                   authCode: widget.authCode,
                   replyTo: widget.status.id,
-                  preFill: "@"+widget.status.author.acct,
+                  preFill: "@"+widget.status.author.acct + " ",
                 )));
   }
 
