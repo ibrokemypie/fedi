@@ -111,6 +111,7 @@ class PostState extends State<Post> {
             padding: const EdgeInsets.all(16),
             child: FormField(
                 builder: (FormFieldState<int> state) => TextField(
+                      autofocus: true,
                       controller: textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: maxLines,
