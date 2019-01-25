@@ -92,7 +92,7 @@ class PostState extends State<Post> {
     submitAction = newPost;
     contentWarningField = new Container();
     replyTo = widget.replyTo;
-    textController.text = widget.preFill;
+    textController = TextEditingController(text: widget.preFill ?? "");
   }
 
   @override
