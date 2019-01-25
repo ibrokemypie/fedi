@@ -37,11 +37,38 @@ class FediNotification {
   FediNotification.fromMisskey(Map v, Instance instance) {
     this.id = v["id"];
     this.date = v["createdAt"];
-    this.notificationType = v["notificationType"];
+    this.notificationType = v["type"];
     this.isRead = v["isRead"];
     this.author = User.fromMisskey(v["user"], instance) ?? null;
     this.note = Status.fromMisskey(v["note"], instance) ?? null;
   }
 
   Map<String, dynamic> toJson() => _$FediNotificationToJson(this);
+}
+
+Icon notificationTypeIcon(String notificationType) {
+  switch (notificationType) {
+    case "reply":
+      return Icon(Icons.reply);
+    case "renote":
+      return Icon(Icons.repeat);
+    case "reaction":
+      return Icon(Icons.star);
+    case "mention":
+      return Icon(Icons.alternate_email);
+  }
+}
+
+String notificationTypeString(String notificationType) {
+  switch (notificationType) {
+    case "reply":
+      return " replied to your status.";
+    case "renote":
+      return " renoted your status.";
+    case "reaction":
+      return " favourited your status.";
+    case "mention":
+      return " mentioned you";
+  }
+  return "";
 }

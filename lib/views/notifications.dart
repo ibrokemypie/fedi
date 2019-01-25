@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/api/notifications.dart';
 import 'package:fedi/definitions/notification.dart';
-// import 'package:fedi/views/notification.dart';
+import 'package:fedi/views/notification.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'dart:async';
 
@@ -22,10 +22,12 @@ class NotificationsState extends State<Notifications> {
   Future<void> newNotifications() async {
     List<FediNotification> notificationList;
     if (notifications.length > 0) {
-      notificationList = await getNotifications(widget.instance, widget.authCode,
+      notificationList = await getNotifications(
+          widget.instance, widget.authCode,
           currentNotifications: notifications);
     } else {
-      notificationList = await getNotifications(widget.instance, widget.authCode);
+      notificationList =
+          await getNotifications(widget.instance, widget.authCode);
     }
     setState(() {
       notifications = notificationList;
@@ -46,13 +48,10 @@ class NotificationsState extends State<Notifications> {
         if (index >= notifications.length) {
           return null;
         }
-        // if (notifications[index].renote != null) {
-        //   return RenoteBuilder(
-        //       widget.instance, widget.authCode, notifications[index]);
-        // } else {
-        //   return StatusBuilder(
-        //       widget.instance, widget.authCode, statuses[index]);
-        // }
+        if (notifications[index] != null) {
+          return NotificationBuilder(
+              widget.instance, widget.authCode, notifications[index]);
+        }
       },
     );
   }
