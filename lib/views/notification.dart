@@ -21,6 +21,7 @@ class NotificationBuilder extends StatefulWidget {
 class NotificationBuilderState extends State<NotificationBuilder> {
   Color favouriteColour = Colors.white;
   FediNotification notification;
+  Status note;
 
   void _toggleFavourite() async {
     bool success;
@@ -73,6 +74,11 @@ class NotificationBuilderState extends State<NotificationBuilder> {
     super.initState();
     setState(() {
       notification = widget.notification;
+      if (notification.note.renote != null) {
+        note = notification.note.renote;
+      } else {
+                note = notification.note;
+      }
     });
   }
 
@@ -114,7 +120,7 @@ class NotificationBuilderState extends State<NotificationBuilder> {
               Container(
                   padding: const EdgeInsets.only(right: 16.0),
                   child:
-                      Icon(visIcon(notification.note.visibility), size: 16.0))
+                      Icon(visIcon(note.visibility), size: 16.0))
             ],
           ),
         ),
@@ -133,13 +139,13 @@ class NotificationBuilderState extends State<NotificationBuilder> {
                       Container(
                         padding:
                             const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                        child: Text(widget.notification.note.body),
+                        child: Text(note.body),
                       ),
 
                       Container(
                         padding:
                             const EdgeInsets.only(bottom: 8.0, right: 32.0),
-                        child: widget.notification.note.statusFiles(),
+                        child:  note.statusFiles(),
                       ),
 
                       // Buttons
@@ -160,7 +166,7 @@ class NotificationBuilderState extends State<NotificationBuilder> {
                               icon: Icon(Icons.repeat),
                               onPressed: _renote,
                             ),
-                            Text(notification.note.renoteCount.toString()),
+                            Text(note.renoteCount.toString()),
                           ]),
 
                           // Favourite
@@ -170,7 +176,7 @@ class NotificationBuilderState extends State<NotificationBuilder> {
                               onPressed: _toggleFavourite,
                               color: favouriteColour,
                             ),
-                            Text(notification.note.favCount.toString()),
+                            Text(note.favCount.toString()),
                           ]),
                         ],
                       ),
