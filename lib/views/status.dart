@@ -188,31 +188,34 @@ class StatusBuilderState extends State<StatusBuilder> {
     } else {
       statusTile = Container(
           child: Column(children: <Widget>[
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          color: Colors.red,
-          child: Row(
-            children: <Widget>[
-              Container(
-                alignment: FractionalOffset.topCenter,
-                padding: const EdgeInsets.only(left: 16.0, right: 4),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundImage: new CachedNetworkImageProvider(
-                      widget.status.author.avatarUrl),
+        Material(
+          elevation: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            color: Colors.red,
+            child: Row(
+              children: <Widget>[
+                Container(
+                  alignment: FractionalOffset.topCenter,
+                  padding: const EdgeInsets.only(left: 16.0, right: 4),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundImage: new CachedNetworkImageProvider(
+                        widget.status.author.avatarUrl),
+                  ),
                 ),
-              ),
-              Expanded(
-                  child: Row(
-                children: <Widget>[
-                  Icon(Icons.repeat),
-                  Text("renoted by " + widget.status.author.nickname),
-                ],
-              )),
-              Container(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Icon(visIcon(widget.status.visibility), size: 16.0))
-            ],
+                Expanded(
+                    child: Row(
+                  children: <Widget>[
+                    Icon(Icons.repeat),
+                    Text("renoted by " + widget.status.author.nickname),
+                  ],
+                )),
+                Container(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Icon(visIcon(widget.status.visibility), size: 16.0))
+              ],
+            ),
           ),
         ),
         Row(
