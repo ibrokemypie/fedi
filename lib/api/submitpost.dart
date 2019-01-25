@@ -30,9 +30,13 @@ Future<dynamic> submitMisskeyPost(
     "i": authCode,
     "text": post.content,
     "visibility": post.visiblity,
-    "cw": post.contentWarning,
-    "replyId": post.replyTo
   });
+
+  if (post.replyTo != null)
+    params.putIfAbsent("replyId", () => post.replyTo);
+
+  if (post.contentWarning != null)
+    params.putIfAbsent("cw", () => post.contentWarning);
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));
