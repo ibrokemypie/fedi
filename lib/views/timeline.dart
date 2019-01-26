@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/status.dart';
 import 'package:fedi/api/hometimeline.dart';
-import 'package:fedi/views/status.dart';
+import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'dart:async';
 
