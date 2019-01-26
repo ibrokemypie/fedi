@@ -2,13 +2,11 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'package:fedi/definitions/notification.dart';
-import 'package:fedi/definitions/user.dart';
-import 'package:fedi/definitions/file.dart';
+import 'package:fedi/definitions/item.dart';
 
 getNotifications(Instance instance, String authCode,
-    {List<FediNotification> currentNotifications}) async {
-  List<FediNotification> notifications;
+    {List<Item> currentNotifications}) async {
+  List<Item> notifications;
 
   switch (instance.type) {
     case "misskey":
@@ -27,8 +25,8 @@ getNotifications(Instance instance, String authCode,
 }
 
 Future<List> getMisskeyNotifications(Instance instance, String authCode,
-    {List<FediNotification> currentNotifications}) async {
-  List<FediNotification> newNotifications = new List();
+    {List<Item> currentNotifications}) async {
+  List<Item> newNotifications = new List();
   Map<String, dynamic> params;
   String actionPath = "/api/i/notifications";
 
@@ -44,12 +42,12 @@ Future<List> getMisskeyNotifications(Instance instance, String authCode,
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-      var notification = FediNotification.fromMisskey(v, instance);
+      var notification = Item.fromMisskey(v, instance);
       if (notification != null) newNotifications.add(notification);
     });
 
     if (currentNotifications != null) {
-      return new List<FediNotification>.from(newNotifications)
+      return new List<Item>.from(newNotifications)
         ..addAll(currentNotifications);
     }
 

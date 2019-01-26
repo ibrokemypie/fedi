@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/api/notifications.dart';
-import 'package:fedi/definitions/notification.dart';
-import 'package:fedi/views/notification.dart';
+import 'package:fedi/definitions/item.dart';
+import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'dart:async';
 
 class Notifications extends StatefulWidget {
   final Instance instance;
   final String authCode;
-  // static Instance instance;
 
   Notifications({this.instance, this.authCode});
   @override
@@ -16,11 +15,11 @@ class Notifications extends StatefulWidget {
 }
 
 class NotificationsState extends State<Notifications> {
-  List<FediNotification> notifications = new List();
+  List<Item> notifications = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
 
   Future<void> newNotifications() async {
-    List<FediNotification> notificationList;
+    List<Item> notificationList;
     if (notifications.length > 0) {
       notificationList = await getNotifications(
           widget.instance, widget.authCode,
@@ -49,7 +48,7 @@ class NotificationsState extends State<Notifications> {
           return null;
         }
         if (notifications[index] != null) {
-          return NotificationBuilder(
+          return ItemBuilder(
               widget.instance, widget.authCode, notifications[index]);
         }
       },
