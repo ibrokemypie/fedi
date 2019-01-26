@@ -44,9 +44,13 @@ class StatusBuilderState extends State<StatusBuilder> {
   }
 
   void _renote() async {
-    bool success;
-    success =
-        await renotePost(widget.instance, widget.authCode, widget.status.id);
+    String postId;
+    if (widget.status.renote != null) {
+      postId = widget.status.renote.id;
+    } else {
+      postId = widget.status.id;
+    }
+    bool success = await renotePost(widget.instance, widget.authCode, postId);
     if (success) {
       setState(() {
         // widget.status.renoted = true;
