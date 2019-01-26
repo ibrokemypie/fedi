@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/notification.dart';
 import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
@@ -21,7 +21,7 @@ class NotificationBuilder extends StatefulWidget {
 class NotificationBuilderState extends State<NotificationBuilder> {
   Color favouriteColour = Colors.white;
   FediNotification notification;
-  Status note;
+  Item note;
 
   void _toggleFavourite() async {
     bool success;

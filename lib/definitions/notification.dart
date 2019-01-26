@@ -2,7 +2,7 @@ import 'package:fedi/definitions/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 
 part 'notification.g.dart';
 
@@ -13,7 +13,7 @@ class FediNotification {
   User author;
   String notificationType;
   bool isRead;
-  Status note;
+  Item note;
 
   FediNotification(id, date, author, notificationType, isRead, note) {
     this.id = id;
@@ -40,7 +40,7 @@ class FediNotification {
     this.notificationType = v["type"];
     this.isRead = v["isRead"];
     this.author = User.fromMisskey(v["user"], instance) ?? null;
-    this.note = Status.fromMisskey(v["note"], instance) ?? null;
+    this.note = Item.fromMisskey(v["note"], instance) ?? null;
   }
 
   Map<String, dynamic> toJson() => _$FediNotificationToJson(this);

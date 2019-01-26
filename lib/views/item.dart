@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
@@ -7,37 +7,37 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class StatusBuilder extends StatefulWidget {
+class ItemBuilder extends StatefulWidget {
   final Instance instance;
   final String authCode;
-  final Status status;
+  final Item item;
 
-  StatusBuilder(this.instance, this.authCode, this.status);
+  ItemBuilder(this.instance, this.authCode, this.item);
   @override
-  StatusBuilderState createState() => new StatusBuilderState();
+  ItemBuilderState createState() => new ItemBuilderState();
 }
 
-class StatusBuilderState extends State<StatusBuilder> {
+class ItemBuilderState extends State<ItemBuilder> {
   Color favouriteColour = Colors.white;
 
   void _toggleFavourite() async {
     bool success;
-    if (widget.status.favourited != true) {
+    if (widget.item.favourited != true) {
       success =
-          favouritePost(widget.instance, widget.authCode, widget.status.id);
+          favouritePost(widget.instance, widget.authCode, widget.item.id);
       if (success) {
         setState(() {
-          widget.status.favourited = true;
-          widget.status.favCount += 1;
+          widget.item.favourited = true;
+          widget.item.favCount += 1;
         });
       }
     } else {
       success =
-          unFavouritePost(widget.instance, widget.authCode, widget.status.id);
+          unFavouritePost(widget.instance, widget.authCode, widget.item.id);
       if (success) {
         setState(() {
-          widget.status.favourited = false;
-          widget.status.favCount -= 1;
+          widget.item.favourited = false;
+          widget.item.favCount -= 1;
         });
       }
     }
@@ -45,16 +45,16 @@ class StatusBuilderState extends State<StatusBuilder> {
 
   void _renote() async {
     String postId;
-    if (widget.status.renote != null) {
-      postId = widget.status.renote.id;
+    if (widget.item.renote != null) {
+      postId = widget.item.renote.id;
     } else {
-      postId = widget.status.id;
+      postId = widget.item.id;
     }
     bool success = await renotePost(widget.instance, widget.authCode, postId);
     if (success) {
       setState(() {
         // widget.status.renoted = true;
-        widget.status.renoteCount += 1;
+        widget.item.renoteCount += 1;
       });
     }
   }
@@ -66,8 +66,8 @@ class StatusBuilderState extends State<StatusBuilder> {
             builder: (context) => Post(
                   instance: widget.instance,
                   authCode: widget.authCode,
-                  replyTo: widget.status.id,
-                  preFill: "@" + widget.status.author.acct + " ",
+                  replyTo: widget.item.id,
+                  preFill: "@" + widget.item.author.acct + " ",
                 )));
   }
 
@@ -93,7 +93,7 @@ class StatusBuilderState extends State<StatusBuilder> {
               icon: Icon(Icons.repeat),
               onPressed: _renote,
             ),
-            Text(widget.status.renoteCount.toString()),
+            Text(widget.item.renoteCount.toString()),
           ]),
 
           // Favourite
@@ -103,7 +103,7 @@ class StatusBuilderState extends State<StatusBuilder> {
               onPressed: _toggleFavourite,
               color: favouriteColour,
             ),
-            Text(widget.status.favCount.toString()),
+            Text(widget.item.favCount.toString()),
           ]),
         ],
       );
@@ -134,7 +134,7 @@ class StatusBuilderState extends State<StatusBuilder> {
 
   _visibilityIcon() => Container(
       padding: const EdgeInsets.only(right: 16.0),
-      child: Icon(visIcon(widget.status.visibility), size: 16.0));
+      child: Icon(visIcon(widget.item.visibility), size: 16.0));
 
   _avatar(String avatarUrl) => Container(
         alignment: FractionalOffset.topCenter,
@@ -168,7 +168,7 @@ class StatusBuilderState extends State<StatusBuilder> {
           child: Row(
         children: <Widget>[
           Icon(Icons.repeat),
-          Text("renoted by " + widget.status.author.nickname),
+          Text("renoted by " + widget.item.author.nickname),
         ],
       ));
 
@@ -185,7 +185,7 @@ class StatusBuilderState extends State<StatusBuilder> {
                 child: CircleAvatar(
                   radius: 16,
                   backgroundImage: new CachedNetworkImageProvider(
-                      widget.status.author.avatarUrl),
+                      widget.item.author.avatarUrl),
                 ),
               ),
               _renotedBy(),
@@ -199,17 +199,17 @@ class StatusBuilderState extends State<StatusBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.status.author.avatarUrl),
+            _avatar(widget.item.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.status.author.nickname,
-                    widget.status.author.acct, _visibilityIcon()),
-                _bodyText(widget.status.body),
-                _files(widget.status.statusFiles()),
+                _authorRow(widget.item.author.nickname,
+                    widget.item.author.acct, _visibilityIcon()),
+                _bodyText(widget.item.body),
+                _files(widget.item.statusFiles()),
                 _buttonRow(),
               ],
             )),
@@ -223,17 +223,17 @@ class StatusBuilderState extends State<StatusBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.status.renote.author.avatarUrl),
+            _avatar(widget.item.renote.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.status.renote.author.nickname,
-                    widget.status.renote.author.acct, Container()),
-                _bodyText(widget.status.renote.body),
-                _files(widget.status.renote.statusFiles()),
+                _authorRow(widget.item.renote.author.nickname,
+                    widget.item.renote.author.acct, Container()),
+                _bodyText(widget.item.renote.body),
+                _files(widget.item.renote.statusFiles()),
                 _buttonRow(),
               ],
             )),
@@ -245,14 +245,14 @@ class StatusBuilderState extends State<StatusBuilder> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      if (widget.status.favourited || widget.status.myReaction != null) {
+      if (widget.item.favourited || widget.item.myReaction != null) {
         favouriteColour = Colors.yellow;
       } else {
         favouriteColour = Colors.white;
       }
     });
 
-    if (widget.status.renote != null) {
+    if (widget.item.renote != null) {
       return Container(child: Column(children: _renoteTile()));
     } else {
       return Container(child: Column(children: _statusTile()));

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/newpost.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/api/submitpost.dart';
 

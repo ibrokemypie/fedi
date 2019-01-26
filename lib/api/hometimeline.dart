@@ -2,13 +2,13 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/user.dart';
 import 'package:fedi/definitions/file.dart';
 
 getHomeTimeline(Instance instance, String authCode,
-    {List<Status> currentStatuses, String sinceId}) async {
-  List<Status> statuses;
+    {List<Item> currentStatuses, String sinceId}) async {
+  List<Item> statuses;
 
   switch (instance.type) {
     case "misskey":
@@ -27,8 +27,8 @@ getHomeTimeline(Instance instance, String authCode,
 }
 
 Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
-    {List<Status> currentStatuses, String sinceId}) async {
-  List<Status> newStatuses = new List();
+    {List<Item> currentStatuses, String sinceId}) async {
+  List<Item> newStatuses = new List();
   Map<String, dynamic> params;
   String actionPath = "/api/notes/timeline";
 
@@ -52,13 +52,13 @@ Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-        var status = Status.fromMisskey(v, instance);
+        var status = Item.fromMisskey(v, instance);
         if (status != null)
           newStatuses.add(status);
     });
 
     if (currentStatuses != null) {
-      return new List<Status>.from(newStatuses)..addAll(currentStatuses);
+      return new List<Item>.from(newStatuses)..addAll(currentStatuses);
     }
 
     return newStatuses;

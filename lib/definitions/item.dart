@@ -4,10 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
 
-part 'status.g.dart';
+part 'item.g.dart';
 
 @JsonSerializable()
-class Status {
+class Item {
   String id;
   String date;
   User author;
@@ -20,9 +20,9 @@ class Status {
   String myReaction;
   int renoteCount;
   List<File> files;
-  Status renote;
+  Item renote;
 
-  Status(id, date, author, url, title, body, visibility, favourited, favCount,
+  Item(id, date, author, url, title, body, visibility, favourited, favCount,
       myReaction, renoteCount, files, renote) {
     this.id = id;
     this.date = date;
@@ -39,7 +39,7 @@ class Status {
     this.renote = renote;
   }
 
-  Status.fromJson(Map json) {
+  Item.fromJson(Map json) {
     this.id = json['id'];
     this.date = json['date'];
     this.author = json['author'];
@@ -56,7 +56,7 @@ class Status {
   }
 
 // TODO: status from mastodon return
-  Status.fromMisskey(Map v, Instance instance) {
+  Item.fromMisskey(Map v, Instance instance) {
     int countreacts(Map r) {
       int reactions = 0;
       r.forEach((react, number) => reactions += number);
@@ -76,7 +76,7 @@ class Status {
         }
 
         if (v["renoteId"] != null && v["deletedAt"] == null) {
-          this.renote = Status.fromMisskey(v["renote"], instance);
+          this.renote = Item.fromMisskey(v["renote"], instance);
         }
 
         this.body = v["text"] ?? "";
@@ -226,7 +226,7 @@ class Status {
     }
   }
 
-  Map<String, dynamic> toJson() => _$StatusToJson(this);
+  Map<String, dynamic> toJson() => _$ItemToJson(this);
 }
 
 IconData visIcon(String visibility) {

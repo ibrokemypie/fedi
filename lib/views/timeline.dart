@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fedi/definitions/status.dart';
+import 'package:fedi/definitions/item.dart';
 import 'package:fedi/api/hometimeline.dart';
 import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
@@ -16,11 +16,11 @@ class TimeLine extends StatefulWidget {
 }
 
 class TimeLineState extends State<TimeLine> {
-  List<Status> statuses = new List();
+  List<Item> statuses = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
 
   Future<void> newStatuses() async {
-    List<Status> statusList;
+    List<Item> statusList;
     if (statuses.length > 0) {
       statusList = await getHomeTimeline(widget.instance, widget.authCode,
           currentStatuses: statuses, sinceId: statuses[0].id);
@@ -46,7 +46,7 @@ class TimeLineState extends State<TimeLine> {
         if (index >= statuses.length) {
           return null;
         }
-        return StatusBuilder(widget.instance, widget.authCode, statuses[index]);
+        return ItemBuilder(widget.instance, widget.authCode, statuses[index]);
       },
     );
   }

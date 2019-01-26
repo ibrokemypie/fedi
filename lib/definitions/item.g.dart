@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'status.dart';
+part of 'item.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Status _$StatusFromJson(Map<String, dynamic> json) {
-  return Status(
+Item _$ItemFromJson(Map<String, dynamic> json) {
+  return Item(
       json['id'],
       json['date'],
       json['author'],
@@ -23,7 +23,7 @@ Status _$StatusFromJson(Map<String, dynamic> json) {
       json['renote']);
 }
 
-Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
       'author': instance.author,
