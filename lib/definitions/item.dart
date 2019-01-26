@@ -12,7 +12,7 @@ class Item {
   String date;
   User author;
   String url;
-  String title;
+  String contentWarning;
   String body;
   String visibility;
   bool favourited;
@@ -30,7 +30,7 @@ class Item {
       date,
       author,
       url,
-      title,
+      contentWarning,
       body,
       visibility,
       favourited,
@@ -46,7 +46,7 @@ class Item {
     this.date = date;
     this.author = author;
     this.url = url;
-    this.title = title;
+    this.contentWarning = contentWarning;
     this.body = body;
     this.visibility = visibility.toLowerCase();
     this.favourited = favourited;
@@ -130,7 +130,7 @@ class Item {
             v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
         // TODO: rename to contentwarning and implement
-        this.title = "one";
+        this.contentWarning = v["cw"] ?? null;
       } catch (e) {
         throw Exception(e);
       }
