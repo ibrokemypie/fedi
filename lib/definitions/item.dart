@@ -65,7 +65,7 @@ class Item {
     this.date = json['date'];
     this.author = json['author'];
     this.url = json['url'];
-    this.title = json['title'];
+    this.contentWarning = json['cw'];
     this.body = json['body'];
     this.visibility = json['visibility'].toString().toLowerCase();
     this.favourited = json['favourited'];

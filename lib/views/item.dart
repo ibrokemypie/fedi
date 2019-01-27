@@ -19,6 +19,9 @@ class ItemBuilder extends StatefulWidget {
 
 class ItemBuilderState extends State<ItemBuilder> {
   Color favouriteColour = Colors.white;
+  bool _contentWarningToggled = true;
+  Widget _contentWarningView = Container();
+  Widget _bodyTextWidget = Container();
 
   void _toggleFavourite() async {
     bool success;
@@ -73,6 +76,12 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (widget.item.contentWarning != null) {
+        _contentWarningView = _contentWarning();
+        _contentWarningToggled = false;
+      }
+    });
   }
 
   _buttonRow() => Row(
@@ -107,11 +116,43 @@ class ItemBuilderState extends State<ItemBuilder> {
         ],
       );
 
-// TODO: content warning
-  _bodyText(String bodyText) => Container(
-        padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-        child: Text(bodyText),
+  _contentWarning() => Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(this.widget.item.contentWarning),
+              Expanded(child: Container(),),
+              RaisedButton(
+                child: Text("Toggle content"),
+                color: Colors.red,
+                onPressed: () => setState(() {
+                      _contentWarningToggled = !_contentWarningToggled;
+                    }),
+              ),
+            ],
+          ),
+          Divider(
+            height: 2,
+          ),
+        ],
       );
+
+  _body(String bodyText) {
+    setState(() {
+      if (_contentWarningToggled == true) {
+        _bodyTextWidget = Text(bodyText);
+      } else {
+        _bodyTextWidget = Container();
+      }
+    });
+
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[_contentWarningView, _bodyTextWidget]),
+    );
+  }
 
 // TODO: sensitive media
   _files(Widget files) => Container(
@@ -171,11 +212,10 @@ class ItemBuilderState extends State<ItemBuilder> {
         ],
       ));
 
-_notificationText() =>               Expanded(
-                child: Text(widget.item.author.nickname +
-                    notificationTypeString(
-                        widget.item.notificationType)),
-              );
+  _notificationText() => Expanded(
+        child: Text(widget.item.author.nickname +
+            notificationTypeString(widget.item.notificationType)),
+      );
 
   _renoteRow() => Material(
         elevation: 1,
@@ -236,7 +276,7 @@ _notificationText() =>               Expanded(
               children: <Widget>[
                 _authorRow(widget.item.author.nickname, widget.item.author.acct,
                     _visibilityIcon()),
-                _bodyText(widget.item.body),
+                _body(widget.item.body),
                 _files(widget.item.statusFiles()),
                 _buttonRow(),
               ],
@@ -260,7 +300,7 @@ _notificationText() =>               Expanded(
               children: <Widget>[
                 _authorRow(widget.item.renote.author.nickname,
                     widget.item.renote.author.acct, Container()),
-                _bodyText(widget.item.renote.body),
+                _body(widget.item.renote.body),
                 _files(widget.item.renote.statusFiles()),
                 _buttonRow(),
               ],
@@ -282,9 +322,11 @@ _notificationText() =>               Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.item.notificationNote.author.nickname,
-                    widget.item.notificationNote.author.acct, _visibilityIcon()),
-                _bodyText(widget.item.notificationNote.body),
+                _authorRow(
+                    widget.item.notificationNote.author.nickname,
+                    widget.item.notificationNote.author.acct,
+                    _visibilityIcon()),
+                _body(widget.item.notificationNote.body),
                 _files(widget.item.notificationNote.statusFiles()),
                 _buttonRow(),
               ],
