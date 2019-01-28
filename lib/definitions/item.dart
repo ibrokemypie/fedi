@@ -89,7 +89,10 @@ class Item {
       return reactions;
     }
 
-    if (v["user"] != null && v["id"] != null && v["deletedAt"] == null && !v.containsKey("deletedAt")) {
+    if (v["user"] != null &&
+        v["id"] != null &&
+        v["deletedAt"] == null &&
+        !v.containsKey("deletedAt")) {
       try {
         List<File> files = new List();
 
@@ -106,23 +109,17 @@ class Item {
           this.renote = Item.fromMisskey(v["renote"], instance);
         }
 
-        if (v["type"] != null && v["deletedAt"] == null) {
-          this.isRead = v["isRead"];
-          this.notificationType = v["type"];
-          this.notificationNote = Item.fromMisskey(v["note"], instance);
-        }
-
         if (v["user"] != null) {
           User user = new User.fromMisskey(v["user"], instance);
           this.author = user;
         }
 
+        this.id = v["id"];
+        this.date = v["createdAt"];
         this.body = v["text"] ?? "";
         this.renoteCount = v["renoteCount"] ?? 0;
         this.files = files;
         this.myReaction = v["myReaction"] ?? null;
-        this.id = v["id"];
-        this.date = v["createdAt"];
         this.visibility = v["visibility"] ?? null;
         this.url = v["uri"];
         this.files = files;
@@ -131,6 +128,14 @@ class Item {
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
         // TODO: rename to contentwarning and implement
         this.contentWarning = v["cw"] ?? null;
+
+        if (v["type"] != null && v["deletedAt"] == null) {
+          this.isRead = v["isRead"];
+          this.notificationType = v["type"];
+          if (v["note"] != null) {
+            this.notificationNote = Item.fromMisskey(v["note"], instance);
+          }
+        }
       } catch (e) {
         throw Exception(e);
       }
@@ -292,6 +297,8 @@ Icon notificationTypeIcon(String notificationType) {
       return Icon(Icons.star);
     case "mention":
       return Icon(Icons.alternate_email);
+    case "follow":
+      return Icon(Icons.person_add);
   }
 }
 
@@ -305,6 +312,8 @@ String notificationTypeString(String notificationType) {
       return " favourited your status.";
     case "mention":
       return " mentioned you";
+    case "follow":
+      return " followed you";
   }
   return "";
 }

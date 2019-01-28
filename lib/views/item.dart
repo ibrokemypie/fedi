@@ -121,7 +121,9 @@ class ItemBuilderState extends State<ItemBuilder> {
           Row(
             children: <Widget>[
               Text(this.widget.item.contentWarning),
-              Expanded(child: Container(),),
+              Expanded(
+                child: Container(),
+              ),
               RaisedButton(
                 child: Text("Toggle content"),
                 color: Colors.red,
@@ -310,8 +312,12 @@ class ItemBuilderState extends State<ItemBuilder> {
         _divider(),
       ];
 
-  _notificationTile() => <Widget>[
-        _notificationRow(),
+  _notificationTile() {
+    List<Widget> Content = <Widget>[
+      _notificationRow(),
+    ];
+    if (widget.item.notificationType != "follow") {
+      Content.addAll([
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -334,7 +340,30 @@ class ItemBuilderState extends State<ItemBuilder> {
           ],
         ),
         _divider(),
-      ];
+      ]);
+    } else {
+      Content.addAll([
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _avatar(widget.item.author.avatarUrl),
+
+            // Content
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _authorRow(widget.item.author.nickname, widget.item.author.acct,
+                    _visibilityIcon()),
+              ],
+            )),
+          ],
+        ),
+        _divider(),
+      ]);
+    }
+    return Content;
+  }
 
   @override
   Widget build(BuildContext context) {
