@@ -21,6 +21,9 @@ class HomeState extends State {
   Widget tabTwo = new Center(
     child: CircularProgressIndicator(),
   );
+  Widget tabThree= new Center(
+    child: CircularProgressIndicator(),
+  );
   Widget tabFour = new Center(
     child: CircularProgressIndicator(),
   );
@@ -56,6 +59,11 @@ class HomeState extends State {
           instance: instance,
           authCode: authCode,
         );
+        tabThree = TimeLine(
+          instance: instance,
+          authCode: authCode,
+          timeline: "local",
+        );
         tabFour = TimeLine(
           instance: instance,
           authCode: authCode,
@@ -81,7 +89,7 @@ class HomeState extends State {
             tabs: [
               Tab(icon: Icon(Icons.home)),
               Tab(icon: Icon(Icons.notifications)),
-              Tab(icon: Icon(Icons.message)),
+              Tab(icon: Icon(Icons.people)),
               Tab(icon: Icon(Icons.public)),
             ],
           ),
@@ -104,7 +112,7 @@ class HomeState extends State {
           children: [
             tabOne,
             tabTwo,
-            Icon(Icons.message),
+            tabThree,
             tabFour,
           ],
         ),
