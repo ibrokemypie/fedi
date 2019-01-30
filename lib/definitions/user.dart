@@ -36,7 +36,7 @@ class User {
 // TODO: user from mastodon return
   User.fromMisskey(Map v, Instance instance) {
     this.username = v["username"];
-    this.nickname = v["name"] ?? "null";
+    this.nickname = v["name"] ?? this.username;
     this.host = v["host"] ?? instance.host;
     this.acct = this.username + "@" + this.host;
     this.id = v["id"];
