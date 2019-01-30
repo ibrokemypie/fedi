@@ -85,6 +85,13 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
+  void _moreButtonAction(String action) {
+    switch(action) {
+      case "details":
+        _showContext();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -116,34 +123,50 @@ class ItemBuilderState extends State<ItemBuilder> {
   }
 
   _buttonRow() => Row(
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          // Reply
           Row(children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.reply),
-              onPressed: _reply,
-            ),
-            Text(_note.replyCount.toString()),
-          ]),
+            // Reply
+            Row(children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.reply),
+                onPressed: _reply,
+              ),
+              Text(_note.replyCount.toString()),
+            ]),
 
-          // Boost
-          Row(children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.repeat),
-              onPressed: _renote,
-            ),
-            Text(_note.renoteCount.toString()),
-          ]),
+            // Boost
+            Row(children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.repeat),
+                onPressed: _renote,
+              ),
+              Text(_note.renoteCount.toString()),
+            ]),
 
-          // Favourite
-          Row(children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.star),
-              onPressed: _toggleFavourite,
-              color: favouriteColour,
+            // Favourite
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.star),
+                  onPressed: _toggleFavourite,
+                  color: favouriteColour,
+                ),
+                Text(_note.favCount.toString()),
+              ],
             ),
-            Text(_note.favCount.toString()),
           ]),
+          PopupMenuButton(
+            icon: Icon(Icons.more_horiz),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: "details",
+                    child: Text('Details'),
+                  ),
+                ],
+            onSelected: _moreButtonAction,
+          )
         ],
       );
 
