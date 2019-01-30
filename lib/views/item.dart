@@ -86,7 +86,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   }
 
   void _moreButtonAction(String action) {
-    switch(action) {
+    switch (action) {
       case "details":
         _showContext();
     }
@@ -268,9 +268,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             notificationTypeString(_item.notificationType)),
       );
 
-  _renoteRow() => GestureDetector(
-      onTap: _showContext,
-      child: Material(
+  _renoteRow() => Material(
         elevation: 1,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -291,7 +289,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             ],
           ),
         ),
-      ));
+      );
 
   _notificationRow() => GestureDetector(
       onTap: _showContext,
