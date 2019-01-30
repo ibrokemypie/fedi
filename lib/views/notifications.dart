@@ -28,10 +28,12 @@ class NotificationsState extends State<Notifications> {
       notificationList =
           await getNotifications(widget.instance, widget.authCode);
     }
-    setState(() {
-      notifications = notificationList;
-      contents = notificationsListView();
-    });
+    try {
+      setState(() {
+        notifications = notificationList;
+        contents = notificationsListView();
+      });
+    } catch (e) {}
   }
 
   @override

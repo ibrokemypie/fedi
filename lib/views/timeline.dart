@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/api/hometimeline.dart';
+import 'package:fedi/api/publictimeline.dart';
 import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'dart:async';
@@ -28,10 +29,12 @@ class TimeLineState extends State<TimeLine> {
     } else {
       statusList = await _timelineCommand(widget.instance, widget.authCode);
     }
-    setState(() {
-      statuses = statusList;
-      contents = statusListView();
-    });
+    try {
+      setState(() {
+        statuses = statusList;
+        contents = statusListView();
+      });
+    } catch (e) {}
   }
 
   void _determineTimeline() {
@@ -40,6 +43,10 @@ class TimeLineState extends State<TimeLine> {
       switch (widget.timeline) {
         case "home":
           _timelineCommand = getHomeTimeline;
+          break;
+        case "public":
+          _timelineCommand = getMisskeyPublicTimeline;
+          break;
       }
     });
   }

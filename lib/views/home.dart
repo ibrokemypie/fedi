@@ -21,6 +21,9 @@ class HomeState extends State {
   Widget tabTwo = new Center(
     child: CircularProgressIndicator(),
   );
+  Widget tabFour = new Center(
+    child: CircularProgressIndicator(),
+  );
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -52,6 +55,11 @@ class HomeState extends State {
         tabTwo = Notifications(
           instance: instance,
           authCode: authCode,
+        );
+        tabFour = TimeLine(
+          instance: instance,
+          authCode: authCode,
+          timeline: "public",
         );
       });
     }
@@ -97,7 +105,7 @@ class HomeState extends State {
             tabOne,
             tabTwo,
             Icon(Icons.message),
-            Icon(Icons.public),
+            tabFour,
           ],
         ),
         floatingActionButton: FloatingActionButton(
