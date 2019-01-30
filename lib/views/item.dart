@@ -291,9 +291,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         ),
       );
 
-  _notificationRow() => GestureDetector(
-      onTap: _showContext,
-      child: Material(
+  _notificationRow() => Material(
         elevation: 1,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -314,7 +312,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             ],
           ),
         ),
-      ));
+      );
 
   _date() => Text(timeago.format(DateTime.parse(_item.date)) + " ");
 
