@@ -317,11 +317,12 @@ class ItemBuilderState extends State<ItemBuilder> {
       _notificationRow(),
     ];
     if (widget.item.notificationType != "follow") {
+          Item note = widget.item.notificationNote.renote ?? widget.item.notificationNote;
       Content.addAll([
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.item.notificationNote.author.avatarUrl),
+            _avatar(note.author.avatarUrl),
 
             // Content
             Expanded(
@@ -329,11 +330,11 @@ class ItemBuilderState extends State<ItemBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _authorRow(
-                    widget.item.notificationNote.author.nickname,
-                    widget.item.notificationNote.author.acct,
+                    note.author.nickname,
+                    note.author.acct,
                     _visibilityIcon()),
-                _body(widget.item.notificationNote.body),
-                _files(widget.item.notificationNote.statusFiles()),
+                _body(note.body),
+                _files(note.statusFiles()),
                 _buttonRow(),
               ],
             )),
