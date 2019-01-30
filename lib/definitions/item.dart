@@ -19,6 +19,7 @@ class Item {
   int favCount;
   String myReaction;
   int renoteCount;
+  int replyCount;
   List<File> files;
   Item renote;
   String notificationType;
@@ -37,6 +38,7 @@ class Item {
       favCount,
       myReaction,
       renoteCount,
+      replyCount,
       files,
       renote,
       notificationType,
@@ -53,6 +55,7 @@ class Item {
     this.favCount = favCount;
     this.myReaction = myReaction;
     this.renoteCount = renoteCount;
+    this.replyCount = replyCount;
     this.files = files;
     this.renote = renote;
     this.notificationType = notificationType;
@@ -72,6 +75,7 @@ class Item {
     this.favCount = json['favCount'];
     this.myReaction = json['reaction'];
     this.renoteCount = json['renoteCount'];
+    this.replyCount = json['replyCount'];
     this.files = json['files'];
     this.renote = json['renote'];
     this.notificationType = json['notificationType'];
@@ -118,6 +122,7 @@ class Item {
         this.date = v["createdAt"];
         this.body = v["text"] ?? "";
         this.renoteCount = v["renoteCount"] ?? 0;
+        this.replyCount = v["repliesCount"] ?? 0;
         this.files = files;
         this.myReaction = v["myReaction"] ?? null;
         this.visibility = v["visibility"] ?? null;

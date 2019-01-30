@@ -109,7 +109,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               icon: Icon(Icons.reply),
               onPressed: _reply,
             ),
-            Text("0"),
+            Text(_note.replyCount.toString()),
           ]),
 
           // Boost
