@@ -5,6 +5,7 @@ import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
+import 'package:fedi/views/context.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ItemBuilder extends StatefulWidget {
@@ -71,6 +72,18 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
+  void _showContext() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => StatusContext(
+                  authCode: widget.authCode,
+                  instance: _instance,
+                  statusId: _note.id,
+                  originalStatus: _note,
+                )));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -134,17 +147,17 @@ class ItemBuilderState extends State<ItemBuilder> {
       );
 
   _contentWarning() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-              Text(_note.contentWarning),
-              RaisedButton(
-                child: Text("Toggle content"),
-                color: Colors.red,
-                onPressed: () => setState(() {
-                      _contentWarningToggled = !_contentWarningToggled;
-                    }),
-              ),
+          Text(_note.contentWarning),
+          RaisedButton(
+            child: Text("Toggle content"),
+            color: Colors.red,
+            onPressed: () => setState(() {
+                  _contentWarningToggled = !_contentWarningToggled;
+                }),
+          ),
           Divider(
             height: 2,
           ),
@@ -231,7 +244,9 @@ class ItemBuilderState extends State<ItemBuilder> {
             notificationTypeString(_item.notificationType)),
       );
 
-  _renoteRow() => Material(
+  _renoteRow() => GestureDetector(
+      onTap: _showContext,
+      child: Material(
         elevation: 1,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -252,9 +267,11 @@ class ItemBuilderState extends State<ItemBuilder> {
             ],
           ),
         ),
-      );
+      ));
 
-  _notificationRow() => Material(
+  _notificationRow() => GestureDetector(
+      onTap: _showContext,
+      child: Material(
         elevation: 1,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -275,7 +292,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             ],
           ),
         ),
-      );
+      ));
 
   _statusTile() => <Widget>[
         Row(
