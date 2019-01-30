@@ -8,9 +8,9 @@ import 'dart:async';
 class TimeLine extends StatefulWidget {
   final Instance instance;
   final String authCode;
-  // static Instance instance;
+  final String timeline;
 
-  TimeLine({this.instance, this.authCode});
+  TimeLine({this.instance, this.authCode, this.timeline});
   @override
   TimeLineState createState() => new TimeLineState();
 }
@@ -18,14 +18,15 @@ class TimeLine extends StatefulWidget {
 class TimeLineState extends State<TimeLine> {
   List<Item> statuses = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
+  var _timelineCommand;
 
   Future<void> newStatuses() async {
     List<Item> statusList;
     if (statuses.length > 0) {
-      statusList = await getHomeTimeline(widget.instance, widget.authCode,
+      statusList = await _timelineCommand(widget.instance, widget.authCode,
           currentStatuses: statuses, sinceId: statuses[0].id);
     } else {
-      statusList = await getHomeTimeline(widget.instance, widget.authCode);
+      statusList = await _timelineCommand(widget.instance, widget.authCode);
     }
     setState(() {
       statuses = statusList;
@@ -33,9 +34,20 @@ class TimeLineState extends State<TimeLine> {
     });
   }
 
+  void _determineTimeline() {
+    print(widget.timeline);
+    setState(() {
+      switch (widget.timeline) {
+        case "home":
+          _timelineCommand = getHomeTimeline;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _determineTimeline();
     newStatuses();
   }
 

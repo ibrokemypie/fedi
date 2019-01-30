@@ -47,6 +47,7 @@ class HomeState extends State {
         tabOne = TimeLine(
           instance: instance,
           authCode: authCode,
+          timeline: "home",
         );
         tabTwo = Notifications(
           instance: instance,

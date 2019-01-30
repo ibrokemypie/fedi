@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 
-getHomeTimeline(Instance instance, String authCode,
+Future<List<Item>> getHomeTimeline(Instance instance, String authCode,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> statuses;
 
