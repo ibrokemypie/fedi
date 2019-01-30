@@ -7,6 +7,7 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/context.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -193,6 +194,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         padding: const EdgeInsets.only(right: 8.0),
         child: Text(
           nick,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -213,17 +215,16 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _authorRow(String nickName, String accountName, Widget trailing) => Container(
         padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    _nickName(nickName),
-                    _accountName(accountName),
+                    Flexible(child: _nickName(nickName)),
+                    trailing,
                   ]),
-              trailing,
+              _accountName(accountName),
             ]),
       );
 
@@ -294,6 +295,8 @@ class ItemBuilderState extends State<ItemBuilder> {
         ),
       ));
 
+  _date() => Text(timeago.format(DateTime.parse(_item.date)) + " ");
+
   _statusTile() => <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +309,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _authorRow(_note.author.nickname, _note.author.acct,
-                    _visibilityIcon()),
+                    Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
                 _files(_note.statusFiles()),
                 _buttonRow(),
@@ -329,8 +332,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(
-                    _note.author.nickname, _note.author.acct, Container()),
+                _authorRow(_note.author.nickname, _note.author.acct,
+                    Row(children: <Widget>[_date()])),
                 _body(_note.body),
                 _files(_note.statusFiles()),
                 _buttonRow(),
@@ -358,7 +361,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _authorRow(_note.author.nickname, _note.author.acct,
-                    _visibilityIcon()),
+                    Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
                 _files(_note.statusFiles()),
                 _buttonRow(),
@@ -381,7 +384,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _authorRow(_note.author.nickname, _note.author.acct,
-                    _visibilityIcon()),
+                    Row(children: <Widget>[_date(), _visibilityIcon()])),
               ],
             )),
           ],
