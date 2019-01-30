@@ -134,13 +134,10 @@ class ItemBuilderState extends State<ItemBuilder> {
       );
 
   _contentWarning() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Row(
-            children: <Widget>[
               Text(_note.contentWarning),
-              Expanded(
-                child: Container(),
-              ),
               RaisedButton(
                 child: Text("Toggle content"),
                 color: Colors.red,
@@ -148,8 +145,6 @@ class ItemBuilderState extends State<ItemBuilder> {
                       _contentWarningToggled = !_contentWarningToggled;
                     }),
               ),
-            ],
-          ),
           Divider(
             height: 2,
           ),
