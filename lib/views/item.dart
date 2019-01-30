@@ -22,41 +22,39 @@ class ItemBuilderState extends State<ItemBuilder> {
   bool _contentWarningToggled = true;
   Widget _contentWarningView = Container();
   Widget _bodyTextWidget = Container();
+  Instance _instance;
+  Item _item;
+  bool _isRenote = false;
+  bool _isNotification = false;
+  Item _note;
 
   void _toggleFavourite() async {
     bool success;
-    if (widget.item.favourited != true) {
-      success = favouritePost(widget.instance, widget.authCode, widget.item.id);
+    if (_note.favourited != true) {
+      success = favouritePost(_instance, widget.authCode, _note.id);
       if (success) {
         setState(() {
-          widget.item.favourited = true;
-          widget.item.favCount += 1;
+          _note.favourited = true;
+          _note.favCount += 1;
         });
       }
     } else {
-      success =
-          unFavouritePost(widget.instance, widget.authCode, widget.item.id);
+      success = unFavouritePost(_instance, widget.authCode, _note.id);
       if (success) {
         setState(() {
-          widget.item.favourited = false;
-          widget.item.favCount -= 1;
+          _note.favourited = false;
+          _note.favCount -= 1;
         });
       }
     }
   }
 
   void _renote() async {
-    String postId;
-    if (widget.item.renote != null) {
-      postId = widget.item.renote.id;
-    } else {
-      postId = widget.item.id;
-    }
-    bool success = await renotePost(widget.instance, widget.authCode, postId);
+    bool success = await renotePost(_instance, widget.authCode, _note.id);
     if (success) {
       setState(() {
         // widget.status.renoted = true;
-        widget.item.renoteCount += 1;
+        _note.renoteCount += 1;
       });
     }
   }
@@ -66,10 +64,10 @@ class ItemBuilderState extends State<ItemBuilder> {
         context,
         MaterialPageRoute(
             builder: (context) => Post(
-                  instance: widget.instance,
+                  instance: _instance,
                   authCode: widget.authCode,
-                  replyTo: widget.item.id,
-                  preFill: "@" + widget.item.author.acct + " ",
+                  replyTo: _note.id,
+                  preFill: "@" + _note.author.acct + " ",
                 )));
   }
 
@@ -77,9 +75,28 @@ class ItemBuilderState extends State<ItemBuilder> {
   void initState() {
     super.initState();
     setState(() {
-      if (widget.item.contentWarning != null) {
+      _instance = widget.instance;
+      _item = widget.item;
+      _note = _item;
+      if (_item.contentWarning != null) {
         _contentWarningView = _contentWarning();
         _contentWarningToggled = false;
+      }
+
+      if (_item.notificationType != null) {
+        _isNotification = true;
+        if (_item.notificationNote != null) {
+          _note = _item.notificationNote;
+          if (_item.notificationNote.renote != null) {
+            _isRenote = true;
+            _note = _item.notificationNote.renote;
+          }
+        }
+      } else {
+        if (_item.renote != null) {
+          _isRenote = true;
+          _note = _item.renote;
+        }
       }
     });
   }
@@ -101,7 +118,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               icon: Icon(Icons.repeat),
               onPressed: _renote,
             ),
-            Text(widget.item.renoteCount.toString()),
+            Text(_note.renoteCount.toString()),
           ]),
 
           // Favourite
@@ -111,7 +128,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               onPressed: _toggleFavourite,
               color: favouriteColour,
             ),
-            Text(widget.item.favCount.toString()),
+            Text(_note.favCount.toString()),
           ]),
         ],
       );
@@ -120,7 +137,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Text(this.widget.item.contentWarning),
+              Text(_note.contentWarning),
               Expanded(
                 child: Container(),
               ),
@@ -176,7 +193,7 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _visibilityIcon() => Container(
       padding: const EdgeInsets.only(right: 16.0),
-      child: Icon(visIcon(widget.item.visibility), size: 16.0));
+      child: Icon(visIcon(_note.visibility), size: 16.0));
 
   _avatar(String avatarUrl) => Container(
         alignment: FractionalOffset.topCenter,
@@ -210,13 +227,13 @@ class ItemBuilderState extends State<ItemBuilder> {
           child: Row(
         children: <Widget>[
           Icon(Icons.repeat),
-          Text("renoted by " + widget.item.author.nickname),
+          Text("renoted by " + _item.author.nickname),
         ],
       ));
 
   _notificationText() => Expanded(
-        child: Text(widget.item.author.nickname +
-            notificationTypeString(widget.item.notificationType)),
+        child: Text(_item.author.nickname +
+            notificationTypeString(_item.notificationType)),
       );
 
   _renoteRow() => Material(
@@ -231,8 +248,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                 padding: const EdgeInsets.only(left: 16.0, right: 4),
                 child: CircleAvatar(
                   radius: 16,
-                  backgroundImage: new CachedNetworkImageProvider(
-                      widget.item.author.avatarUrl),
+                  backgroundImage:
+                      new CachedNetworkImageProvider(_item.author.avatarUrl),
                 ),
               ),
               _renotedBy(),
@@ -254,11 +271,11 @@ class ItemBuilderState extends State<ItemBuilder> {
                 padding: const EdgeInsets.only(left: 16.0, right: 4),
                 child: CircleAvatar(
                   radius: 16,
-                  backgroundImage: new CachedNetworkImageProvider(
-                      widget.item.author.avatarUrl),
+                  backgroundImage:
+                      new CachedNetworkImageProvider(_item.author.avatarUrl),
                 ),
               ),
-              notificationTypeIcon(widget.item.notificationType),
+              notificationTypeIcon(_item.notificationType),
               _notificationText(),
             ],
           ),
@@ -269,17 +286,17 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.item.author.avatarUrl),
+            _avatar(_note.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.item.author.nickname, widget.item.author.acct,
+                _authorRow(_note.author.nickname, _note.author.acct,
                     _visibilityIcon()),
-                _body(widget.item.body),
-                _files(widget.item.statusFiles()),
+                _body(_note.body),
+                _files(_note.statusFiles()),
                 _buttonRow(),
               ],
             )),
@@ -293,17 +310,17 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.item.renote.author.avatarUrl),
+            _avatar(_note.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.item.renote.author.nickname,
-                    widget.item.renote.author.acct, Container()),
-                _body(widget.item.renote.body),
-                _files(widget.item.renote.statusFiles()),
+                _authorRow(
+                    _note.author.nickname, _note.author.acct, Container()),
+                _body(_note.body),
+                _files(_note.statusFiles()),
                 _buttonRow(),
               ],
             )),
@@ -316,25 +333,22 @@ class ItemBuilderState extends State<ItemBuilder> {
     List<Widget> Content = <Widget>[
       _notificationRow(),
     ];
-    if (widget.item.notificationType != "follow") {
-          Item note = widget.item.notificationNote.renote ?? widget.item.notificationNote;
+    if (_item.notificationType != "follow") {
       Content.addAll([
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(note.author.avatarUrl),
+            _avatar(_note.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(
-                    note.author.nickname,
-                    note.author.acct,
+                _authorRow(_note.author.nickname, _note.author.acct,
                     _visibilityIcon()),
-                _body(note.body),
-                _files(note.statusFiles()),
+                _body(_note.body),
+                _files(_note.statusFiles()),
                 _buttonRow(),
               ],
             )),
@@ -347,14 +361,14 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(widget.item.author.avatarUrl),
+            _avatar(_note.author.avatarUrl),
 
             // Content
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(widget.item.author.nickname, widget.item.author.acct,
+                _authorRow(_note.author.nickname, _note.author.acct,
                     _visibilityIcon()),
               ],
             )),
@@ -369,16 +383,16 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      if (widget.item.favourited || widget.item.myReaction != null) {
+      if (_note.favourited || _note.myReaction != null) {
         favouriteColour = Colors.yellow;
       } else {
         favouriteColour = Colors.white;
       }
     });
 
-    if (widget.item.notificationType != null) {
+    if (_isNotification) {
       return Container(child: Column(children: _notificationTile()));
-    } else if (widget.item.renote != null) {
+    } else if (_isRenote) {
       return Container(child: Column(children: _renoteTile()));
     } else {
       return Container(child: Column(children: _statusTile()));
