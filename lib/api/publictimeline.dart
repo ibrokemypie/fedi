@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 
-getPublicTimeline(Instance instance, String authCode,
+Future<List<Item>> getPublicTimeline(Instance instance, String authCode,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> statuses;
 

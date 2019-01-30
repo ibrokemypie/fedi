@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 
-getNotifications(Instance instance, String authCode,
+Future<List<Item>> getNotifications(Instance instance, String authCode,
     {List<Item> currentNotifications}) async {
   List<Item> notifications;
 

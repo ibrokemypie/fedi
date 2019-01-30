@@ -20,7 +20,7 @@ class TimeLine extends StatefulWidget {
 class TimeLineState extends State<TimeLine> {
   List<Item> statuses = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
-  var _timelineCommand;
+  Function _timelineCommand;
 
   Future<void> newStatuses() async {
     List<Item> statusList;
@@ -35,7 +35,7 @@ class TimeLineState extends State<TimeLine> {
         statuses = statusList;
         contents = statusListView();
       });
-    } catch (e) {}
+    } catch (e) {print(e);}
   }
 
   void _determineTimeline() {
