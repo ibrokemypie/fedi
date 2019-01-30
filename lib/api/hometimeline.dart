@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
-import 'package:fedi/definitions/user.dart';
-import 'package:fedi/definitions/file.dart';
 
 getHomeTimeline(Instance instance, String authCode,
     {List<Item> currentStatuses, String sinceId}) async {

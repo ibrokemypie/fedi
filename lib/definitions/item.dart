@@ -126,7 +126,6 @@ class Item {
         this.favourited =
             v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
-        // TODO: rename to contentwarning and implement
         this.contentWarning = v["cw"] ?? null;
 
         if (v["type"] != null && v["deletedAt"] == null) {
