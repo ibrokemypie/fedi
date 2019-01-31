@@ -1,130 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
 
-Widget statusFiles(Item status) {
-    switch (status.files.length) {
-      case 0:
-        return null;
-      case 1:
-        return Container(
-          child: Image.network(
-            status.files[0].thumbnailUrl,
-            fit: BoxFit.contain,
+Widget statusFile(String thumbnailUrl, String fileUrl) {
+  return Image.network(
+    thumbnailUrl,
+    fit: BoxFit.contain,
+  );
+}
+
+Widget singleFile(Item status, int fileNumber) {
+  return Container(
+      child: statusFile(status.files[fileNumber].thumbnailUrl,
+          status.files[fileNumber].fileUrl));
+}
+
+Widget fileRow(Item status, int startAt) {
+  return FittedBox(
+      child: Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+      statusFile(
+          status.files[startAt].thumbnailUrl, status.files[startAt].fileUrl),
+      statusFile(status.files[startAt + 1].thumbnailUrl,
+          status.files[startAt + 1].fileUrl),
+    ],
+  ));
+}
+
+Widget statusFiles(Function moreButtonAction,Item status) {
+  switch (status.files.length) {
+    case 0:
+      return null;
+    case 1:
+      return singleFile(status, 0);
+    case 2:
+      return fileRow(status, 0);
+    case 3:
+      return Column(children: <Widget>[
+        fileRow(status, 0),
+        singleFile(status, 2),
+      ]);
+    case 4:
+      return Column(children: <Widget>[
+        fileRow(status, 0),
+        fileRow(status, 2),
+      ]);
+    default:
+      return Column(children: <Widget>[
+        fileRow(status, 0),
+        fileRow(status, 2),
+        Container(
+          // width: double.infinity,
+          child: FlatButton(
+            color: Colors.grey,
+            onPressed: moreButtonAction,
+            child: Center(child: Text("More")),
           ),
-        );
-      case 2:
-        return FittedBox(
-            child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Image.network(
-              status.files[0].thumbnailUrl,
-              fit: BoxFit.contain,
-            ),
-            Image.network(
-              status.files[1].thumbnailUrl,
-              fit: BoxFit.contain,
-            ),
-          ],
-        ));
-      case 3:
-        return Column(children: <Widget>[
-          FittedBox(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.network(
-                status.files[0].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-              Image.network(
-                status.files[1].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-            ],
-          )),
-          Container(
-            child: Image.network(
-              status.files[2].thumbnailUrl,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ]);
-      case 4:
-        return Column(children: <Widget>[
-          FittedBox(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.network(
-                status.files[0].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-              Image.network(
-                status.files[1].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-            ],
-          )),
-          FittedBox(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.network(
-                status.files[2].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-              Image.network(
-                status.files[3].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-            ],
-          )),
-        ]);
-      default:
-        return Column(children: <Widget>[
-          FittedBox(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.network(
-                status.files[0].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-              Image.network(
-                status.files[1].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-            ],
-          )),
-          FittedBox(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Image.network(
-                status.files[2].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-              Image.network(
-                status.files[3].thumbnailUrl,
-                fit: BoxFit.contain,
-              ),
-            ],
-          )),
-          Container(
-            width: double.infinity,
-            child: FlatButton(
-              color: Colors.grey,
-              onPressed: () => {},
-              child: Center(child: Text("More")),
-            ),
-          ),
-        ]);
-    }
+        ),
+      ]);
+  }
 }
