@@ -26,7 +26,7 @@ class StatusFileState extends State<StatusFile> {
       _files = widget.files;
       _file = _files[widget.fileNumber];
 
-      if (_file.sensitive) {
+      if (_file.sensitive == true) {
         _isVisible = false;
         _toggleButton = Positioned(
           right: 0,
