@@ -7,12 +7,9 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
-import 'package:fedi/views/webpage.dart';
+import 'package:fedi/views/postbody.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:markdown/markdown.dart' as markdown;
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -96,14 +93,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     switch (action) {
       case "details":
         _showContext();
-    }
-  }
-
-  void _linkHandler(String link) {
-    print(link);
-    if (link.startsWith(new RegExp(r'(https://|ftp://|http://|mailto://)'))) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Webpage(url: link)));
     }
   }
 
@@ -191,15 +180,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   _body(String bodyText) {
     setState(() {
       if (_contentWarningToggled == true) {
-        if (_instance.type == "misskey") {
-          _bodyTextWidget = MarkdownBody(
-            data: bodyText,
-            onTapLink: _linkHandler,
-          );
-        } else {
-          _bodyTextWidget = MarkdownBody(
-              data: html2md.convert(markdown.markdownToHtml(bodyText)));
-        }
+        _bodyTextWidget = PostBody(_instance,_note.body);
       } else {
         _bodyTextWidget = Container();
       }
