@@ -3,17 +3,70 @@ import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/file.dart';
 import 'package:photo_view/photo_view.dart';
 
-Widget statusFile(File file) {
-  if (!file.sensitive) {
-    return Image.network(
-      file.thumbnailUrl,
-      fit: BoxFit.contain,
-    );
+class StatusFile extends StatefulWidget {
+  final File file;
+
+  StatusFile(this.file);
+  @override
+  StatusFileState createState() => new StatusFileState();
+}
+
+class StatusFileState extends State<StatusFile> {
+  bool _isVisible;
+  File _file;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _file = widget.file;
+
+      if (_file.sensitive) {
+        _isVisible = false;
+      } else {
+        _isVisible = true;
+      }
+    });
+  }
+
+  void toggleVisible() {
+    setState(() {
+      _isVisible = !_isVisible;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isVisible) {
+      return Image.network(
+        _file.thumbnailUrl,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return InkWell(
+          onTap: toggleVisible,
+          child: Container(
+            width: 200,
+            height: 200,
+            color: Colors.grey[900],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Marked Sensitive",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text("Tap to view"),
+              ],
+            ),
+          ));
+    }
   }
 }
 
 Widget singleFile(Item status, int fileNumber) {
-  return Container(child: statusFile(status.files[fileNumber]));
+  return Container(child: StatusFile(status.files[fileNumber]));
 }
 
 Widget fileRow(Item status, int startAt) {
@@ -22,8 +75,8 @@ Widget fileRow(Item status, int startAt) {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
-      statusFile(status.files[startAt]),
-      statusFile(status.files[startAt + 1]),
+      StatusFile(status.files[startAt]),
+      StatusFile(status.files[startAt + 1]),
     ],
   ));
 }
