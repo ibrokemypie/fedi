@@ -27,4 +27,4 @@ List<String> misskeyScope = [
   "vote-write"
 ];
 
-List<String> mastodonScope = ["read", "write", "follow", "push"];
+String mastodonScope = "read write follow push";

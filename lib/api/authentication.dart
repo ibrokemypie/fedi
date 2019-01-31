@@ -1,6 +1,7 @@
 import 'package:fedi/definitions/instance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:core';
 import 'dart:async';
 import 'package:fedi/definitions/shared.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
     // TODO: authenticate mastodon
     default:
       {
+         await mastodonAuth(context,instance);
         throw Exception(instance.type + " isnt supported lol");
       }
   }
@@ -136,6 +138,35 @@ Future<String> misskeyIGenerate(
     } else {
       throw Exception('user code invalid');
     }
+  } else {
+    throw Exception('Failed to load post');
+  }
+}
+
+
+Future<String> mastodonAuth(BuildContext context, Instance instance) async {
+  // First register the app and get appId and appSecret
+  var appAuth = await mastodonAppRegister(instance);
+
+  print(appAuth);
+
+}
+
+Future<Map<String, dynamic>> mastodonAppRegister(Instance instance) async {
+  String actionPath = "/api/v1/apps";
+  Map<String, String> params = Map.from({
+    "client_name": appName,
+    "redirect_uris": appCallbackUri,
+    "website": appHomepage,
+    "scopes": mastodonScope
+  });
+
+  final response =
+      await http.post(instance.uri + actionPath, body: params);
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+    return returned;
   } else {
     throw Exception('Failed to load post');
   }
