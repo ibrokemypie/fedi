@@ -16,7 +16,7 @@ class ItemBuilder extends StatefulWidget {
   final Item item;
   final bool isContext;
 
-  ItemBuilder(this.instance, this.authCode, this.item,this.isContext);
+  ItemBuilder(this.instance, this.authCode, this.item, this.isContext);
   @override
   ItemBuilderState createState() => new ItemBuilderState();
 }
@@ -25,6 +25,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   Color favouriteColour = Colors.white;
   bool _contentWarningToggled = true;
   Widget _contentWarningView = Container();
+  Widget _contentWarningToggle = Container();
   Widget _bodyTextWidget = Container();
   Instance _instance;
   Item _item;
@@ -152,13 +153,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(_note.contentWarning),
-          RaisedButton(
-            child: Text("Toggle content"),
-            color: Colors.red,
-            onPressed: () => setState(() {
-                  _contentWarningToggled = !_contentWarningToggled;
-                }),
-          ),
+          _contentWarningToggle,
           Divider(
             height: 2,
           ),
@@ -182,7 +177,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     );
   }
 
-// TODO: sensitive media
   _files(Widget files) => Container(
         padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
         child: files,
@@ -307,7 +301,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(statusFiles(widget.isContext,_showContext, _note)),
+                _files(statusFiles(widget.isContext, _showContext, _note)),
                 _buttonRow(),
               ],
             )),
@@ -359,7 +353,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(statusFiles(widget.isContext,_showContext, _note)),
+                _files(statusFiles(widget.isContext, _showContext, _note)),
                 _buttonRow(),
               ],
             )),
@@ -398,6 +392,15 @@ class ItemBuilderState extends State<ItemBuilder> {
       _item = widget.item;
       _note = _item;
       if (_item.contentWarning != null) {
+        if (_item.body != "") {
+          _contentWarningToggle = RaisedButton(
+            child: Text("Toggle content"),
+            color: Colors.red,
+            onPressed: () => setState(() {
+                  _contentWarningToggled = !_contentWarningToggled;
+                }),
+          );
+        }
         _contentWarningView = _contentWarning();
         _contentWarningToggled = false;
       }
