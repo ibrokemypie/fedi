@@ -145,20 +145,19 @@ class Item {
     }
   }
 
-    Item.fromMastodon(Map v, Instance instance) {
-    if (v["account"] != null &&
-        v["id"] != null) {
+  Item.fromMastodon(Map v, Instance instance) {
+    if (v["account"] != null && v["id"] != null) {
       try {
         List<File> files = new List();
-
-        // if (v["media_attachments"] != null) {
-        //   for (var fileJson in v["files"]) {
-        //     if (fileJson != null) {
-        //       File newFile = File.fromMisskey(fileJson);
-        //       files.add(newFile);
-        //     }
-        //   }
-        // }
+        List attachments = v["media_attachments"];
+        if (attachments.length > 0) {
+          for (var fileJson in attachments) {
+            if (fileJson != null) {
+              File newFile = File.fromMastodon(fileJson, v["sensitive"]);
+              files.add(newFile);
+            }
+          }
+        }
 
         if (v["reblog"] != null) {
           this.renote = Item.fromMastodon(v["reblog"], instance);
@@ -178,8 +177,7 @@ class Item {
         this.myReaction = null;
         this.visibility = v["visibility"] ?? null;
         this.url = v["url"];
-        this.favourited =
-            v["favourited"] ?? false;
+        this.favourited = v["favourited"] ?? false;
         this.favCount = v["favourites_count"];
         this.contentWarning = v["spoiler_text"] ?? null;
 

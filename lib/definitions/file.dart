@@ -34,7 +34,6 @@ class File {
     this.fileUrl = json['fileUrl'];
   }
 
-// TODO: file from mastodon return
   File.fromMisskey(Map v) {
     this.id = v["id"];
     this.date = v["createdAt"];
@@ -43,6 +42,14 @@ class File {
     this.authorId = v["userId"];
     this.sensitive = v["isSensitive"];
     this.thumbnailUrl = v["thumbnailUrl"];
+    this.fileUrl = v["url"];
+  }
+
+  File.fromMastodon(Map v, bool sensitive) {
+    this.id = v["id"];
+    this.type = v["type"];
+    this.sensitive = sensitive;
+    this.thumbnailUrl = v["preview_url"];
     this.fileUrl = v["url"];
   }
 
