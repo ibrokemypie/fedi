@@ -9,6 +9,8 @@ import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:html2md/html2md.dart' as html2md;
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -163,7 +165,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   _body(String bodyText) {
     setState(() {
       if (_contentWarningToggled == true) {
-        _bodyTextWidget = Text(bodyText);
+        _bodyTextWidget = MarkdownBody(data: html2md.convert(bodyText));
       } else {
         _bodyTextWidget = Container();
       }
