@@ -8,6 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:fedi/views/webauth.dart';
 import 'package:crypto/crypto.dart';
 
+String encodeMap(Map data) {
+  return data.keys
+      .map((key) =>
+          "${Uri.encodeComponent(key)}=${Uri.encodeComponent(data[key])}")
+      .join("&");
+}
+
 Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
   String userAuth;
@@ -20,7 +27,7 @@ Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
     // TODO: authenticate mastodon
     default:
       {
-         await mastodonAuth(context,instance);
+        await mastodonAuth(context, instance);
         throw Exception(instance.type + " isnt supported lol");
       }
   }
@@ -143,13 +150,15 @@ Future<String> misskeyIGenerate(
   }
 }
 
-
 Future<String> mastodonAuth(BuildContext context, Instance instance) async {
   // First register the app and get appId and appSecret
   var appAuth = await mastodonAppRegister(instance);
+  String appId = appAuth["client_id"];
+  String appSecret = appAuth["client_id"];
 
-  print(appAuth);
+  String authCode = await mastodonAuthSession(context, instance, appId);
 
+  print(authCode);
 }
 
 Future<Map<String, dynamic>> mastodonAppRegister(Instance instance) async {
@@ -161,13 +170,36 @@ Future<Map<String, dynamic>> mastodonAppRegister(Instance instance) async {
     "scopes": mastodonScope
   });
 
-  final response =
-      await http.post(instance.uri + actionPath, body: params);
+  final response = await http.post(instance.uri + actionPath, body: params);
 
   if (response.statusCode == 200) {
     Map<String, dynamic> returned = json.decode(response.body);
     return returned;
   } else {
     throw Exception('Failed to load post');
+  }
+}
+
+Future<String> mastodonAuthSession(
+    BuildContext context, Instance instance, String appId) async {
+  String actionPath = "/oauth/authorize";
+  Map<String, String> params = Map.from({
+    "scope": mastodonScope,
+    "response_type": "code",
+    "redirect_uri": appCallbackUri,
+    "client_id": appId
+  });
+
+  String dest = instance.uri + actionPath + "?" + encodeMap(params);
+
+  String authUrl = await Navigator.push(
+      context, MaterialPageRoute(builder: (context) => WebAuth(url: dest)));
+  if (authUrl.startsWith("fedi://appredirect")) {
+    Uri returnedUri = Uri.parse(authUrl);
+    String authCode = returnedUri.queryParameters["code"];
+    print("authenticated " + authCode);
+    return authCode;
+  } else {
+    throw Exception(authUrl);
   }
 }
