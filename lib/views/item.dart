@@ -100,6 +100,22 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   void initState() {
     super.initState();
+    if (widget.item.contentWarning != null &&
+        widget.item.contentWarning != "") {
+      setState(() {
+        if (widget.item.body != "") {
+          _contentWarningToggle = RaisedButton(
+              child: Text("Toggle content"),
+              color: Colors.red,
+              onPressed: () {
+                setState(() {
+                  _contentWarningToggled = !_contentWarningToggled;
+                });
+              });
+        }
+        _contentWarningToggled = false;
+      });
+    }
   }
 
   _buttonRow() => Row(
@@ -393,18 +409,10 @@ class ItemBuilderState extends State<ItemBuilder> {
       _instance = widget.instance;
       _item = widget.item;
       _note = _item;
-      if (_item.contentWarning != null && _item.contentWarning != "") {
-        if (_item.body != "") {
-          _contentWarningToggle = RaisedButton(
-            child: Text("Toggle content"),
-            color: Colors.red,
-            onPressed: () => setState(() {
-                  _contentWarningToggled = !_contentWarningToggled;
-                }),
-          );
-        }
+
+      if (widget.item.contentWarning != null &&
+          widget.item.contentWarning != "") {
         _contentWarningView = _contentWarning();
-        _contentWarningToggled = false;
       }
 
       if (_item.notificationType != null) {
