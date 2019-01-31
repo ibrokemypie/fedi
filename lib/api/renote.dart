@@ -12,10 +12,10 @@ renotePost(Instance instance, String authCode, String postId) async {
         renoted = await renoteMisskeyPost(instance, authCode, postId);
         break;
       }
-    // TODO: renote on mastodon
     default:
       {
-        throw Exception(instance.type + " isnt supported lol");
+        renoted = await renoteMastodonPost(instance, authCode, postId);
+        break;
       }
   }
   return renoted;
@@ -30,6 +30,22 @@ Future<bool> renoteMisskeyPost(
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));
+
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    throw Exception('Failed to load post ' +
+        (instance.uri + actionPath + json.encode(params)));
+  }
+}
+
+Future<bool> renoteMastodonPost(
+    Instance instance, String authCode, String postId) async {
+  Map<String, dynamic> params;
+  String actionPath = "/api/v1/statuses/" + postId + "/reblog";
+
+  final response = await http.post(instance.uri + actionPath,
+      headers: {"Authorization": "bearer " + authCode});
 
   if (response.statusCode == 200) {
     return true;
