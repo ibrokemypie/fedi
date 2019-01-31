@@ -8,13 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:fedi/views/webauth.dart';
 import 'package:crypto/crypto.dart';
 
-String encodeMap(Map data) {
-  return data.keys
-      .map((key) =>
-          "${Uri.encodeComponent(key)}=${Uri.encodeComponent(data[key])}")
-      .join("&");
-}
-
 Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
   Instance instance = await Instance.fromUrl(instanceUrl);
   String userAuth;
@@ -193,7 +186,7 @@ Future<String> mastodonAuthSession(
     "client_id": appId
   });
 
-  String dest = instance.uri + actionPath + "?" + encodeMap(params);
+  String dest = instance.uri + actionPath + "?" + uriEncodeMap(params);
 
   String authUrl = await Navigator.push(
       context, MaterialPageRoute(builder: (context) => WebAuth(url: dest)));

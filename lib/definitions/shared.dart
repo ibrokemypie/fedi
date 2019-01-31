@@ -28,3 +28,10 @@ List<String> misskeyScope = [
 ];
 
 String mastodonScope = "read write follow push";
+
+String uriEncodeMap(Map data) {
+  return data.keys
+      .map((key) =>
+          "${Uri.encodeComponent(key)}=${Uri.encodeComponent(data[key])}")
+      .join("&");
+}
