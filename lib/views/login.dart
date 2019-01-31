@@ -58,6 +58,9 @@ class LogInState extends State<LogIn> {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(e.toString()),
         ));
+        setState(() {
+          _clickLogin = _loginAction;
+        });
       }
     }
   }
