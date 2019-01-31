@@ -420,8 +420,6 @@ class ItemBuilderState extends State<ItemBuilder> {
           _note = _item.renote;
         }
       }
-    });
-    setState(() {
       if (_note.favourited || _note.myReaction != null) {
         favouriteColour = Colors.yellow;
       } else {
