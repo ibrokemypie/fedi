@@ -4,18 +4,19 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 
-Future<List<Item>> getHomeTimeline(Instance instance, String authCode,
+Future<List<Item>> getTimeline(Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> statuses;
+
 
   switch (instance.type) {
     case "misskey":
       {
-        statuses = await getMisskeyHomeTimeline(instance, authCode,
+        statuses = await getMisskeyTimeline(instance, authCode, timelineName,
             currentStatuses: currentStatuses, sinceId: sinceId);
         break;
       }
-    // TODO: get hometimeline on mastodon
+    // TODO: get Publictimeline on mastodon
     default:
       {
         throw Exception(instance.type + " isnt supported lol");
@@ -24,11 +25,24 @@ Future<List<Item>> getHomeTimeline(Instance instance, String authCode,
   return statuses;
 }
 
-Future<List> getMisskeyHomeTimeline(Instance instance, String authCode,
+Future<List> getMisskeyTimeline(Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
-  String actionPath = "/api/notes/timeline";
+    String actionPath;
+
+
+  switch (timelineName) {
+    case "home":
+      actionPath = "/api/notes/timeline";
+      break;
+    case "local":
+      actionPath = "/api/notes/local-timeline";
+      break;
+    case "public":
+      actionPath = "/api/notes/global-timeline";
+      break;
+  }
 
   if (sinceId == null) {
     params = Map.from({
