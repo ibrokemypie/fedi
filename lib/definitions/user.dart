@@ -33,7 +33,6 @@ class User {
     this.acct = this.username + "@" + this.host;
   }
 
-// TODO: user from mastodon return
   User.fromMisskey(Map v, Instance instance) {
     this.username = v["username"];
     this.nickname = v["name"] ?? this.username;
@@ -42,6 +41,16 @@ class User {
     this.id = v["id"];
     this.url = this.host + "/@" + this.username;
     this.avatarUrl = v["avatarUrl"];
+  }
+
+  User.fromMastodon(Map v, Instance instance) {
+    this.username = v["username"];
+    this.nickname = v["display_name"] ?? this.username;
+    this.host = v["host"] ?? instance.host;
+    this.acct = this.username + "@" + this.host;
+    this.id = v["id"];
+    this.url = v["url"];
+    this.avatarUrl = v["avatar"] ?? v["avatar_static"];
   }
 
   Map<String, dynamic> toJson() => _$UserToJson(this);

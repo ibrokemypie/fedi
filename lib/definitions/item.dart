@@ -164,10 +164,10 @@ class Item {
           this.renote = Item.fromMisskey(v["reblog"], instance);
         }
 
-        // if (v["account"] != null) {
-        //   User user = new User.fromMisskey(v["account"], instance);
-        //   this.author = user;
-        // }
+        if (v["account"] != null) {
+          User user = new User.fromMastodon(v["account"], instance);
+          this.author = user;
+        }
 
         this.id = v["id"];
         this.date = v["created_at"];
