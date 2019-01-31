@@ -12,10 +12,10 @@ favouritePost(Instance instance, String authCode, String postId) async {
         favourited = await favouriteMisskeyPost(instance, authCode, postId);
         break;
       }
-    // TODO: favourite on mastodon
     default:
       {
-        throw Exception(instance.type + " isnt supported lol");
+        favourited = await favouriteMastodonPost(instance, authCode, postId);
+        break;
       }
   }
   return favourited;
@@ -42,6 +42,22 @@ Future<bool> favouriteMisskeyPost(
       throw Exception('Failed to load post ' +
           (instance.uri + actionPath + json.encode(params)));
     }
+  } else {
+    throw Exception('Failed to load post ' +
+        (instance.uri + actionPath + json.encode(params)));
+  }
+}
+
+Future<bool> favouriteMastodonPost(
+    Instance instance, String authCode, String postId) async {
+  Map<String, dynamic> params;
+  String actionPath = "/api/v1/statuses/" + postId + "/favourite";
+
+  final response = await http.post(instance.uri + actionPath,
+      headers: {"Authorization": "bearer " + authCode});
+
+  if (response.statusCode == 200) {
+    return true;
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
