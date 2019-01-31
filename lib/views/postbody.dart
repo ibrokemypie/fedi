@@ -15,8 +15,8 @@ class PostBody extends StatefulWidget {
 }
 
 class PostBodyState extends State<PostBody> {
+  String _postText;
   void _linkHandler(String link) {
-    print(link);
     if (link.startsWith(new RegExp(r'(https://|ftp://|http://|mailto://)'))) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Webpage(url: link)));
@@ -24,17 +24,16 @@ class PostBodyState extends State<PostBody> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _postText = html2md.convert(markdown.markdownToHtml(widget.text));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (widget.instance.type == "misskey") {
-      return MarkdownBody(
-        data: widget.text,
-        onTapLink: _linkHandler,
-      );
-    } else {
-      return MarkdownBody(
-        data: html2md.convert(markdown.markdownToHtml(widget.text)),
-        onTapLink: _linkHandler,
-      );
-    }
+    return MarkdownBody(
+      data: _postText,
+      onTapLink: _linkHandler,
+    );
   }
 }
