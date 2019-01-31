@@ -5,6 +5,7 @@ import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
+import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -305,7 +306,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(_note.statusFiles()),
+                _files(statusFiles(_note)),
                 _buttonRow(),
               ],
             )),
@@ -329,7 +330,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
                 _body(_note.body),
-                _files(_note.statusFiles()),
+                _files(statusFiles(_note)),
                 _buttonRow(),
               ],
             )),
@@ -357,7 +358,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(_note.statusFiles()),
+                _files(statusFiles(_note)),
                 _buttonRow(),
               ],
             )),
