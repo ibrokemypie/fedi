@@ -47,7 +47,7 @@ class User {
     this.username = v["username"];
     this.nickname = v["display_name"] ?? this.username;
     this.host = v["host"] ?? instance.host;
-    this.acct = this.username + "@" + this.host;
+    this.acct = v["acct"];
     this.id = v["id"];
     this.url = v["url"];
     this.avatarUrl = v["avatar"] ?? v["avatar_static"];
