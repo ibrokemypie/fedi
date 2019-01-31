@@ -45,6 +45,9 @@ Future<List> getMisskeyTimeline(Instance instance, String authCode, String timel
     case "public":
       actionPath = "/api/notes/global-timeline";
       break;
+    case "notifications":
+      actionPath = "/api/i/notifications";
+      break;
   }
 
   if (sinceId == null) {
@@ -111,6 +114,9 @@ Future<List> getMastodonTimeline(Instance instance, String authCode, String time
       break;
     case "public":
       actionPath = "/api/v1/timelines/public";
+      break;
+        case "notifications":
+      actionPath = "/api/v1/notifications";
       break;
   }
 

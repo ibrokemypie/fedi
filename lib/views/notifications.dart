@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fedi/api/notifications.dart';
+import 'package:fedi/api/gettimeline.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
@@ -21,12 +21,12 @@ class NotificationsState extends State<Notifications> {
   Future<void> newNotifications() async {
     List<Item> notificationList;
     if (notifications.length > 0) {
-      notificationList = await getNotifications(
-          widget.instance, widget.authCode,
-          currentNotifications: notifications);
+      notificationList = await getTimeline(
+          widget.instance, widget.authCode, "notifications",
+          currentStatuses: notifications);
     } else {
       notificationList =
-          await getNotifications(widget.instance, widget.authCode);
+          await getTimeline(widget.instance, widget.authCode, "notifications");
     }
     try {
       setState(() {
