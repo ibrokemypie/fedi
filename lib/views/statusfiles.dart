@@ -29,18 +29,6 @@ Widget fileRow(Item status, int startAt) {
 }
 
 Widget statusFiles(bool isContext, Function moreButtonAction, Item status) {
-  Widget moreButton = Container();
-  if (!isContext) {
-    moreButton = Container(
-      // width: double.infinity,
-      child: FlatButton(
-        color: Colors.grey,
-        onPressed: moreButtonAction,
-        child: Center(child: Text("More")),
-      ),
-    );
-  }
-
   switch (status.files.length) {
     case 0:
       return null;
@@ -59,10 +47,40 @@ Widget statusFiles(bool isContext, Function moreButtonAction, Item status) {
         fileRow(status, 2),
       ]);
     default:
-      return Column(children: <Widget>[
+      List<Widget> manyItems = [];
+
+      manyItems.addAll([
         fileRow(status, 0),
         fileRow(status, 2),
-        moreButton,
       ]);
+
+      if (!isContext) {
+        manyItems.add(Container(
+          // width: double.infinity,
+          child: FlatButton(
+            color: Colors.grey,
+            onPressed: moreButtonAction,
+            child: Center(child: Text("More")),
+          ),
+        ));
+      } else {
+        if (status.files.length > 4) {
+          int remaining = status.files.length - 4;
+          int currentNumber = 4;
+          while (remaining > 0) {
+            if (remaining % 2 == 0) {
+              remaining -= 2;
+              manyItems.add(fileRow(status, currentNumber));
+              currentNumber += 2;
+            } else {
+              remaining -= 1;
+              manyItems.add(singleFile(status, currentNumber));
+              currentNumber += 1;
+            }
+          }
+        }
+      }
+      
+      return Column(children: manyItems);
   }
 }
