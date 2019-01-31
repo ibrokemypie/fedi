@@ -5,10 +5,10 @@ import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/shared.dart';
 
-Future<List<Item>> getTimeline(Instance instance, String authCode, String timelineName,
+Future<List<Item>> getTimeline(
+    Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> statuses;
-
 
   switch (instance.type) {
     case "misskey":
@@ -17,23 +17,26 @@ Future<List<Item>> getTimeline(Instance instance, String authCode, String timeli
             currentStatuses: currentStatuses, sinceId: sinceId);
         break;
       }
-    // TODO: get Publictimeline on mastodon
-    default:
+    case "mastodon":
       {
         statuses = await getMastodonTimeline(instance, authCode, timelineName,
             currentStatuses: currentStatuses, sinceId: sinceId);
         break;
       }
+    default:
+      {
+        throw (instance.type + "not supported");
+      }
   }
   return statuses;
 }
 
-Future<List> getMisskeyTimeline(Instance instance, String authCode, String timelineName,
+Future<List> getMisskeyTimeline(
+    Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
-    String actionPath;
-
+  String actionPath;
 
   switch (timelineName) {
     case "home":
@@ -70,9 +73,8 @@ Future<List> getMisskeyTimeline(Instance instance, String authCode, String timel
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-        var status = Item.fromMisskey(v, instance);
-        if (status != null)
-          newStatuses.add(status);
+      var status = Item.fromMisskey(v, instance);
+      if (status != null) newStatuses.add(status);
     });
 
     if (currentStatuses != null) {
@@ -86,12 +88,12 @@ Future<List> getMisskeyTimeline(Instance instance, String authCode, String timel
   }
 }
 
-Future<List> getMastodonTimeline(Instance instance, String authCode, String timelineName,
+Future<List> getMastodonTimeline(
+    Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses, String sinceId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
-    String actionPath;
-
+  String actionPath;
 
   if (sinceId == null) {
     params = Map.from({
@@ -110,27 +112,26 @@ Future<List> getMastodonTimeline(Instance instance, String authCode, String time
       break;
     case "local":
       actionPath = "/api/v1/timelines/public";
-      params.addAll({"local":"true"});
+      params.addAll({"local": "true"});
       break;
     case "public":
       actionPath = "/api/v1/timelines/public";
       break;
-        case "notifications":
+    case "notifications":
       actionPath = "/api/v1/notifications";
       break;
   }
 
-
-  final response =
-      await http.get(instance.uri + actionPath + "?" + uriEncodeMap(params), headers: {"Authorization":"bearer "+authCode});
+  final response = await http.get(
+      instance.uri + actionPath + "?" + uriEncodeMap(params),
+      headers: {"Authorization": "bearer " + authCode});
 
   if (response.statusCode == 200) {
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-        var status = Item.fromMastodon(v, instance);
-        if (status != null)
-          newStatuses.add(status);
+      var status = Item.fromMastodon(v, instance);
+      if (status != null) newStatuses.add(status);
     });
 
     if (currentStatuses != null) {

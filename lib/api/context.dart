@@ -15,12 +15,15 @@ getContext(Instance instance, String authCode, String statusId,
             instance, authCode, statusId, originalStatus);
         break;
       }
-    // TODO: get hometimeline on mastodon
-    default:
+    case "mastodon":
       {
         statuses = await getMastodonContext(
             instance, authCode, statusId, originalStatus);
         break;
+      }
+    default:
+      {
+        throw (instance.type + "not supported");
       }
   }
   return statuses;

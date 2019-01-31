@@ -17,11 +17,14 @@ Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
         userAuth = await misskeyAuth(context, instance);
         break;
       }
-    // TODO: authenticate mastodon
-    default:
+    case "mastodon":
       {
         userAuth = await mastodonAuth(context, instance);
         break;
+      }
+    default:
+      {
+        throw (instance.type + "not supported");
       }
   }
   return userAuth;
