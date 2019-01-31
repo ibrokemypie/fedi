@@ -95,31 +95,6 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _instance = widget.instance;
-      _item = widget.item;
-      _note = _item;
-      if (_item.contentWarning != null) {
-        _contentWarningView = _contentWarning();
-        _contentWarningToggled = false;
-      }
-
-      if (_item.notificationType != null) {
-        _isNotification = true;
-        if (_item.notificationNote != null) {
-          _note = _item.notificationNote;
-          if (_item.notificationNote.renote != null) {
-            _isRenote = true;
-            _note = _item.notificationNote.renote;
-          }
-        }
-      } else {
-        if (_item.renote != null) {
-          _isRenote = true;
-          _note = _item.renote;
-        }
-      }
-    });
   }
 
   _buttonRow() => Row(
@@ -416,6 +391,31 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _instance = widget.instance;
+      _item = widget.item;
+      _note = _item;
+      if (_item.contentWarning != null) {
+        _contentWarningView = _contentWarning();
+        _contentWarningToggled = false;
+      }
+
+      if (_item.notificationType != null) {
+        _isNotification = true;
+        if (_item.notificationNote != null) {
+          _note = _item.notificationNote;
+          if (_item.notificationNote.renote != null) {
+            _isRenote = true;
+            _note = _item.notificationNote.renote;
+          }
+        }
+      } else {
+        if (_item.renote != null) {
+          _isRenote = true;
+          _note = _item.renote;
+        }
+      }
+    });
     setState(() {
       if (_note.favourited || _note.myReaction != null) {
         favouriteColour = Colors.yellow;
