@@ -14,8 +14,9 @@ class ItemBuilder extends StatefulWidget {
   final Instance instance;
   final String authCode;
   final Item item;
+  final bool isContext;
 
-  ItemBuilder(this.instance, this.authCode, this.item);
+  ItemBuilder(this.instance, this.authCode, this.item,this.isContext);
   @override
   ItemBuilderState createState() => new ItemBuilderState();
 }
@@ -306,7 +307,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(statusFiles(_showContext, _note)),
+                _files(statusFiles(widget.isContext,_showContext, _note)),
                 _buttonRow(),
               ],
             )),
@@ -330,7 +331,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
                 _body(_note.body),
-                _files(statusFiles(_showContext, _note)),
+                _files(statusFiles(widget.isContext, _showContext, _note)),
                 _buttonRow(),
               ],
             )),
@@ -358,7 +359,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
-                _files(statusFiles(_showContext, _note)),
+                _files(statusFiles(widget.isContext,_showContext, _note)),
                 _buttonRow(),
               ],
             )),

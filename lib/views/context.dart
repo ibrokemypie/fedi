@@ -50,7 +50,7 @@ class StatusContextState extends State<StatusContext> {
         if (index >= statusList.length) {
           return null;
         }
-        return ItemBuilder(widget.instance, widget.authCode, statusList[index]);
+        return ItemBuilder(widget.instance, widget.authCode, statusList[index],true);
       },
     );
   }

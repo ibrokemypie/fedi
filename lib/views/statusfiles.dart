@@ -28,7 +28,19 @@ Widget fileRow(Item status, int startAt) {
   ));
 }
 
-Widget statusFiles(Function moreButtonAction,Item status) {
+Widget statusFiles(bool isContext, Function moreButtonAction, Item status) {
+  Widget moreButton = Container();
+  if (!isContext) {
+    moreButton = Container(
+      // width: double.infinity,
+      child: FlatButton(
+        color: Colors.grey,
+        onPressed: moreButtonAction,
+        child: Center(child: Text("More")),
+      ),
+    );
+  }
+
   switch (status.files.length) {
     case 0:
       return null;
@@ -50,14 +62,7 @@ Widget statusFiles(Function moreButtonAction,Item status) {
       return Column(children: <Widget>[
         fileRow(status, 0),
         fileRow(status, 2),
-        Container(
-          // width: double.infinity,
-          child: FlatButton(
-            color: Colors.grey,
-            onPressed: moreButtonAction,
-            child: Center(child: Text("More")),
-          ),
-        ),
+        moreButton,
       ]);
   }
 }

@@ -51,7 +51,7 @@ class NotificationsState extends State<Notifications> {
         }
         if (notifications[index] != null) {
           return ItemBuilder(
-              widget.instance, widget.authCode, notifications[index]);
+              widget.instance, widget.authCode, notifications[index],false);
         }
       },
     );
