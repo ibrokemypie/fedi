@@ -149,7 +149,8 @@ class Item {
     if (v["account"] != null && v["id"] != null) {
       try {
         List<File> files = new List();
-        List attachments = v["media_attachments"];
+        List attachments = v["media_attachments"] ?? [];
+        
         if (attachments.length > 0) {
           for (var fileJson in attachments) {
             if (fileJson != null) {
@@ -201,8 +202,10 @@ IconData visIcon(String visibility) {
     case "public":
       return Icons.public;
     case "home":
+    case "unlisted":
       return Icons.home;
     case "followers":
+    case "private":
       return Icons.group;
     case "specified":
       return Icons.message;
@@ -215,8 +218,10 @@ Icon notificationTypeIcon(String notificationType) {
     case "reply":
       return Icon(Icons.reply);
     case "renote":
+    case "reblog":
       return Icon(Icons.repeat);
     case "reaction":
+    case "favourite":
       return Icon(Icons.star);
     case "mention":
       return Icon(Icons.alternate_email);
