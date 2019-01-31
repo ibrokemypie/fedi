@@ -23,8 +23,10 @@ class Instance {
     if (this.type == null) {
       if (version.contains("misskey")) {
         this.type = "misskey";
+      
+      // TODO: change things for pleroma
       } else if (version.contains("pleroma")) {
-        this.type = "pleroma";
+        this.type = "mastodon";
       } else {
         this.type = "mastodon";
       }
