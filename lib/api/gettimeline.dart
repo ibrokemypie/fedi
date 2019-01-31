@@ -122,7 +122,7 @@ Future<List> getMastodonTimeline(Instance instance, String authCode, String time
     List<dynamic> returned = json.decode(response.body);
 
     returned.forEach((v) {
-        var status = Item.fromMisskey(v, instance);
+        var status = Item.fromMastodon(v, instance);
         if (status != null)
           newStatuses.add(status);
     });

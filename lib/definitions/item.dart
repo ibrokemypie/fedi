@@ -83,7 +83,6 @@ class Item {
     this.notificationNote = json['notificationNote'];
   }
 
-// TODO: status from mastodon return
   Item.fromMisskey(Map v, Instance instance) {
     int countreacts(Map r) {
       int reactions = 0;
@@ -138,6 +137,56 @@ class Item {
           this.notificationType = v["type"];
           if (v["note"] != null) {
             this.notificationNote = Item.fromMisskey(v["note"], instance);
+          }
+        }
+      } catch (e) {
+        throw Exception(e);
+      }
+    }
+  }
+
+    Item.fromMastodon(Map v, Instance instance) {
+    if (v["account"] != null &&
+        v["id"] != null) {
+      try {
+        List<File> files = new List();
+
+        // if (v["media_attachments"] != null) {
+        //   for (var fileJson in v["files"]) {
+        //     if (fileJson != null) {
+        //       File newFile = File.fromMisskey(fileJson);
+        //       files.add(newFile);
+        //     }
+        //   }
+        // }
+
+        if (v["reblog"] != null) {
+          this.renote = Item.fromMisskey(v["reblog"], instance);
+        }
+
+        // if (v["account"] != null) {
+        //   User user = new User.fromMisskey(v["account"], instance);
+        //   this.author = user;
+        // }
+
+        this.id = v["id"];
+        this.date = v["created_at"];
+        this.body = v["content"] ?? "";
+        this.renoteCount = v["reblogs_count"] ?? 0;
+        this.replyCount = v["replies_count"] ?? 0;
+        this.files = files;
+        this.myReaction = null;
+        this.visibility = v["visibility"] ?? null;
+        this.url = v["url"];
+        this.favourited =
+            v["favourited"] ?? false;
+        this.favCount = v["favourites_count"];
+        this.contentWarning = v["spoiler_text"] ?? null;
+
+        if (v["type"] != null) {
+          this.notificationType = v["type"];
+          if (v["status"] != null) {
+            this.notificationNote = Item.fromMastodon(v["status"], instance);
           }
         }
       } catch (e) {
