@@ -391,7 +391,7 @@ class ItemBuilderState extends State<ItemBuilder> {
       _instance = widget.instance;
       _item = widget.item;
       _note = _item;
-      if (_item.contentWarning != null) {
+      if (_item.contentWarning != null && _item.contentWarning != "") {
         if (_item.body != "") {
           _contentWarningToggle = RaisedButton(
             child: Text("Toggle content"),
@@ -420,7 +420,7 @@ class ItemBuilderState extends State<ItemBuilder> {
           _note = _item.renote;
         }
       }
-      if (_note.favourited || _note.myReaction != null) {
+      if (_note.favourited == true || (_note.myReaction != null)) {
         favouriteColour = Colors.yellow;
       } else {
         favouriteColour = Colors.white;

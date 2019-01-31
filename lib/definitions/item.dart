@@ -161,7 +161,7 @@ class Item {
         // }
 
         if (v["reblog"] != null) {
-          this.renote = Item.fromMisskey(v["reblog"], instance);
+          this.renote = Item.fromMastodon(v["reblog"], instance);
         }
 
         if (v["account"] != null) {
