@@ -4,12 +4,13 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:flutter/material.dart';
 import 'package:fedi/views/webpage.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/item.dart';
 
 class PostBody extends StatefulWidget {
-  final String text;
+  final Item status;
   final Instance instance;
 
-  PostBody(this.instance, this.text);
+  PostBody(this.instance, this.status);
   @override
   PostBodyState createState() => new PostBodyState();
 }
@@ -26,7 +27,7 @@ class PostBodyState extends State<PostBody> {
   @override
   void initState() {
     super.initState();
-    _postText = html2md.convert(markdown.markdownToHtml(widget.text));
+    _postText = html2md.convert(markdown.markdownToHtml(widget.status.body));
   }
 
   @override

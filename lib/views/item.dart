@@ -180,7 +180,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   _body(String bodyText) {
     setState(() {
       if (_contentWarningToggled == true) {
-        _bodyTextWidget = PostBody(_instance,_note.body);
+        _bodyTextWidget = PostBody(_instance,_note);
       } else {
         _bodyTextWidget = Container();
       }
