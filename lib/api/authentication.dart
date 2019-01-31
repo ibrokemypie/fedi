@@ -27,8 +27,8 @@ Future<String> instanceLogin(BuildContext context, String instanceUrl) async {
     // TODO: authenticate mastodon
     default:
       {
-        await mastodonAuth(context, instance);
-        throw Exception(instance.type + " isnt supported lol");
+        userAuth = await mastodonAuth(context, instance);
+        break;
       }
   }
   return userAuth;
@@ -154,11 +154,14 @@ Future<String> mastodonAuth(BuildContext context, Instance instance) async {
   // First register the app and get appId and appSecret
   var appAuth = await mastodonAppRegister(instance);
   String appId = appAuth["client_id"];
-  String appSecret = appAuth["client_id"];
+  String appSecret = appAuth["client_secret"];
 
   String authCode = await mastodonAuthSession(context, instance, appId);
 
-  print(authCode);
+  String accessToken =
+      await mastodonAccessToken(instance, appId, appSecret, authCode);
+
+  return accessToken;
 }
 
 Future<Map<String, dynamic>> mastodonAppRegister(Instance instance) async {
@@ -201,5 +204,26 @@ Future<String> mastodonAuthSession(
     return authCode;
   } else {
     throw Exception(authUrl);
+  }
+}
+
+Future<String> mastodonAccessToken(
+    Instance instance, String appId, String appSecret, String authCode) async {
+  String actionPath = "/oauth/token";
+  Map<String, String> params = Map.from({
+    "client_id": appId,
+    "client_secret": appSecret,
+    "grant_type": "authorization_code",
+    "redirect_uri": appCallbackUri,
+    "code": authCode,
+  });
+
+  final response = await http.post(instance.uri + actionPath, body: params);
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+    return returned["access_token"];
+  } else {
+    throw Exception('Failed to load post');
   }
 }
