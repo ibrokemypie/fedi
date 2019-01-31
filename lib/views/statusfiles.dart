@@ -14,6 +14,7 @@ class StatusFile extends StatefulWidget {
 class StatusFileState extends State<StatusFile> {
   bool _isVisible;
   File _file;
+  Widget _toggleButton = Container();
 
   @override
   void initState() {
@@ -23,6 +24,15 @@ class StatusFileState extends State<StatusFile> {
 
       if (_file.sensitive) {
         _isVisible = false;
+        _toggleButton = Positioned(
+          right: 0,
+          top: 0,
+          child: IconButton(
+            icon: Icon(Icons.remove_red_eye),
+            color: Colors.grey,
+            onPressed: toggleVisible,
+          ),
+        );
       } else {
         _isVisible = true;
       }
@@ -38,9 +48,15 @@ class StatusFileState extends State<StatusFile> {
   @override
   Widget build(BuildContext context) {
     if (_isVisible) {
-      return Image.network(
-        _file.thumbnailUrl,
-        fit: BoxFit.contain,
+      return Stack(
+        children: <Widget>[
+          Image.network(
+            _file.thumbnailUrl,
+            fit: BoxFit.cover,
+            height: 200,
+          ),
+          _toggleButton
+        ],
       );
     } else {
       return InkWell(
