@@ -18,7 +18,9 @@ getContext(Instance instance, String authCode, String statusId,
     // TODO: get hometimeline on mastodon
     default:
       {
-        throw Exception(instance.type + " isnt supported lol");
+        statuses = await getMastodonContext(
+            instance, authCode, statusId, originalStatus);
+        break;
       }
   }
   return statuses;
@@ -46,6 +48,37 @@ Future<List> getMisskeyContext(Instance instance, String authCode,
 
     returned.forEach((v) {
       var status = Item.fromMisskey(v, instance);
+      if (status != null) newStatuses.add(status);
+    });
+
+    return newStatuses;
+  } else {
+    throw Exception('Failed to load post ' +
+        (instance.uri + actionPath + json.encode(params)));
+  }
+}
+
+Future<List> getMastodonContext(Instance instance, String authCode,
+    String statusId, Item originalStatus) async {
+  List<Item> newStatuses = new List();
+  Map<String, dynamic> params;
+  String actionPath = "/api/v1/statuses/" + statusId + "/context";
+
+  final response = await http.get(instance.uri + actionPath,
+      headers: {"Authorization": "bearer " + authCode});
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> returned = json.decode(response.body);
+
+    returned["descendants"].reversed.forEach((v) {
+      var status = Item.fromMastodon(v, instance);
+      if (status != null) newStatuses.add(status);
+    });
+
+    newStatuses.add(originalStatus);
+
+    returned["ancestors"].reversed.forEach((v) {
+      var status = Item.fromMastodon(v, instance);
       if (status != null) newStatuses.add(status);
     });
 
