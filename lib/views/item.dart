@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:html2md/html2md.dart' as html2md;
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as markdown;
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -181,7 +182,12 @@ class ItemBuilderState extends State<ItemBuilder> {
   _body(String bodyText) {
     setState(() {
       if (_contentWarningToggled == true) {
-        _bodyTextWidget = MarkdownBody(data: html2md.convert(bodyText));
+        if (_instance.type == "misskey") {
+          _bodyTextWidget = MarkdownBody(data: bodyText);
+        } else {
+          _bodyTextWidget =
+              MarkdownBody(data: html2md.convert(markdown.markdownToHtml(bodyText)));
+        }
       } else {
         _bodyTextWidget = Container();
       }
