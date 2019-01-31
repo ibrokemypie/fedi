@@ -24,7 +24,8 @@ Item _$ItemFromJson(Map<String, dynamic> json) {
       json['renote'],
       json['notificationType'],
       json['isRead'],
-      json['notificationNote']);
+      json['notificationNote'],
+      json['emoji']);
 }
 
 Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
@@ -44,5 +45,6 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'renote': instance.renote,
       'notificationType': instance.notificationType,
       'isRead': instance.isRead,
-      'notificationNote': instance.notificationNote
+      'notificationNote': instance.notificationNote,
+      'emoji': instance.emoji
     };

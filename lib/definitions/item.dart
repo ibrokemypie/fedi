@@ -3,6 +3,7 @@ import 'package:fedi/definitions/file.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/emoji.dart';
 
 part 'item.g.dart';
 
@@ -25,6 +26,7 @@ class Item {
   String notificationType;
   bool isRead;
   Item notificationNote;
+  List<Emoji> emoji;
 
   Item(
       id,
@@ -43,7 +45,8 @@ class Item {
       renote,
       notificationType,
       isRead,
-      notificationNote) {
+      notificationNote,
+      emoji) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -61,6 +64,7 @@ class Item {
     this.notificationType = notificationType;
     this.isRead = isRead;
     this.notificationNote = notificationNote;
+    this.emoji = emoji;
   }
 
   Item.fromJson(Map json) {
@@ -81,6 +85,7 @@ class Item {
     this.notificationType = json['notificationType'];
     this.isRead = json['isRead'];
     this.notificationNote = json['notificationNote'];
+    this.emoji = json['emoji'];
   }
 
   Item.fromMisskey(Map v, Instance instance) {
@@ -98,6 +103,17 @@ class Item {
         !v.containsKey("deletedAt")) {
       try {
         List<File> files = new List();
+        List<Emoji> postEmojis = List<Emoji>();
+        List emojis = v["emojis"] ?? [];
+
+        if (emojis.length > 0) {
+          for (var emoji in emojis) {
+            if (emoji != null) {
+              Emoji newEmoji = Emoji.fromMisskey(emoji);
+              postEmojis.add(newEmoji);
+            }
+          }
+        }
 
         if (v["files"] != null) {
           for (var fileJson in v["files"]) {
@@ -127,6 +143,7 @@ class Item {
         this.visibility = v["visibility"] ?? null;
         this.url = v["uri"];
         this.files = files;
+        this.emoji = postEmojis;
         this.favourited =
             v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
@@ -150,7 +167,18 @@ class Item {
       try {
         List<File> files = new List();
         List attachments = v["media_attachments"] ?? [];
-        
+        List<Emoji> postEmojis = List<Emoji>();
+        List emojis = v["emojis"] ?? [];
+
+        if (emojis.length > 0) {
+          for (var emoji in emojis) {
+            if (emoji != null) {
+              Emoji newEmoji = Emoji.fromMastodon(emoji);
+              postEmojis.add(newEmoji);
+            }
+          }
+        }
+
         if (attachments.length > 0) {
           for (var fileJson in attachments) {
             if (fileJson != null) {
@@ -175,6 +203,7 @@ class Item {
         this.renoteCount = v["reblogs_count"] ?? 0;
         this.replyCount = v["replies_count"] ?? 0;
         this.files = files;
+        this.emoji = postEmojis;
         this.myReaction = null;
         this.visibility = v["visibility"] ?? null;
         this.url = v["url"];
