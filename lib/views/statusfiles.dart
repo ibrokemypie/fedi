@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
+import 'package:fedi/definitions/file.dart';
+import 'package:photo_view/photo_view.dart';
 
-Widget statusFile(String thumbnailUrl, String fileUrl) {
-  return Image.network(
-    thumbnailUrl,
-    fit: BoxFit.contain,
-  );
+Widget statusFile(File file) {
+  if (!file.sensitive) {
+    return Image.network(
+      file.thumbnailUrl,
+      fit: BoxFit.contain,
+    );
+  }
 }
 
 Widget singleFile(Item status, int fileNumber) {
-  return Container(
-      child: statusFile(status.files[fileNumber].thumbnailUrl,
-          status.files[fileNumber].fileUrl));
+  return Container(child: statusFile(status.files[fileNumber]));
 }
 
 Widget fileRow(Item status, int startAt) {
@@ -20,10 +22,8 @@ Widget fileRow(Item status, int startAt) {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
-      statusFile(
-          status.files[startAt].thumbnailUrl, status.files[startAt].fileUrl),
-      statusFile(status.files[startAt + 1].thumbnailUrl,
-          status.files[startAt + 1].fileUrl),
+      statusFile(status.files[startAt]),
+      statusFile(status.files[startAt + 1]),
     ],
   ));
 }
@@ -80,7 +80,7 @@ Widget statusFiles(bool isContext, Function moreButtonAction, Item status) {
           }
         }
       }
-      
+
       return Column(children: manyItems);
   }
 }
