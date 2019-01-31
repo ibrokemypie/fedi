@@ -7,6 +7,7 @@ import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
+import 'package:fedi/views/webpage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:html2md/html2md.dart' as html2md;
@@ -98,6 +99,14 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
+  void _linkHandler(String link) {
+    print(link);
+    if (link.startsWith(new RegExp(r'(https://|ftp://|http://|mailto://)'))) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Webpage(url: link)));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -183,10 +192,13 @@ class ItemBuilderState extends State<ItemBuilder> {
     setState(() {
       if (_contentWarningToggled == true) {
         if (_instance.type == "misskey") {
-          _bodyTextWidget = MarkdownBody(data: bodyText);
+          _bodyTextWidget = MarkdownBody(
+            data: bodyText,
+            onTapLink: _linkHandler,
+          );
         } else {
-          _bodyTextWidget =
-              MarkdownBody(data: html2md.convert(markdown.markdownToHtml(bodyText)));
+          _bodyTextWidget = MarkdownBody(
+              data: html2md.convert(markdown.markdownToHtml(bodyText)));
         }
       } else {
         _bodyTextWidget = Container();
