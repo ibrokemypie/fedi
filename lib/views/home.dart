@@ -18,27 +18,27 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Instance instance;
   String authCode;
+
   TabController _tabController;
-
-  List<Item> _statuses = new List();
   String _currentTab;
+  String _lastTab;
 
-  LinkedHashMap<String, Widget> _tabs = LinkedHashMap.from({
-    "tabOne": new Center(
+  List<String> _tabNames;
+  Map<String, List<Item>> _tabStatuses;
+  List<Widget> _tabWidgets = new List.of([
+    new Center(
       child: CircularProgressIndicator(),
     ),
-    "tabTwo": new Center(
+    new Center(
       child: CircularProgressIndicator(),
     ),
-    "tabThree": new Center(
+    new Center(
       child: CircularProgressIndicator(),
     ),
-    "tabFour": new Center(
+    new Center(
       child: CircularProgressIndicator(),
     ),
-  });
-
-  List<Widget> _tabList = List<Widget>();
+  ]);
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -60,19 +60,19 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setState(() {
       List<Item> _newlist = List();
       _newlist.add(_newStatus);
-      _newlist.addAll(_statuses);
-      _statuses = _newlist;
+      _newlist.addAll(_tabStatuses[_currentTab]);
+      _tabStatuses[_currentTab] = _newlist;
     });
   }
 
-  Future<void> _newStatuses(String timeline) async {
+  Future<void> _newStatuses() async {
     List<Item> statusList;
-    statusList = await getTimeline(instance, authCode, timeline);
+    statusList = await getTimeline(instance, authCode, _currentTab);
 
     try {
       setState(() {
-        _statuses = statusList;
-        _resetTabs();
+        _tabStatuses[_currentTab] = statusList;
+        _populateTabs();
         // contents = statusListView();
       });
     } catch (e) {
@@ -80,60 +80,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  void _resetTabs() {
-    setState(() {
-      _tabs["tabOne"] = RefreshIndicator(
-        child: TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "home",
-          statuses: _statuses,
-          lasttimeline: _currentTab,
-          inittimeline: _initTimeline,
-        ),
-        key: Key("home"),
-        onRefresh: () => _newStatuses("home"),
-      );
-      _tabs["tabTwo"] = Notifications(
-        instance: instance,
-        authCode: authCode,
-      );
-      _tabs["tabThree"] = RefreshIndicator(
-        child: TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "local",
-          statuses: _statuses,
-          lasttimeline: _currentTab,
-          inittimeline: _initTimeline,
-        ),
-        key: Key("local"),
-        onRefresh: () => _newStatuses("local"),
-      );
-      _tabs["tabFour"] = RefreshIndicator(
-        child: TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "public",
-          statuses: _statuses,
-          lasttimeline: _currentTab,
-          inittimeline: _initTimeline,
-        ),
-        key: Key("public"),
-        onRefresh: () => _newStatuses("local"),
-      );
-
-      _tabList = List<Widget>.from(_tabs.values.toList());
-    });
-  }
-
-  Future<bool> _initTimeline(String timeline) async {
+  Future<bool> _initTimeline() async {
     List<Item> statusList;
-    statusList = await getTimeline(instance, authCode, timeline);
+    print("timeline" + _currentTab);
+    statusList = await getTimeline(instance, authCode, _currentTab);
     try {
       setState(() {
-        _statuses = statusList;
-        _resetTabs();
+        _tabStatuses[_currentTab] = statusList;
+        _populateTabs();
       });
     } catch (e) {
       print(e);
@@ -156,14 +110,53 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         instance = newInstance;
         authCode = userAuth;
 
-        _resetTabs();
+        _tabController.addListener(_tabChange);
+        _currentTab = _tabNames.elementAt(_tabController.index);
+        _lastTab = "none";
+
+        _populateTabs();
       });
     }
   }
 
   _tabChange() {
     setState(() {
-      _currentTab = _tabs.keys.elementAt(_tabController.index);
+      _lastTab = _currentTab;
+      _currentTab = _tabNames[_tabController.index];
+      print("last tab: " + _lastTab + " current tab: " + _currentTab);
+    });
+  }
+
+  _timelineWidget(String timelineName) {
+    return new RefreshIndicator(
+      child: TimeLine(
+        instance: instance,
+        authCode: authCode,
+        statuses: _tabStatuses[timelineName],
+        inittimeline: _initTimeline,
+      ),
+      key: Key(timelineName),
+      onRefresh: () => _newStatuses(),
+    );
+  }
+
+  _populateTabs() {
+    List<Widget> newtabs = new List();
+    for (String name in _tabNames) {
+      newtabs.add(_timelineWidget(name));
+    }
+    setState(() {
+      _tabWidgets = newtabs;
+    });
+  }
+
+  _initTabStatuses() {
+    Map<String, List<Item>> newtabstatuses = new Map();
+    for (String name in _tabNames) {
+      newtabstatuses.addAll({name: new List<Item>()});
+    }
+    setState(() {
+      _tabStatuses = newtabstatuses;
     });
   }
 
@@ -171,11 +164,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     setState(() {
-      _tabList = List<Widget>.from(_tabs.values.toList());
-      _tabController = TabController(vsync: this, length: _tabList.length);
-      _tabController.addListener(_tabChange);
-      _currentTab = _tabs.keys.elementAt(_tabController.index);
+      _tabNames = new List.of(["home", "local", "local", "public"]);
+      _tabController = TabController(vsync: this, length: _tabNames.length);
     });
+    _initTabStatuses();
     verifyAuth();
   }
 
@@ -215,7 +207,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: _tabController,
-        children: _tabList,
+        children: _tabWidgets,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _postStatus,

@@ -8,19 +8,15 @@ import 'dart:async';
 class TimeLine extends StatefulWidget {
   final Instance instance;
   final String authCode;
-  final String timeline;
   final List<Item> statuses;
   final Function inittimeline;
-  final String lasttimeline;
   final Key key;
 
   TimeLine(
       {this.instance,
       this.authCode,
-      this.timeline,
       this.statuses,
       this.inittimeline,
-      this.lasttimeline,
       this.key});
   @override
   TimeLineState createState() => new TimeLineState();
@@ -33,7 +29,6 @@ class TimeLineState extends State<TimeLine> {
   @override
   void initState() {
     super.initState();
-    widget.inittimeline(widget.timeline);
   }
 
   Widget statusListView() {
@@ -51,10 +46,8 @@ class TimeLineState extends State<TimeLine> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.statuses == null || widget.statuses.length == 0 || (widget.lasttimeline != widget.timeline)) {
-      print(widget.timeline);
-      print(widget.lasttimeline);
-      widget.inittimeline(widget.timeline);
+    if (widget.statuses == null || widget.statuses.length == 0) {
+      widget.inittimeline();
     } else {
       setState(() {
         _statuses = widget.statuses;
