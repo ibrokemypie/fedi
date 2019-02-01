@@ -71,13 +71,13 @@ class ItemBuilderState extends State<ItemBuilder> {
   }
 
   void _reply() async {
-    String prefill = "@" + _note.author.acct;
+    String prefill = "@" + _note.author.acct + " ";
     for (Mention mentionObject in _note.mentions) {
       if (mentionObject.acct != null) {
-        prefill = prefill + " " + "@" + mentionObject.acct;
+        prefill = prefill + "@" + mentionObject.acct + " ";
       } else {
         User mentionedUser = await getUserFromId(_instance, mentionObject.id);
-        prefill = prefill + " " + "@" + mentionedUser.acct;
+        prefill = prefill + "@" + mentionedUser.acct + " ";
       }
     }
     print(prefill);
