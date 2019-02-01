@@ -4,19 +4,18 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/user.dart';
 
-Future<User> getUserFromId(
-    Instance instance, String authCode, String userId) async {
+Future<User> getUserFromId(Instance instance, String userId) async {
   User foundUser;
 
   switch (instance.type) {
     case "misskey":
       {
-        foundUser = await getUserFromIdMisskey(instance, authCode, userId);
+        foundUser = await getUserFromIdMisskey(instance, userId);
         break;
       }
     case "mastodon":
       {
-        foundUser = await getUserFromIdMastodon(instance, authCode, userId);
+        foundUser = await getUserFromIdMastodon(instance, userId);
         break;
       }
     default:
@@ -27,8 +26,7 @@ Future<User> getUserFromId(
   return foundUser;
 }
 
-Future<User> getUserFromIdMisskey(
-    Instance instance, String authCode, String userId) async {
+Future<User> getUserFromIdMisskey(Instance instance, String userId) async {
   Map<String, dynamic> params;
   String actionPath = "/api/users/show";
 
@@ -48,8 +46,7 @@ Future<User> getUserFromIdMisskey(
   }
 }
 
-Future<User> getUserFromIdMastodon(
-    Instance instance, String authCode, String userId) async {
+Future<User> getUserFromIdMastodon(Instance instance, String userId) async {
   Map<String, dynamic> params;
   String actionPath = "/api/v1/accounts/" + userId;
 
@@ -65,14 +62,13 @@ Future<User> getUserFromIdMastodon(
 }
 
 Future<User> getUserFromUsername(
-    Instance instance, String authCode, String username, String host) async {
+    Instance instance, String username, String host) async {
   User foundUser;
 
   switch (instance.type) {
     case "misskey":
       {
-        foundUser =
-            await getUserFromUsernameMisskey(instance, authCode, username, host);
+        foundUser = await getUserFromUsernameMisskey(instance, username, host);
         break;
       }
     default:
@@ -84,7 +80,7 @@ Future<User> getUserFromUsername(
 }
 
 Future<User> getUserFromUsernameMisskey(
-    Instance instance, String authCode, String username, String host) async {
+    Instance instance, String username, String host) async {
   Map<String, dynamic> params;
   String actionPath = "/api/users/show";
 
