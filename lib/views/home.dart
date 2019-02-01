@@ -15,9 +15,10 @@ class Home extends StatefulWidget {
   HomeState createState() => new HomeState();
 }
 
-class HomeState extends State {
+class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Instance instance;
   String authCode;
+  TabController _tabController;
 
   List<Item> _statuses = new List();
 
@@ -159,48 +160,56 @@ class HomeState extends State {
   @override
   void initState() {
     super.initState();
-    _tabList = List<Widget>.from(_tabs.values.toList());
+    setState(() {
+      _tabList = List<Widget>.from(_tabs.values.toList());
+      _tabController = TabController(vsync: this, length: _tabList.length);
+    });
     verifyAuth();
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.notifications)),
-              Tab(icon: Icon(Icons.people)),
-              Tab(icon: Icon(Icons.public)),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(icon: Icon(Icons.home)),
+            Tab(icon: Icon(Icons.notifications)),
+            Tab(icon: Icon(Icons.people)),
+            Tab(icon: Icon(Icons.public)),
+          ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              // TODO: rest of the drawer
-              // TODO: user header
-              ListTile(
-                title: Text('Logout'),
-                onTap: () {
-                  _logout(context);
-                },
-              )
-            ],
-          ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            // TODO: rest of the drawer
+            // TODO: user header
+            ListTile(
+              title: Text('Logout'),
+              onTap: () {
+                _logout(context);
+              },
+            )
+          ],
         ),
-        body: TabBarView(
-          children: _tabList,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _postStatus,
-          child: Icon(Icons.edit),
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: _tabList,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _postStatus,
+        child: Icon(Icons.edit),
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
       ),
     );
   }

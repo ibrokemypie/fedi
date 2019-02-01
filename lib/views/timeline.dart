@@ -31,6 +31,7 @@ class TimeLineState extends State<TimeLine> {
   @override
   void initState() {
     super.initState();
+    widget.inittimeline(widget.timeline);
   }
 
   Widget statusListView() {
