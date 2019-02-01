@@ -16,8 +16,10 @@ class ItemBuilder extends StatefulWidget {
   final String authCode;
   final Item item;
   final bool isContext;
+  final Key key;
 
-  ItemBuilder(this.instance, this.authCode, this.item, this.isContext);
+  ItemBuilder(
+      this.instance, this.authCode, this.item, this.isContext, this.key);
   @override
   ItemBuilderState createState() => new ItemBuilderState();
 }
@@ -180,7 +182,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   _body(String bodyText) {
     setState(() {
       if (_contentWarningToggled == true) {
-        _bodyTextWidget = PostBody(_instance,_note);
+        _bodyTextWidget = PostBody(_instance, _note);
       } else {
         _bodyTextWidget = Container();
       }

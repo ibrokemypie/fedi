@@ -18,7 +18,7 @@ class StatusContext extends StatefulWidget {
 }
 
 class StatusContextState extends State<StatusContext> {
-    ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
   List<Item> statuses = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
 
@@ -32,7 +32,6 @@ class StatusContextState extends State<StatusContext> {
       statuses = statusList;
       contents = statusListView();
     });
-    
   }
 
   @override
@@ -50,7 +49,8 @@ class StatusContextState extends State<StatusContext> {
         if (index >= statusList.length) {
           return null;
         }
-        return ItemBuilder(widget.instance, widget.authCode, statusList[index],true);
+        return ItemBuilder(widget.instance, widget.authCode, statusList[index],
+            true, Key(statusList[index].id));
       },
     );
   }

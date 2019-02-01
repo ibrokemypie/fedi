@@ -40,8 +40,8 @@ class TimeLineState extends State<TimeLine> {
         if (index >= _statuses.length) {
           return null;
         }
-        return ItemBuilder(
-            widget.instance, widget.authCode, _statuses[index], false);
+        return ItemBuilder(widget.instance, widget.authCode, _statuses[index],
+            false, Key(_statuses[index].id));
       },
     );
   }
