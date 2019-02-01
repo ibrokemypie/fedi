@@ -4,6 +4,7 @@ import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/attachment.dart';
 import 'package:fedi/api/submitpost.dart';
+import 'package:fedi/api/newattachment.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -37,6 +38,7 @@ class PostState extends State<Post> {
   TextEditingController textController;
   List<Attachment> _attachmentList = new List();
   List<File> _mediaList = new List();
+  bool _posted = false;
 
   textUpdated(String currentText) {
     int currentLines = 1 + '\n'.allMatches(currentText).length;
@@ -53,6 +55,7 @@ class PostState extends State<Post> {
   }
 
   _toggleContentWarning() {
+    if (_posted = false){
     if (hasCw != true) {
       setState(() {
         hasCw = true;
@@ -72,28 +75,34 @@ class PostState extends State<Post> {
         contentWarning = null;
         contentWarningField = new Container();
       });
-    }
+    }}
   }
 
   _setVisibility(String newVisibility) {
+    if (_posted = false){
     setState(() {
       visibility = newVisibility;
     });
   }
+  }
 
   _addMedia() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _mediaList.add(image);
-    });
-    _updateMediaRow();
+    if (_posted = false) {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        _mediaList.add(image);
+      });
+      _updateMediaRow();
+    }
   }
 
   _removeMedia(File target) async {
-    setState(() {
-      _mediaList.remove(target);
-    });
-    _updateMediaRow();
+    if (_posted = false) {
+      setState(() {
+        _mediaList.remove(target);
+      });
+      _updateMediaRow();
+    }
   }
 
   _removeMediaButton(File target) {
@@ -148,6 +157,7 @@ class PostState extends State<Post> {
   void newPost() async {
     setState(() {
       submitAction = null;
+      _posted = true;
     });
     try {
       if (chars <= widget.instance.maxChars) {
@@ -161,10 +171,12 @@ class PostState extends State<Post> {
       } else {
         setState(() {
           submitAction = newPost;
+          _posted = false;
         });
       }
     } catch (e) {
       submitAction = newPost;
+      _posted = false;
     }
   }
 
