@@ -21,6 +21,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   List<Item> _statuses = new List();
+  String _currentTab;
 
   LinkedHashMap<String, Widget> _tabs = LinkedHashMap.from({
     "tabOne": new Center(
@@ -87,6 +88,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           authCode: authCode,
           timeline: "home",
           statuses: _statuses,
+          lasttimeline: _currentTab,
           inittimeline: _initTimeline,
         ),
         key: Key("home"),
@@ -102,6 +104,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           authCode: authCode,
           timeline: "local",
           statuses: _statuses,
+          lasttimeline: _currentTab,
           inittimeline: _initTimeline,
         ),
         key: Key("local"),
@@ -113,6 +116,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           authCode: authCode,
           timeline: "public",
           statuses: _statuses,
+          lasttimeline: _currentTab,
           inittimeline: _initTimeline,
         ),
         key: Key("public"),
@@ -157,12 +161,20 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
+  _tabChange() {
+    setState(() {
+      _currentTab = _tabs.keys.elementAt(_tabController.index);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     setState(() {
       _tabList = List<Widget>.from(_tabs.values.toList());
       _tabController = TabController(vsync: this, length: _tabList.length);
+      _tabController.addListener(_tabChange);
+      _currentTab = _tabs.keys.elementAt(_tabController.index);
     });
     verifyAuth();
   }

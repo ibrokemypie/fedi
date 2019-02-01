@@ -11,6 +11,7 @@ class TimeLine extends StatefulWidget {
   final String timeline;
   final List<Item> statuses;
   final Function inittimeline;
+  final String lasttimeline;
   final Key key;
 
   TimeLine(
@@ -19,6 +20,7 @@ class TimeLine extends StatefulWidget {
       this.timeline,
       this.statuses,
       this.inittimeline,
+      this.lasttimeline,
       this.key});
   @override
   TimeLineState createState() => new TimeLineState();
@@ -49,7 +51,9 @@ class TimeLineState extends State<TimeLine> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.statuses == null || widget.statuses.length == 0) {
+    if (widget.statuses == null || widget.statuses.length == 0 || (widget.lasttimeline != widget.timeline)) {
+      print(widget.timeline);
+      print(widget.lasttimeline);
       widget.inittimeline(widget.timeline);
     } else {
       setState(() {
