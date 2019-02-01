@@ -10,8 +10,16 @@ class TimeLine extends StatefulWidget {
   final String authCode;
   final String timeline;
   final List<Item> statuses;
+  final Function inittimeline;
+  final Key key;
 
-  TimeLine({this.instance, this.authCode, this.timeline, this.statuses});
+  TimeLine(
+      {this.instance,
+      this.authCode,
+      this.timeline,
+      this.statuses,
+      this.inittimeline,
+      this.key});
   @override
   TimeLineState createState() => new TimeLineState();
 }
@@ -35,27 +43,9 @@ class TimeLineState extends State<TimeLine> {
     }
   }
 
-  Future<void> _initTimeline() async {
-    List<Item> statusList;
-    statusList =
-        await getTimeline(widget.instance, widget.authCode, widget.timeline);
-    try {
-      setState(() {
-        _statuses = statusList;
-        contents = statusListView();
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _statuses = widget.statuses;
-    });
-    _initTimeline();
   }
 
   Widget statusListView() {
@@ -73,6 +63,15 @@ class TimeLineState extends State<TimeLine> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.statuses == null || widget.statuses.length == 0) {
+      widget.inittimeline(widget.timeline);
+    } else {
+      setState(() {
+        _statuses = widget.statuses;
+        contents = statusListView();
+      });
+    }
+
     return RefreshIndicator(
       child: contents,
       onRefresh: _newStatuses,

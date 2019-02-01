@@ -36,7 +36,7 @@ class HomeState extends State {
     ),
   });
 
-List<Widget> _tabList = List<Widget>();
+  List<Widget> _tabList = List<Widget>();
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -77,17 +77,54 @@ List<Widget> _tabList = List<Widget>();
     }
   }
 
-  Future<void> _initTimeline(String timeline) async {
+  void _resetTabs() {
+    setState(() {
+      _tabs["tabOne"] = TimeLine(
+        instance: instance,
+        authCode: authCode,
+        timeline: "home",
+        statuses: _statuses,
+        inittimeline: _initTimeline,
+        key: Key("home"),
+      );
+      _tabs["tabTwo"] = Notifications(
+        instance: instance,
+        authCode: authCode,
+      );
+      _tabs["tabThree"] = TimeLine(
+        instance: instance,
+        authCode: authCode,
+        timeline: "local",
+        statuses: _statuses,
+        inittimeline: _initTimeline,
+        key: Key("local"),
+      );
+      _tabs["tabFour"] = TimeLine(
+        instance: instance,
+        authCode: authCode,
+        timeline: "public",
+        statuses: _statuses,
+        inittimeline: _initTimeline,
+        key: Key("public"),
+      );
+
+      _tabList = List<Widget>.from(_tabs.values.toList());
+    });
+  }
+
+  Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
     statusList = await getTimeline(instance, authCode, timeline);
     try {
       setState(() {
         _statuses = statusList;
-        // contents = statusListView();
+        _resetTabs();
       });
     } catch (e) {
       print(e);
+      return false;
     }
+    return true;
   }
 
   Future<void> verifyAuth() async {
@@ -104,30 +141,7 @@ List<Widget> _tabList = List<Widget>();
         instance = newInstance;
         authCode = userAuth;
 
-        _tabs["tabOne"] = TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "home",
-          statuses: _statuses,
-        );
-        _tabs["tabTwo"] = Notifications(
-          instance: instance,
-          authCode: authCode,
-        );
-        _tabs["tabThree"] = TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "local",
-          statuses: _statuses,
-        );
-        _tabs["tabFour"] = TimeLine(
-          instance: instance,
-          authCode: authCode,
-          timeline: "public",
-          statuses: _statuses,
-        );
-
-        _tabList = List<Widget>.from(_tabs.values.toList());
+        _resetTabs();
       });
     }
   }
