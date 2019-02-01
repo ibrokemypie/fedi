@@ -109,6 +109,7 @@ class Item {
         !v.containsKey("deletedAt")) {
       try {
         List<Attachment> attachments = new List();
+        List jsonAttachments = v["media"] ?? [];
         List<Emoji> postEmojis = List<Emoji>();
         List<Mention> mentions = List<Mention>();
         List emojis = v["emojis"] ?? [];
@@ -122,8 +123,8 @@ class Item {
           }
         }
 
-        if (v["attachments"] != null) {
-          for (var AttachmentJson in v["attachments"]) {
+        if (jsonAttachments.length > 0) {
+          for (var AttachmentJson in jsonAttachments) {
             if (AttachmentJson != null) {
               Attachment newAttachment = Attachment.fromMisskey(AttachmentJson);
               attachments.add(newAttachment);
@@ -202,7 +203,8 @@ class Item {
         if (jsonAttachments.length > 0) {
           for (var AttachmentJson in jsonAttachments) {
             if (AttachmentJson != null) {
-              Attachment newAttachment = Attachment.fromMastodon(AttachmentJson, v["sensitive"]);
+              Attachment newAttachment =
+                  Attachment.fromMastodon(AttachmentJson, v["sensitive"]);
               attachments.add(newAttachment);
             }
           }
@@ -219,7 +221,7 @@ class Item {
 
         if (v["mentions"] != null) {
           for (Map mentionMap in v["mentions"]) {
-            mentions.add(Mention.fromMastodon(mentionMap,instance));
+            mentions.add(Mention.fromMastodon(mentionMap, instance));
           }
         }
 
