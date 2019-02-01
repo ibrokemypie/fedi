@@ -42,7 +42,7 @@ Future<Item> submitMisskeyPost(
   if (post.contentWarning != null)
     params.putIfAbsent("cw", () => post.contentWarning);
 
-  if (post.attachments != null) {
+  if (post.attachments != null && post.attachments.length > 0) {
     List<String> attachments = new List();
     for (Attachment attachment in post.attachments) {
       attachments.add(attachment.id);
@@ -78,7 +78,7 @@ Future<Item> submitMastodonPost(
   if (post.contentWarning != null)
     params.putIfAbsent("spoiler_text", () => post.contentWarning);
 
-  if (post.attachments != null) {
+  if (post.attachments != null && post.attachments.length > 0) {
     List<String> attachments = new List();
     for (Attachment attachment in post.attachments) {
       attachments.add(attachment.id);
