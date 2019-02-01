@@ -199,7 +199,7 @@ class Item {
           }
         }
 
-        if (attachments.length > 0) {
+        if (jsonAttachments.length > 0) {
           for (var AttachmentJson in jsonAttachments) {
             if (AttachmentJson != null) {
               Attachment newAttachment = Attachment.fromMastodon(AttachmentJson, v["sensitive"]);
