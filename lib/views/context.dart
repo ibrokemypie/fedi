@@ -19,7 +19,7 @@ class StatusContext extends StatefulWidget {
 
 class StatusContextState extends State<StatusContext> {
   ScrollController _scrollController = ScrollController();
-  List<Item> statuses = new List();
+  List<Item> statuses = new List<Item>();
   Widget contents = new Center(child: CircularProgressIndicator());
 
   Future<void> newStatuses() async {
@@ -37,6 +37,10 @@ class StatusContextState extends State<StatusContext> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      statuses.add(widget.originalStatus);
+      contents = statusListView();
+    });
     newStatuses();
   }
 
