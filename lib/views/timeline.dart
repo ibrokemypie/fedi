@@ -28,21 +28,6 @@ class TimeLineState extends State<TimeLine> {
   Widget contents = new Center(child: CircularProgressIndicator());
   List<Item> _statuses = new List();
 
-  Future<void> _newStatuses() async {
-    List<Item> statusList;
-    statusList =
-        await getTimeline(widget.instance, widget.authCode, widget.timeline);
-
-    try {
-      setState(() {
-        _statuses = statusList;
-        contents = statusListView();
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -72,9 +57,6 @@ class TimeLineState extends State<TimeLine> {
       });
     }
 
-    return RefreshIndicator(
-      child: contents,
-      onRefresh: _newStatuses,
-    );
+    return contents;
   }
 }

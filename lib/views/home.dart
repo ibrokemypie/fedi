@@ -70,6 +70,7 @@ class HomeState extends State {
     try {
       setState(() {
         _statuses = statusList;
+        _resetTabs();
         // contents = statusListView();
       });
     } catch (e) {
@@ -79,33 +80,42 @@ class HomeState extends State {
 
   void _resetTabs() {
     setState(() {
-      _tabs["tabOne"] = TimeLine(
-        instance: instance,
-        authCode: authCode,
-        timeline: "home",
-        statuses: _statuses,
-        inittimeline: _initTimeline,
+      _tabs["tabOne"] = RefreshIndicator(
+        child: TimeLine(
+          instance: instance,
+          authCode: authCode,
+          timeline: "home",
+          statuses: _statuses,
+          inittimeline: _initTimeline,
+        ),
         key: Key("home"),
+        onRefresh: () => _newStatuses("home"),
       );
       _tabs["tabTwo"] = Notifications(
         instance: instance,
         authCode: authCode,
       );
-      _tabs["tabThree"] = TimeLine(
-        instance: instance,
-        authCode: authCode,
-        timeline: "local",
-        statuses: _statuses,
-        inittimeline: _initTimeline,
+      _tabs["tabThree"] = RefreshIndicator(
+        child: TimeLine(
+          instance: instance,
+          authCode: authCode,
+          timeline: "local",
+          statuses: _statuses,
+          inittimeline: _initTimeline,
+        ),
         key: Key("local"),
+        onRefresh: () => _newStatuses("local"),
       );
-      _tabs["tabFour"] = TimeLine(
-        instance: instance,
-        authCode: authCode,
-        timeline: "public",
-        statuses: _statuses,
-        inittimeline: _initTimeline,
+      _tabs["tabFour"] = RefreshIndicator(
+        child: TimeLine(
+          instance: instance,
+          authCode: authCode,
+          timeline: "public",
+          statuses: _statuses,
+          inittimeline: _initTimeline,
+        ),
         key: Key("public"),
+        onRefresh: () => _newStatuses("local"),
       );
 
       _tabList = List<Widget>.from(_tabs.values.toList());
