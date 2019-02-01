@@ -218,8 +218,8 @@ class Item {
         }
 
         if (v["mentions"] != null) {
-          for (String mentionedId in v["mentions"]) {
-            mentions.add(Mention(id: mentionedId));
+          for (Map mentionMap in v["mentions"]) {
+            mentions.add(Mention.fromMastodon(mentionMap));
           }
         }
 
