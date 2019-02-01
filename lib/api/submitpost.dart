@@ -3,9 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/newpost.dart';
+import 'package:fedi/definitions/item.dart';
 
-submitPost(Instance instance, String authCode, NewPost post) async {
-  var createdNote;
+Future<Item> submitPost(Instance instance, String authCode, NewPost post) async {
+  Item createdNote;
 
   switch (instance.type) {
     case "misskey":
@@ -22,7 +23,7 @@ submitPost(Instance instance, String authCode, NewPost post) async {
   return createdNote;
 }
 
-Future<dynamic> submitMisskeyPost(
+Future<Item> submitMisskeyPost(
     Instance instance, String authCode, NewPost post) async {
   Map<String, dynamic> params;
   String actionPath = "/api/notes/create";
@@ -45,7 +46,7 @@ Future<dynamic> submitMisskeyPost(
 
   if (response.statusCode == 200) {
     var returned = json.decode(response.body);
-    return returned;
+    return Item.fromMisskey(returned["createdNote"], instance);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
@@ -53,7 +54,7 @@ Future<dynamic> submitMisskeyPost(
 }
 
 
-Future<dynamic> submitMastodonPost(
+Future<Item> submitMastodonPost(
     Instance instance, String authCode, NewPost post) async {
   Map<String, dynamic> params;
   String actionPath = "/api/v1/statuses";

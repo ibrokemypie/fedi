@@ -79,10 +79,9 @@ class PostState extends State<Post> {
             content: textController.text,
             contentWarning: contentWarning,
             replyTo: replyTo);
-        // TODO: add createdNote to timeline
         var createdNote =
             await submitPost(widget.instance, widget.authCode, post);
-        Navigator.pop(context);
+        Navigator.pop(context, createdNote);
       } else {
         setState(() {
           submitAction = newPost;

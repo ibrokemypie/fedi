@@ -5,6 +5,7 @@ import 'package:fedi/views/notifications.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/item.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
@@ -15,13 +16,16 @@ class Home extends StatefulWidget {
 class HomeState extends State {
   Instance instance;
   String authCode;
+
+  List<Item> statuses = new List();
+
   Widget tabOne = new Center(
     child: CircularProgressIndicator(),
   );
   Widget tabTwo = new Center(
     child: CircularProgressIndicator(),
   );
-  Widget tabThree= new Center(
+  Widget tabThree = new Center(
     child: CircularProgressIndicator(),
   );
   Widget tabFour = new Center(
@@ -35,6 +39,22 @@ class HomeState extends State {
     prefs.setString('instance', null);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LogIn()));
+  }
+
+  void _postStatus() async {
+    final _newStatus = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Post(
+                  instance: instance,
+                  authCode: authCode,
+                )));
+    setState(() {
+      List<Item> _newlist = List();
+      _newlist.add(_newStatus);
+      _newlist.addAll(statuses);
+      statuses = _newlist;
+    });
   }
 
   Future<void> verifyAuth() async {
@@ -54,6 +74,7 @@ class HomeState extends State {
           instance: instance,
           authCode: authCode,
           timeline: "home",
+          statuses: statuses,
         );
         tabTwo = Notifications(
           instance: instance,
@@ -63,11 +84,13 @@ class HomeState extends State {
           instance: instance,
           authCode: authCode,
           timeline: "local",
+          statuses: statuses,
         );
         tabFour = TimeLine(
           instance: instance,
           authCode: authCode,
           timeline: "public",
+          statuses: statuses,
         );
       });
     }
@@ -117,13 +140,7 @@ class HomeState extends State {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Post(
-                        instance: instance,
-                        authCode: authCode,
-                      ))),
+          onPressed: _postStatus,
           child: Icon(Icons.edit),
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,

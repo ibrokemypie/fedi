@@ -9,46 +9,64 @@ class TimeLine extends StatefulWidget {
   final Instance instance;
   final String authCode;
   final String timeline;
+  final List<Item> statuses;
 
-  TimeLine({this.instance, this.authCode, this.timeline});
+  TimeLine({this.instance, this.authCode, this.timeline, this.statuses});
   @override
   TimeLineState createState() => new TimeLineState();
 }
 
 class TimeLineState extends State<TimeLine> {
-  List<Item> statuses = new List();
   Widget contents = new Center(child: CircularProgressIndicator());
+  List<Item> _statuses = new List();
 
-  Future<void> newStatuses() async {
+  Future<void> _newStatuses() async {
     List<Item> statusList;
-    if (statuses.length > 0) {
-      statusList = await getTimeline(widget.instance, widget.authCode, widget.timeline,
-          currentStatuses: statuses, sinceId: statuses[0].id);
-    } else {
-      statusList = await getTimeline(widget.instance, widget.authCode, widget.timeline);
-    }
+    statusList =
+        await getTimeline(widget.instance, widget.authCode, widget.timeline);
+
     try {
       setState(() {
-        statuses = statusList;
+        _statuses = statusList;
         contents = statusListView();
       });
-    } catch (e) {print(e);}
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _initTimeline() async {
+    List<Item> statusList;
+    statusList =
+        await getTimeline(widget.instance, widget.authCode, widget.timeline);
+    try {
+      setState(() {
+        _statuses = statusList;
+        contents = statusListView();
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    newStatuses();
+    setState(() {
+      _statuses = widget.statuses;
+    });
+    _initTimeline();
   }
 
   Widget statusListView() {
     return new ListView.builder(
       itemBuilder: (context, i) {
         final index = i;
-        if (index >= statuses.length) {
+        if (index >= _statuses.length) {
           return null;
         }
-        return ItemBuilder(widget.instance, widget.authCode, statuses[index],false);
+        return ItemBuilder(
+            widget.instance, widget.authCode, _statuses[index], false);
       },
     );
   }
@@ -57,7 +75,7 @@ class TimeLineState extends State<TimeLine> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       child: contents,
-      onRefresh: newStatuses,
+      onRefresh: _newStatuses,
     );
   }
 }
