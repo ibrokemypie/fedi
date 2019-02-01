@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/item.dart';
 import 'dart:async';
-import 'dart:collection';
 import 'package:fedi/api/gettimeline.dart';
 
 class Home extends StatefulWidget {
@@ -64,28 +63,26 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  Future<void> _newStatuses() async {
+  Future<void> _newStatuses(String timeline) async {
     List<Item> statusList;
-    statusList = await getTimeline(instance, authCode, _currentTab);
+    statusList = await getTimeline(instance, authCode, timeline);
 
     try {
       setState(() {
-        _tabStatuses[_currentTab] = statusList;
+        _tabStatuses[timeline] = statusList;
         _populateTabs();
-        // contents = statusListView();
       });
     } catch (e) {
       print(e);
     }
   }
 
-  Future<bool> _initTimeline() async {
+  Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
-    print("timeline" + _currentTab);
-    statusList = await getTimeline(instance, authCode, _currentTab);
+    statusList = await getTimeline(instance, authCode, timeline);
     try {
       setState(() {
-        _tabStatuses[_currentTab] = statusList;
+        _tabStatuses[timeline] = statusList;
         _populateTabs();
       });
     } catch (e) {
@@ -122,7 +119,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setState(() {
       _lastTab = _currentTab;
       _currentTab = _tabNames[_tabController.index];
-      print("last tab: " + _lastTab + " current tab: " + _currentTab);
     });
   }
 
@@ -132,10 +128,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         instance: instance,
         authCode: authCode,
         statuses: _tabStatuses[timelineName],
-        inittimeline: _initTimeline,
+        inittimeline: () => _initTimeline(timelineName),
       ),
       key: Key(timelineName),
-      onRefresh: () => _newStatuses(),
+      onRefresh: () => _newStatuses(timelineName),
     );
   }
 
