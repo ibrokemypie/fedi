@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/newpost.dart';
+import 'package:fedi/definitions/attachment.dart';
 import 'package:fedi/definitions/item.dart';
 
-Future<Item> submitPost(Instance instance, String authCode, NewPost post) async {
+Future<Item> submitPost(
+    Instance instance, String authCode, NewPost post) async {
   Item createdNote;
 
   switch (instance.type) {
@@ -35,11 +37,18 @@ Future<Item> submitMisskeyPost(
     "viaMobile": true,
   });
 
-  if (post.replyTo != null)
-    params.putIfAbsent("replyId", () => post.replyTo);
+  if (post.replyTo != null) params.putIfAbsent("replyId", () => post.replyTo);
 
   if (post.contentWarning != null)
     params.putIfAbsent("cw", () => post.contentWarning);
+
+  if (post.attachments != null) {
+    List<String> attachments = new List();
+    for (Attachment attachment in post.attachments) {
+      attachments.add(attachment.id);
+    }
+    params.putIfAbsent("fileIds", () => attachments);
+  }
 
   final response =
       await http.post(instance.uri + actionPath, body: json.encode(params));
@@ -52,7 +61,6 @@ Future<Item> submitMisskeyPost(
         (instance.uri + actionPath + json.encode(params)));
   }
 }
-
 
 Future<Item> submitMastodonPost(
     Instance instance, String authCode, NewPost post) async {
@@ -70,9 +78,8 @@ Future<Item> submitMastodonPost(
   if (post.contentWarning != null)
     params.putIfAbsent("spoiler_text", () => post.contentWarning);
 
-  final response =
-      await http.post(instance.uri + actionPath, body: params,
-      headers: {"Authorization": "bearer " + authCode});
+  final response = await http.post(instance.uri + actionPath,
+      body: params, headers: {"Authorization": "bearer " + authCode});
 
   if (response.statusCode == 200) {
     var returned = json.decode(response.body);

@@ -6,6 +6,7 @@ import 'package:fedi/definitions/attachment.dart';
 import 'package:fedi/api/submitpost.dart';
 import 'package:fedi/api/newattachment.dart';
 import 'dart:io';
+import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 
 class Post extends StatefulWidget {
@@ -55,39 +56,40 @@ class PostState extends State<Post> {
   }
 
   _toggleContentWarning() {
-    if (_posted = false){
-    if (hasCw != true) {
-      setState(() {
-        hasCw = true;
-        contentWarningField = new Container(
-            child: FormField(
-          builder: (FormFieldState<int> state) => TextField(
-                onChanged: _contentWarningUpdated,
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(16),
-                    hintText: "Content Warning"),
-              ),
-        ));
-      });
-    } else {
-      setState(() {
-        hasCw = false;
-        contentWarning = null;
-        contentWarningField = new Container();
-      });
-    }}
+    if (!_posted) {
+      if (hasCw != true) {
+        setState(() {
+          hasCw = true;
+          contentWarningField = new Container(
+              child: FormField(
+            builder: (FormFieldState<int> state) => TextField(
+                  onChanged: _contentWarningUpdated,
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(16),
+                      hintText: "Content Warning"),
+                ),
+          ));
+        });
+      } else {
+        setState(() {
+          hasCw = false;
+          contentWarning = null;
+          contentWarningField = new Container();
+        });
+      }
+    }
   }
 
   _setVisibility(String newVisibility) {
-    if (_posted = false){
-    setState(() {
-      visibility = newVisibility;
-    });
-  }
+    if (!_posted) {
+      setState(() {
+        visibility = newVisibility;
+      });
+    }
   }
 
   _addMedia() async {
-    if (_posted = false) {
+    if (!_posted) {
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       setState(() {
         _mediaList.add(image);
@@ -97,7 +99,7 @@ class PostState extends State<Post> {
   }
 
   _removeMedia(File target) async {
-    if (_posted = false) {
+    if (!_posted) {
       setState(() {
         _mediaList.remove(target);
       });
@@ -154,6 +156,17 @@ class PostState extends State<Post> {
     }
   }
 
+  Future<void> _uploadAttachments() async {
+    for (File file in _mediaList) {
+      Attachment attachment =
+          await newAttachment(widget.instance, widget.authCode, file, false);
+      setState(() {
+        _attachmentList.add(attachment);
+      });
+    }
+    return true;
+  }
+
   void newPost() async {
     setState(() {
       submitAction = null;
@@ -161,10 +174,13 @@ class PostState extends State<Post> {
     });
     try {
       if (chars <= widget.instance.maxChars) {
+        await _uploadAttachments();
+        print("ye");
         NewPost post = NewPost(visibility,
             content: textController.text,
             contentWarning: contentWarning,
-            replyTo: replyTo);
+            replyTo: replyTo,
+            attachments: _attachmentList);
         var createdNote =
             await submitPost(widget.instance, widget.authCode, post);
         Navigator.pop(context, createdNote);
