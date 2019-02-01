@@ -10,7 +10,7 @@ import 'package:fedi/definitions/user.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
-import 'package:fedi/views/postbody.dart';
+import 'package:fedi/views/statusbody.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
