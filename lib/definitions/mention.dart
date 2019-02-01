@@ -39,5 +39,5 @@ class Mention {
   }
 
   Map<String, dynamic> toJson() => _$MentionToJson(this);
-  Map<String, dynamic> fromJson() => _$MentionFromJson(this);
+  factory Mention.fromJson(Map<String, dynamic> json) => _$MentionFromJson(json);
 }

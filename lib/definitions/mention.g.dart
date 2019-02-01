@@ -8,7 +8,11 @@ part of 'mention.dart';
 
 Mention _$MentionFromJson(Map<String, dynamic> json) {
   return Mention(
-      json['id'], json['username'], json['host'], json['acct'], json['url']);
+      id: json['id'],
+      username: json['username'],
+      host: json['host'],
+      acct: json['acct'],
+      url: json['url']);
 }
 
 Map<String, dynamic> _$MentionToJson(Mention instance) => <String, dynamic>{
