@@ -10,7 +10,7 @@ class Mention {
   String acct;
   String url;
 
-  Mention(id, username, host, acct, url) {
+  Mention({id, username, host, acct, url}) {
     this.id = id;
     this.username = username;
     this.host = host;

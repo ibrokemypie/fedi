@@ -4,6 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/emoji.dart';
+import 'package:fedi/definitions/mention.dart';
+import 'package:fedi/api/getuser.dart';
 
 part 'item.g.dart';
 
@@ -27,6 +29,7 @@ class Item {
   bool isRead;
   Item notificationNote;
   List<Emoji> emoji;
+  List<Mention> mentions;
 
   Item(
       id,
@@ -46,7 +49,8 @@ class Item {
       notificationType,
       isRead,
       notificationNote,
-      emoji) {
+      emoji,
+      mentions) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -65,6 +69,7 @@ class Item {
     this.isRead = isRead;
     this.notificationNote = notificationNote;
     this.emoji = emoji;
+    this.mentions = mentions;
   }
 
   Item.fromJson(Map json) {
@@ -86,6 +91,7 @@ class Item {
     this.isRead = json['isRead'];
     this.notificationNote = json['notificationNote'];
     this.emoji = json['emoji'];
+    this.mentions = json['mentions'];
   }
 
   Item.fromMisskey(Map v, Instance instance) {
@@ -104,6 +110,7 @@ class Item {
       try {
         List<File> files = new List();
         List<Emoji> postEmojis = List<Emoji>();
+        List<Mention> mentions = List<Mention>();
         List emojis = v["emojis"] ?? [];
 
         if (emojis.length > 0) {
@@ -133,6 +140,17 @@ class Item {
           this.author = user;
         }
 
+        if (v["mentions"] != null) {
+          for (String mentionedId in v["mentions"]) {
+            mentions.add(Mention(id: mentionedId));
+          }
+        }
+        // if (v["mentionedRemoteUsers"] != null) {
+        //   for (Map mentionJson in v["mentionedRemoteUsers"]) {
+        //     mentions.add(Mention.fromMisskey(mentionJson));
+        //   }
+        // }
+
         this.id = v["id"];
         this.date = v["createdAt"];
         this.body = v["text"] ?? "";
@@ -148,6 +166,7 @@ class Item {
             v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
         this.contentWarning = v["cw"] ?? null;
+        this.mentions = mentions;
 
         if (v["type"] != null && v["deletedAt"] == null) {
           this.isRead = v["isRead"];
@@ -169,6 +188,7 @@ class Item {
         List attachments = v["media_attachments"] ?? [];
         List<Emoji> postEmojis = List<Emoji>();
         List emojis = v["emojis"] ?? [];
+        List<Mention> mentions = List<Mention>();
 
         if (emojis.length > 0) {
           for (var emoji in emojis) {
@@ -197,6 +217,12 @@ class Item {
           this.author = user;
         }
 
+        if (v["mentions"] != null) {
+          for (String mentionedId in v["mentions"]) {
+            mentions.add(Mention(id: mentionedId));
+          }
+        }
+
         this.id = v["id"];
         this.date = v["created_at"];
         this.body = v["content"] ?? "";
@@ -210,6 +236,7 @@ class Item {
         this.favourited = v["favourited"] ?? false;
         this.favCount = v["favourites_count"];
         this.contentWarning = v["spoiler_text"] ?? null;
+        this.mentions = mentions;
 
         if (v["type"] != null) {
           this.notificationType = v["type"];
