@@ -3,7 +3,10 @@ import 'package:fedi/definitions/item.dart';
 import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
+import 'package:fedi/api/getuser.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/mention.dart';
+import 'package:fedi/definitions/user.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/statusfiles.dart';
 import 'package:fedi/views/context.dart';
@@ -67,7 +70,18 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
-  void _reply() {
+  void _reply() async {
+    String prefill = "@" + _note.author.acct;
+    for (Mention mentionObject in _note.mentions) {
+      if (mentionObject.acct != null) {
+        prefill = prefill + " " + "@" + mentionObject.acct;
+      } else {
+        User mentionedUser = await getUserFromId(_instance, mentionObject.id);
+        prefill = prefill + " " + "@" + mentionedUser.acct;
+      }
+    }
+    print(prefill);
+
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -75,7 +89,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                   instance: _instance,
                   authCode: widget.authCode,
                   replyTo: _note.id,
-                  preFill: "@" + _note.author.acct + " ",
+                  preFill: prefill,
                   visibility: _note.visibility,
                 )));
   }
