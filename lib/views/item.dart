@@ -76,6 +76,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                   authCode: widget.authCode,
                   replyTo: _note.id,
                   preFill: "@" + _note.author.acct + " ",
+                  visibility: _note.visibility,
                 )));
   }
 

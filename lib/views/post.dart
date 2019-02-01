@@ -8,9 +8,10 @@ class Post extends StatefulWidget {
   final Instance instance;
   final String authCode;
   final String preFill;
+  final String visibility;
   final String replyTo;
 
-  Post({this.instance, this.authCode, this.preFill, this.replyTo});
+  Post({this.instance, this.authCode, this.preFill, this.replyTo,this.visibility});
   @override
   PostState createState() => new PostState();
 }
@@ -19,7 +20,7 @@ class PostState extends State<Post> {
   var submitAction;
   int maxLines = 10;
   int chars = 0;
-  String visibility = "public";
+  String visibility;
   Widget contentWarningField;
   bool hasCw;
   String contentWarning;
@@ -96,6 +97,7 @@ class PostState extends State<Post> {
   void initState() {
     super.initState();
     submitAction = newPost;
+    visibility = widget.visibility ?? "public";
     contentWarningField = new Container();
     replyTo = widget.replyTo;
     textController = TextEditingController(text: widget.preFill ?? "");
