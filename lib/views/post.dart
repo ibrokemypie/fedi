@@ -11,7 +11,12 @@ class Post extends StatefulWidget {
   final String visibility;
   final String replyTo;
 
-  Post({this.instance, this.authCode, this.preFill, this.replyTo,this.visibility});
+  Post(
+      {this.instance,
+      this.authCode,
+      this.preFill,
+      this.replyTo,
+      this.visibility});
   @override
   PostState createState() => new PostState();
 }
