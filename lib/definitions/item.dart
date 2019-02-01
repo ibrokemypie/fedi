@@ -219,7 +219,7 @@ class Item {
 
         if (v["mentions"] != null) {
           for (Map mentionMap in v["mentions"]) {
-            mentions.add(Mention.fromMastodon(mentionMap));
+            mentions.add(Mention.fromMastodon(mentionMap,instance));
           }
         }
 
