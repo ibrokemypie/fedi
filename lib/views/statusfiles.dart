@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
-import 'package:fedi/definitions/file.dart';
+import 'package:fedi/definitions/attachment.dart';
 import 'package:fedi/views/imageviewer.dart';
 
 class StatusFile extends StatefulWidget {
-  final List<File> files;
+  final List<Attachment> files;
   final int fileNumber;
   final Function showImage;
 
@@ -15,8 +15,8 @@ class StatusFile extends StatefulWidget {
 
 class StatusFileState extends State<StatusFile> {
   bool _isVisible;
-  List<File> _files;
-  File _file;
+  List<Attachment> _files;
+  Attachment _file;
   Widget _toggleButton = Container();
 
   @override
@@ -89,7 +89,7 @@ class StatusFileState extends State<StatusFile> {
 }
 
 Widget singleFile(Item status, int fileNumber, Function showImage) {
-  return Container(child: StatusFile(status.files, fileNumber, showImage));
+  return Container(child: StatusFile(status.attachments, fileNumber, showImage));
 }
 
 Widget fileRow(Item status, int startAt, Function showImage) {
@@ -98,8 +98,8 @@ Widget fileRow(Item status, int startAt, Function showImage) {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
-      StatusFile(status.files, startAt, showImage),
-      StatusFile(status.files, startAt + 1, showImage),
+      StatusFile(status.attachments, startAt, showImage),
+      StatusFile(status.attachments, startAt + 1, showImage),
     ],
   ));
 }
@@ -112,14 +112,14 @@ class statusFiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void viewImage(List<File> files, int currentFile) {
+    void viewImage(List<Attachment> files, int currentFile) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => imageViewer(files, currentFile)));
     }
 
-    switch (status.files.length) {
+    switch (status.attachments.length) {
       case 0:
         return Container();
       case 1:
@@ -154,8 +154,8 @@ class statusFiles extends StatelessWidget {
             ),
           ));
         } else {
-          if (status.files.length > 4) {
-            int remaining = status.files.length - 4;
+          if (status.attachments.length > 4) {
+            int remaining = status.attachments.length - 4;
             int currentNumber = 4;
             while (remaining > 0) {
               if (remaining % 2 == 0) {

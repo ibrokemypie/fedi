@@ -1,5 +1,5 @@
 import 'package:fedi/definitions/user.dart';
-import 'package:fedi/definitions/file.dart';
+import 'package:fedi/definitions/attachment.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
@@ -23,7 +23,7 @@ class Item {
   String myReaction;
   int renoteCount;
   int replyCount;
-  List<File> files;
+  List<Attachment> attachments;
   Item renote;
   String notificationType;
   bool isRead;
@@ -44,7 +44,7 @@ class Item {
       myReaction,
       renoteCount,
       replyCount,
-      files,
+      attachments,
       renote,
       notificationType,
       isRead,
@@ -63,7 +63,7 @@ class Item {
     this.myReaction = myReaction;
     this.renoteCount = renoteCount;
     this.replyCount = replyCount;
-    this.files = files;
+    this.attachments = attachments;
     this.renote = renote;
     this.notificationType = notificationType;
     this.isRead = isRead;
@@ -85,7 +85,7 @@ class Item {
     this.myReaction = json['reaction'];
     this.renoteCount = json['renoteCount'];
     this.replyCount = json['replyCount'];
-    this.files = json['files'];
+    this.attachments = json['attachments'];
     this.renote = json['renote'];
     this.notificationType = json['notificationType'];
     this.isRead = json['isRead'];
@@ -108,7 +108,7 @@ class Item {
         v["deletedAt"] == null &&
         !v.containsKey("deletedAt")) {
       try {
-        List<File> files = new List();
+        List<Attachment> attachments = new List();
         List<Emoji> postEmojis = List<Emoji>();
         List<Mention> mentions = List<Mention>();
         List emojis = v["emojis"] ?? [];
@@ -122,11 +122,11 @@ class Item {
           }
         }
 
-        if (v["files"] != null) {
-          for (var fileJson in v["files"]) {
-            if (fileJson != null) {
-              File newFile = File.fromMisskey(fileJson);
-              files.add(newFile);
+        if (v["attachments"] != null) {
+          for (var AttachmentJson in v["attachments"]) {
+            if (AttachmentJson != null) {
+              Attachment newAttachment = Attachment.fromMisskey(AttachmentJson);
+              attachments.add(newAttachment);
             }
           }
         }
@@ -156,11 +156,11 @@ class Item {
         this.body = v["text"] ?? "";
         this.renoteCount = v["renoteCount"] ?? 0;
         this.replyCount = v["repliesCount"] ?? 0;
-        this.files = files;
+        this.attachments = attachments;
         this.myReaction = v["myReaction"] ?? null;
         this.visibility = v["visibility"] ?? null;
         this.url = v["uri"];
-        this.files = files;
+        this.attachments = attachments;
         this.emoji = postEmojis;
         this.favourited =
             v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
@@ -184,8 +184,8 @@ class Item {
   Item.fromMastodon(Map v, Instance instance) {
     if (v["account"] != null && v["id"] != null) {
       try {
-        List<File> files = new List();
-        List attachments = v["media_attachments"] ?? [];
+        List<Attachment> attachments = new List();
+        List jsonAttachments = v["media_attachments"] ?? [];
         List<Emoji> postEmojis = List<Emoji>();
         List emojis = v["emojis"] ?? [];
         List<Mention> mentions = List<Mention>();
@@ -200,10 +200,10 @@ class Item {
         }
 
         if (attachments.length > 0) {
-          for (var fileJson in attachments) {
-            if (fileJson != null) {
-              File newFile = File.fromMastodon(fileJson, v["sensitive"]);
-              files.add(newFile);
+          for (var AttachmentJson in jsonAttachments) {
+            if (AttachmentJson != null) {
+              Attachment newAttachment = Attachment.fromMastodon(AttachmentJson, v["sensitive"]);
+              attachments.add(newAttachment);
             }
           }
         }
@@ -228,7 +228,7 @@ class Item {
         this.body = v["content"] ?? "";
         this.renoteCount = v["reblogs_count"] ?? 0;
         this.replyCount = v["replies_count"] ?? 0;
-        this.files = files;
+        this.attachments = attachments;
         this.emoji = postEmojis;
         this.myReaction = null;
         this.visibility = v["visibility"] ?? null;

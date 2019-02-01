@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'file.dart';
+part of 'attachment.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-File _$FileFromJson(Map<String, dynamic> json) {
-  return File(
+Attachment _$AttachmentFromJson(Map<String, dynamic> json) {
+  return Attachment(
       json['id'],
       json['date'],
       json['name'],
@@ -18,7 +18,8 @@ File _$FileFromJson(Map<String, dynamic> json) {
       json['fileUrl']);
 }
 
-Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
+Map<String, dynamic> _$AttachmentToJson(Attachment instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
       'name': instance.name,

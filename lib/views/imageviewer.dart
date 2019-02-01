@@ -2,16 +2,16 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
-import 'package:fedi/definitions/file.dart';
+import 'package:fedi/definitions/attachment.dart';
 
-Widget imageViewer(List<File> files, int chosen) {
+Widget imageViewer(List<Attachment> attachments, int chosen) {
   List<PhotoViewGalleryPageOptions> pages =
       new List<PhotoViewGalleryPageOptions>();
   PageController pageController = new PageController(initialPage: chosen);
 
-  for (File file in files) {
+  for (Attachment attachment in attachments) {
     pages.add(PhotoViewGalleryPageOptions(
-      imageProvider: NetworkImage(file.fileUrl),
+      imageProvider: NetworkImage(attachment.fileUrl),
       minScale: PhotoViewComputedScale.contained,
       maxScale: PhotoViewComputedScale.covered * 1.8,
     ));
