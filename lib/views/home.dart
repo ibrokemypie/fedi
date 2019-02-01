@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/item.dart';
 import 'dart:async';
+import 'dart:collection';
+import 'package:fedi/api/gettimeline.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,20 +19,24 @@ class HomeState extends State {
   Instance instance;
   String authCode;
 
-  List<Item> statuses = new List();
+  List<Item> _statuses = new List();
 
-  Widget tabOne = new Center(
-    child: CircularProgressIndicator(),
-  );
-  Widget tabTwo = new Center(
-    child: CircularProgressIndicator(),
-  );
-  Widget tabThree = new Center(
-    child: CircularProgressIndicator(),
-  );
-  Widget tabFour = new Center(
-    child: CircularProgressIndicator(),
-  );
+  LinkedHashMap<String, Widget> _tabs = LinkedHashMap.from({
+    "tabOne": new Center(
+      child: CircularProgressIndicator(),
+    ),
+    "tabTwo": new Center(
+      child: CircularProgressIndicator(),
+    ),
+    "tabThree": new Center(
+      child: CircularProgressIndicator(),
+    ),
+    "tabFour": new Center(
+      child: CircularProgressIndicator(),
+    ),
+  });
+
+List<Widget> _tabList = List<Widget>();
 
   void _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -52,9 +58,36 @@ class HomeState extends State {
     setState(() {
       List<Item> _newlist = List();
       _newlist.add(_newStatus);
-      _newlist.addAll(statuses);
-      statuses = _newlist;
+      _newlist.addAll(_statuses);
+      _statuses = _newlist;
     });
+  }
+
+  Future<void> _newStatuses(String timeline) async {
+    List<Item> statusList;
+    statusList = await getTimeline(instance, authCode, timeline);
+
+    try {
+      setState(() {
+        _statuses = statusList;
+        // contents = statusListView();
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _initTimeline(String timeline) async {
+    List<Item> statusList;
+    statusList = await getTimeline(instance, authCode, timeline);
+    try {
+      setState(() {
+        _statuses = statusList;
+        // contents = statusListView();
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> verifyAuth() async {
@@ -70,28 +103,31 @@ class HomeState extends State {
       setState(() {
         instance = newInstance;
         authCode = userAuth;
-        tabOne = TimeLine(
+
+        _tabs["tabOne"] = TimeLine(
           instance: instance,
           authCode: authCode,
           timeline: "home",
-          statuses: statuses,
+          statuses: _statuses,
         );
-        tabTwo = Notifications(
+        _tabs["tabTwo"] = Notifications(
           instance: instance,
           authCode: authCode,
         );
-        tabThree = TimeLine(
+        _tabs["tabThree"] = TimeLine(
           instance: instance,
           authCode: authCode,
           timeline: "local",
-          statuses: statuses,
+          statuses: _statuses,
         );
-        tabFour = TimeLine(
+        _tabs["tabFour"] = TimeLine(
           instance: instance,
           authCode: authCode,
           timeline: "public",
-          statuses: statuses,
+          statuses: _statuses,
         );
+
+        _tabList = List<Widget>.from(_tabs.values.toList());
       });
     }
   }
@@ -99,6 +135,7 @@ class HomeState extends State {
   @override
   void initState() {
     super.initState();
+    _tabList = List<Widget>.from(_tabs.values.toList());
     verifyAuth();
   }
 
@@ -132,12 +169,7 @@ class HomeState extends State {
           ),
         ),
         body: TabBarView(
-          children: [
-            tabOne,
-            tabTwo,
-            tabThree,
-            tabFour,
-          ],
+          children: _tabList,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _postStatus,
