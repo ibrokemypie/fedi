@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/timeline.dart';
-import 'package:fedi/views/notifications.dart';
 import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
@@ -164,7 +163,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     setState(() {
-      _tabNames = new List.of(["home", "local", "local", "public"]);
+      _tabNames = new List.of(["home", "notifications", "local", "public"]);
       _tabController = TabController(vsync: this, length: _tabNames.length);
     });
     _initTabStatuses();
