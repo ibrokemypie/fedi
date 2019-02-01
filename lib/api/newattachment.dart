@@ -52,7 +52,6 @@ Future<Attachment> newMisskeyAttachment(Instance instance, String authCode,
         .listen((data) => returned = json.decode(data));
 
     Attachment newA = Attachment.fromMisskey(returned);
-    print(newA.toJson());
     return newA;
   } else {
     throw Exception('Failed to load post ' +
@@ -62,28 +61,29 @@ Future<Attachment> newMisskeyAttachment(Instance instance, String authCode,
 
 Future<Attachment> newMastodonAttachment(Instance instance, String authCode,
     File attachment, bool isSensitive) async {
-  // Map<String, dynamic> params;
-  // String actionPath = "/api/v1/statuses";
+  String actionPath = "/api/v1/media";
 
-  // params = Map.from({
-  //   "status": post.content,
-  //   "visibility": post.visiblity,
-  // });
+  var request =
+      http.MultipartRequest("POST", Uri.parse(instance.uri + actionPath));
 
-  // if (post.replyTo != null)
-  //   params.putIfAbsent("in_reply_to_id", () => post.replyTo);
+  request.headers['Authorization'] = "bearer " + authCode;
 
-  // if (post.contentWarning != null)
-  //   params.putIfAbsent("spoiler_text", () => post.contentWarning);
+  request.files.add(new http.MultipartFile.fromBytes(
+      "file", attachment.readAsBytesSync(),
+      filename: basename(attachment.path)));
 
-  // final response = await http.post(instance.uri + actionPath,
-  //     body: params, headers: {"Authorization": "bearer " + authCode});
+  Map returned;
 
-  // if (response.statusCode == 200) {
-  //   var returned = json.decode(response.body);
-  //   return returned;
-  // } else {
-  //   throw Exception('Failed to load post ' +
-  //       (instance.uri + actionPath + json.encode(params)));
-  // }
+  final response = await request.send();
+  if (response.statusCode == 200) {
+    var decoder = new Utf8Decoder(allowMalformed: true);
+    await response.stream
+        .transform(decoder)
+        .listen((data) => returned = json.decode(data));
+
+    Attachment newA = Attachment.fromMastodon(returned, false);
+    return newA;
+  } else {
+    throw Exception('Failed to load post ' + (instance.uri + actionPath));
+  }
 }

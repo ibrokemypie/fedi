@@ -78,12 +78,20 @@ Future<Item> submitMastodonPost(
   if (post.contentWarning != null)
     params.putIfAbsent("spoiler_text", () => post.contentWarning);
 
+  if (post.attachments != null) {
+    List<String> attachments = new List();
+    for (Attachment attachment in post.attachments) {
+      attachments.add(attachment.id);
+      params.addAll({"media_ids[]":attachment.id});
+    }
+  }
+
   final response = await http.post(instance.uri + actionPath,
       body: params, headers: {"Authorization": "bearer " + authCode});
 
   if (response.statusCode == 200) {
     var returned = json.decode(response.body);
-    return returned;
+    return Item.fromMastodon(returned, instance);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));

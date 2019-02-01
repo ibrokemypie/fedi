@@ -175,7 +175,6 @@ class PostState extends State<Post> {
     try {
       if (chars <= widget.instance.maxChars) {
         await _uploadAttachments();
-        print("ye");
         NewPost post = NewPost(visibility,
             content: textController.text,
             contentWarning: contentWarning,
