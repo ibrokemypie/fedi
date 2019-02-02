@@ -13,7 +13,7 @@ class User {
   String url;
   String acct;
 
-  User(username, nickname, id, host, avatarUrl, url) {
+  User({username, nickname, id, host, avatarUrl, url}) {
     this.username = username;
     this.nickname = nickname;
     this.id = id;
