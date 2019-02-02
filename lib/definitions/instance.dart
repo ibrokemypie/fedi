@@ -23,8 +23,8 @@ class Instance {
     if (this.type == null) {
       if (version.contains("misskey")) {
         this.type = "misskey";
-      
-      // TODO: change things for pleroma
+
+        // TODO: change things for pleroma
       } else if (version.contains("pleroma")) {
         this.type = "mastodon";
       } else {
@@ -44,21 +44,45 @@ class Instance {
 
       Uri instanceUri = Uri.parse(protocol + instanceUrl);
 
-      final response =
-          await http.get(instanceUri.toString() + "/api/v1/instance");
+      try {
+        final response = await http.post(instanceUri.toString() + "/api/meta");
 
-      if (response.statusCode == 200) {
-        Map<String, dynamic> returned = json.decode(response.body);
-        returned.addAll({
-          "protocol": instanceUri.scheme,
-          "uri": instanceUri.toString(),
-          "host": instanceUri.host,
-          "maxChars": returned["max_toot_chars"] ?? returned["maxNoteTextLength"] ?? 500,
-        });
-        // If server returns an OK response, parse the JSON
-        return Instance.fromJson(returned);
-      } else {
-        throw Exception('Failed to load post');
+        if (response.statusCode == 200) {
+          Map<String, dynamic> returned = json.decode(response.body);
+          returned.addAll({
+            "protocol": Uri.parse(returned["uri"]).scheme,
+            "host": Uri.parse(returned["uri"]).host,
+            "maxChars": returned["maxNoteTextLength"] ?? 500,
+            "type": "misskey",
+          });
+          // If server returns an OK response, parse the JSON
+          return Instance.fromJson(returned);
+        } else {
+          throw Exception(response.body);
+        }
+      } catch (e) {
+        try {
+          final response =
+              await http.get(instanceUri.toString() + "/api/v1/instance");
+
+          if (response.statusCode == 200) {
+            Map<String, dynamic> returned = json.decode(response.body);
+            returned.addAll({
+              "protocol": instanceUri.scheme,
+              "uri": instanceUri.toString(),
+              "host": instanceUri.host,
+              "maxChars": returned["max_toot_chars"] ??
+                  returned["maxNoteTextLength"] ??
+                  500,
+            });
+            // If server returns an OK response, parse the JSON
+            return Instance.fromJson(returned);
+          } else {
+            throw Exception(response.body);
+          }
+        } catch (e) {
+          throw e;
+        }
       }
     } catch (exception) {
       throw exception;
