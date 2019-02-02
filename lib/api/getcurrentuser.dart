@@ -48,7 +48,7 @@ Future<User> getCurrentUserMisskey(Instance instance, String authCode) async {
 
 Future<User> getCurrentUserMastodon(Instance instance, String authCode) async {
   Map<String, dynamic> params;
-  String actionPath = "/api/v1/verify_credentials";
+  String actionPath = "/api/v1/accounts/verify_credentials";
 
   final response = await http.get(instance.uri + actionPath,
       headers: {"Authorization": "Bearer " + authCode});
