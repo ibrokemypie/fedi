@@ -14,7 +14,12 @@ User _$UserFromJson(Map<String, dynamic> json) {
       host: json['host'],
       avatarUrl: json['avatarUrl'],
       bannerUrl: json['bannerUrl'],
-      url: json['url'])
+      url: json['url'],
+      description: json['description'],
+      fields: json['fields'],
+      followersCount: json['followersCount'],
+      followingCount: json['followingCount'],
+      statusCount: json['statusCount'])
     ..acct = json['acct'] as String;
 }
 
@@ -26,5 +31,10 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'avatarUrl': instance.avatarUrl,
       'bannerUrl': instance.bannerUrl,
       'url': instance.url,
-      'acct': instance.acct
+      'acct': instance.acct,
+      'description': instance.description,
+      'fields': instance.fields,
+      'followersCount': instance.followersCount,
+      'followingCount': instance.followingCount,
+      'statusCount': instance.statusCount
     };
