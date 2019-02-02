@@ -24,6 +24,7 @@ class UserProfileState extends State<UserProfile>
   User _user;
   TabController _tabController;
   Widget _contents = new Center(child: CircularProgressIndicator());
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _bio() {
     String html = markdown.markdownToHtml(_user.description);
@@ -113,15 +114,21 @@ class UserProfileState extends State<UserProfile>
   }
 
   _initialiseWidget() async {
-    User newUser = await getUserFromId(widget.instance, widget.userId);
-    setState(() {
-      _user = newUser;
-      _contents = ListView(
-        children: <Widget>[
-          _bio(),
-        ],
-      );
-    });
+    try {
+      User newUser = await getUserFromId(widget.instance, widget.userId);
+      setState(() {
+        _user = newUser;
+        _contents = ListView(
+          children: <Widget>[
+            _bio(),
+          ],
+        );
+      });
+    } catch (e) {
+      print(e);
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -167,6 +174,6 @@ class UserProfileState extends State<UserProfile>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(), body: _contents);
+    return Scaffold(key: _scaffoldKey, appBar: AppBar(), body: _contents);
   }
 }
