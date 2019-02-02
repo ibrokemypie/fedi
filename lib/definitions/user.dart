@@ -10,15 +10,17 @@ class User {
   String id;
   String host;
   String avatarUrl;
+  String bannerUrl;
   String url;
   String acct;
 
-  User({username, nickname, id, host, avatarUrl, url}) {
+  User({username, nickname, id, host, avatarUrl,bannerUrl, url}) {
     this.username = username?? "";
     this.nickname = nickname?? "";
     this.id = id?? "";
     this.host = host ?? "";
     this.avatarUrl = avatarUrl ?? "";
+    this.bannerUrl = bannerUrl ?? "";
     this.url = this.host + "/@" + this.username;
     this.acct = this.username + "@" + this.host;
   }
@@ -29,6 +31,7 @@ class User {
     this.id = json['id'];
     this.host = json['host'];
     this.avatarUrl = json['avatarUrl'];
+    this.bannerUrl = json['bannerUrl'];
     this.url = this.host + "/@" + this.username;
     this.acct = this.username + "@" + this.host;
   }
@@ -41,6 +44,7 @@ class User {
     this.id = v["id"];
     this.url = this.host + "/@" + this.username;
     this.avatarUrl = v["avatarUrl"];
+    this.bannerUrl = v["bannerUrl"];
   }
 
   User.fromMastodon(Map v, Instance instance) {
@@ -51,6 +55,7 @@ class User {
     this.id = v["id"];
     this.url = v["url"];
     this.avatarUrl = v["avatar"] ?? v["avatar_static"];
+    this.bannerUrl = v["header"] ?? v["header_static"];
   }
 
   Map<String, dynamic> toJson() => _$UserToJson(this);

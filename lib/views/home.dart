@@ -210,8 +210,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: NetworkImage(
-                        "https://boopsnoot.gq/files/5c1882ed0924954e05ccd3a5?web"),
+                    image: NetworkImage(_currentUser.bannerUrl),
                     fit: BoxFit.cover,
                   )),
                   child: Column(
@@ -282,9 +281,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       _tabNames = new List.of(["home", "notifications", "local", "public"]);
       _tabController = TabController(vsync: this, length: _tabNames.length);
     });
-    _dropdownButtonRotations = AnimationController(lowerBound: 0,
-            upperBound: .5, vsync: this, duration: Duration(milliseconds: 100));
-    
+    _dropdownButtonRotations = AnimationController(
+        lowerBound: 0,
+        upperBound: .5,
+        vsync: this,
+        duration: Duration(milliseconds: 100));
+
     _initTabStatuses();
     verifyAuth();
   }
