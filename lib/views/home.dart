@@ -21,6 +21,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String _currentTab;
   String _lastTab;
 
+  Function _newButton;
+
   List<String> _tabNames;
   Map<String, List<Item>> _tabStatuses;
   List<Widget> _tabWidgets = new List.of([
@@ -109,6 +111,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         _tabController.addListener(_tabChange);
         _currentTab = _tabNames.elementAt(_tabController.index);
         _lastTab = "none";
+
+        _newButton = _postStatus;
 
         _populateTabs();
       });
@@ -205,7 +209,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: _tabWidgets,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _postStatus,
+        onPressed: _newButton,
         child: Icon(Icons.edit),
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
