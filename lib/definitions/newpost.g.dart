@@ -10,12 +10,14 @@ NewPost _$NewPostFromJson(Map<String, dynamic> json) {
   return NewPost(json['visiblity'],
       content: json['content'],
       contentWarning: json['contentWarning'],
-      replyTo: json['replyTo']);
+      replyTo: json['replyTo'],
+      attachments: json['attachments']);
 }
 
 Map<String, dynamic> _$NewPostToJson(NewPost instance) => <String, dynamic>{
       'content': instance.content,
       'contentWarning': instance.contentWarning,
       'replyTo': instance.replyTo,
-      'visiblity': instance.visiblity
+      'visiblity': instance.visiblity,
+      'attachments': instance.attachments
     };
