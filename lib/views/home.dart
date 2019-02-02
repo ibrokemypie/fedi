@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fedi/views/post.dart';
 import 'package:fedi/views/timeline.dart';
 import 'package:fedi/views/login.dart';
+import 'package:fedi/views/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/item.dart';
@@ -199,6 +200,16 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
+  _showUserPage() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UserProfile(
+                  instance: _instance,
+                  user: _currentUser,
+                )));
+  }
+
   _appDrawer() {
     return Drawer(
       child: ListView(
@@ -220,10 +231,13 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       Container(
                           padding:
                               EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(_currentUser.avatarUrl),
-                            radius: 28,
+                          child: GestureDetector(
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(_currentUser.avatarUrl),
+                              radius: 28,
+                            ),
+                            onTap: _showUserPage,
                           )),
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 8),
@@ -255,13 +269,13 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Material(
-                  type: MaterialType.transparency,
-                  child: FlatButton(
-                    child: Container(),
-                    onPressed: _toggleHeaderDropdown,
-                  ),
-                ),
+                // Material(
+                //   type: MaterialType.transparency,
+                //   child: FlatButton(
+                //     child: Container(),
+                //     onPressed: _toggleHeaderDropdown,
+                //   ),
+                // ),
               ])),
           ListTile(
             title: Text('Logout'),

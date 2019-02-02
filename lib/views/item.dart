@@ -13,6 +13,7 @@ import 'package:fedi/views/context.dart';
 import 'package:fedi/views/statusbody.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:fedi/views/user.dart';
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -233,13 +234,27 @@ class ItemBuilderState extends State<ItemBuilder> {
       padding: const EdgeInsets.only(right: 16.0),
       child: Icon(visIcon(_note.visibility), size: 16.0));
 
-  _avatar(String avatarUrl) => Container(
+  _avatar(User user) => Container(
         alignment: FractionalOffset.topCenter,
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
-        child: CircleAvatar(
-          backgroundImage: new CachedNetworkImageProvider(avatarUrl),
+        child: GestureDetector(
+          child: CircleAvatar(
+            backgroundImage: new CachedNetworkImageProvider(user.avatarUrl),
+          ),
+          onTap: () => _showUserPage(user.id),
         ),
       );
+
+  _showUserPage(String targetUserId) async {
+    User targetUser = await getUserFromId(_instance, targetUserId);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UserProfile(
+                  instance: _instance,
+                  user: targetUser,
+                )));
+  }
 
   _authorRow(String nickName, String accountName, Widget trailing) => Container(
         padding: const EdgeInsets.only(bottom: 8.0, top: 8),
@@ -283,10 +298,13 @@ class ItemBuilderState extends State<ItemBuilder> {
               Container(
                 alignment: FractionalOffset.topCenter,
                 padding: const EdgeInsets.only(left: 16.0, right: 4),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundImage:
-                      new CachedNetworkImageProvider(_item.author.avatarUrl),
+                child: GestureDetector(
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundImage:
+                        new CachedNetworkImageProvider(_item.author.avatarUrl),
+                  ),
+                  onTap: () => _showUserPage(_item.author.id),
                 ),
               ),
               _renotedBy(),
@@ -306,10 +324,13 @@ class ItemBuilderState extends State<ItemBuilder> {
               Container(
                 alignment: FractionalOffset.topCenter,
                 padding: const EdgeInsets.only(left: 16.0, right: 4),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundImage:
-                      new CachedNetworkImageProvider(_item.author.avatarUrl),
+                child: GestureDetector(
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundImage:
+                        new CachedNetworkImageProvider(_item.author.avatarUrl),
+                  ),
+                  onTap: () => _showUserPage(_item.author.id),
                 ),
               ),
               notificationTypeIcon(_item.notificationType),
@@ -325,7 +346,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author.avatarUrl),
+            _avatar(_note.author),
 
             // Content
             Expanded(
@@ -349,7 +370,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author.avatarUrl),
+            _avatar(_note.author),
 
             // Content
             Expanded(
@@ -377,7 +398,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author.avatarUrl),
+            _avatar(_note.author),
 
             // Content
             Expanded(
@@ -400,7 +421,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author.avatarUrl),
+            _avatar(_note.author),
 
             // Content
             Expanded(
