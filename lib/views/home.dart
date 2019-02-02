@@ -16,13 +16,16 @@ class Home extends StatefulWidget {
   HomeState createState() => new HomeState();
 }
 
-class HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class HomeState extends State<Home> with TickerProviderStateMixin {
   Instance _instance;
   String _authCode;
-  User _currentUser;
+  User _currentUser = new User();
 
   TabController _tabController;
   String _currentTab;
+
+  AnimationController _dropdownButtonRotations;
+  bool _dropdownOpen = false;
 
   Function _newButton;
 
@@ -182,6 +185,96 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
+  _toggleHeaderDropdown() {
+    if (_dropdownOpen) {
+      setState(() {
+        _dropdownOpen = !_dropdownOpen;
+        _dropdownButtonRotations.forward();
+      });
+    } else {
+      setState(() {
+        _dropdownOpen = !_dropdownOpen;
+        _dropdownButtonRotations.reverse();
+      });
+    }
+  }
+
+  _appDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          // TODO: rest of the drawer
+          DrawerHeader(
+              padding: EdgeInsets.all(0),
+              child: Stack(children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: NetworkImage(
+                        "https://boopsnoot.gq/files/5c1882ed0924954e05ccd3a5?web"),
+                    fit: BoxFit.cover,
+                  )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(_currentUser.avatarUrl),
+                            radius: 28,
+                          )),
+                      Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            _currentUser.nickname,
+                            style: TextStyle(fontSize: 24),
+                          )),
+                      Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "@" + _currentUser.acct,
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey[100]),
+                              ),
+                              RotationTransition(
+                                turns: _dropdownButtonRotations,
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                  size: 18,
+                                ),
+                              )
+                            ],
+                          )),
+                    ],
+                  ),
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: FlatButton(
+                    child: Container(),
+                    onPressed: _toggleHeaderDropdown,
+                  ),
+                ),
+              ])),
+          ListTile(
+            title: Text('Logout'),
+            onTap: () {
+              _logout(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -189,6 +282,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       _tabNames = new List.of(["home", "notifications", "local", "public"]);
       _tabController = TabController(vsync: this, length: _tabNames.length);
     });
+    _dropdownButtonRotations = AnimationController(lowerBound: 0,
+            upperBound: .5, vsync: this, duration: Duration(milliseconds: 100));
+    
     _initTabStatuses();
     verifyAuth();
   }
@@ -213,20 +309,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            // TODO: rest of the drawer
-            // TODO: user header
-            ListTile(
-              title: Text('Logout'),
-              onTap: () {
-                _logout(context);
-              },
-            )
-          ],
-        ),
-      ),
+      drawer: _appDrawer(),
       body: TabBarView(
         controller: _tabController,
         children: _tabWidgets,
