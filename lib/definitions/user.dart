@@ -93,11 +93,11 @@ class User {
   }
 
   User.fromMastodon(Map v, Instance instance) {
-    List<Map<String, String>> newFields = new List();
+    List<Map<String, dynamic>> newFields = new List();
     List jsonFields = v["fields"] ?? [];
 
     if (jsonFields.length > 0) {
-      for (Map<String, String> field in jsonFields) {
+      for (Map<String, dynamic> field in jsonFields) {
         if (field != null) {
           newFields.add(field);
         }
