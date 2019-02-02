@@ -5,8 +5,11 @@ import 'package:fedi/views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/item.dart';
+import 'package:fedi/definitions/user.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:fedi/api/gettimeline.dart';
+import 'package:fedi/api/getcurrentuser.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,12 +17,12 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  Instance instance;
-  String authCode;
+  Instance _instance;
+  String _authCode;
+  User _currentUser;
 
   TabController _tabController;
   String _currentTab;
-  String _lastTab;
 
   Function _newButton;
 
@@ -45,6 +48,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     prefs.setBool('authenticated', false);
     prefs.setString('userAuth', null);
     prefs.setString('instance', null);
+    prefs.setString('currentUser', null);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LogIn()));
   }
@@ -54,8 +58,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         context,
         MaterialPageRoute(
             builder: (context) => Post(
-                  instance: instance,
-                  authCode: authCode,
+                  instance: _instance,
+                  authCode: _authCode,
                 )));
     setState(() {
       List<Item> _newlist = List();
@@ -67,7 +71,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Future<void> _newStatuses(String timeline) async {
     List<Item> statusList;
-    statusList = await getTimeline(instance, authCode, timeline);
+    statusList = await getTimeline(_instance, _authCode, timeline);
 
     try {
       setState(() {
@@ -81,7 +85,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
-    statusList = await getTimeline(instance, authCode, timeline);
+    statusList = await getTimeline(_instance, _authCode, timeline);
     try {
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -99,29 +103,48 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     var auth = prefs.getBool('authenticated') ?? false;
     var userAuth = prefs.getString('userAuth') ?? null;
     var instanceUrl = prefs.getString('instance') ?? null;
+    var currentUser;
+    if (prefs.getString('currentUser') != null) {
+      currentUser = json.decode(prefs.getString('currentUser')) ?? null;
+    } else {
+      currentUser = null;
+    }
 
     if (auth == false || userAuth == null || instanceUrl == null) {
       _logout(context);
     } else {
       Instance newInstance = await Instance.fromUrl(instanceUrl);
+
       setState(() {
-        instance = newInstance;
-        authCode = userAuth;
-
-        _tabController.addListener(_tabChange);
-        _currentTab = _tabNames.elementAt(_tabController.index);
-        _lastTab = "none";
-
-        _newButton = _postStatus;
-
-        _populateTabs();
+        _instance = newInstance;
+        _authCode = userAuth;
       });
+
+      if (currentUser == null) {
+        currentUser = await getCurrentUser(_instance, _authCode);
+      }
+
+      if (currentUser == null) {
+        _logout(context);
+      } else {
+        setState(() {
+          _currentUser = currentUser;
+
+          print(_currentUser.username);
+
+          _tabController.addListener(_tabChange);
+          _currentTab = _tabNames.elementAt(_tabController.index);
+
+          _newButton = _postStatus;
+
+          _populateTabs();
+        });
+      }
     }
   }
 
   _tabChange() {
     setState(() {
-      _lastTab = _currentTab;
       _currentTab = _tabNames[_tabController.index];
     });
   }
@@ -129,8 +152,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   _timelineWidget(String timelineName) {
     return new RefreshIndicator(
       child: TimeLine(
-        instance: instance,
-        authCode: authCode,
+        instance: _instance,
+        authCode: _authCode,
         statuses: _tabStatuses[timelineName],
         inittimeline: () => _initTimeline(timelineName),
       ),
