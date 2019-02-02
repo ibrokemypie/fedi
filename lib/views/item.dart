@@ -32,13 +32,14 @@ class ItemBuilderState extends State<ItemBuilder> {
   Color favouriteColour = Colors.white;
   bool _contentWarningToggled = true;
   Widget _contentWarningView = Container();
-  Widget _contentWarningToggle = Container();
   Widget _bodyTextWidget = Container();
   Instance _instance;
   Item _item;
   bool _isRenote = false;
   bool _isNotification = false;
   Item _note;
+
+  bool _firstbuild;
 
   void _toggleFavourite() async {
     if (_note.favourited != true) {
@@ -131,22 +132,9 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   void initState() {
     super.initState();
-    if (widget.item.contentWarning != null &&
-        widget.item.contentWarning != "") {
-      setState(() {
-        if (widget.item.body != "") {
-          _contentWarningToggle = RaisedButton(
-              child: Text("Toggle content"),
-              color: Colors.red,
-              onPressed: () {
-                setState(() {
-                  _contentWarningToggled = !_contentWarningToggled;
-                });
-              });
-        }
-        _contentWarningToggled = false;
-      });
-    }
+    setState(() {
+      _firstbuild = true;
+    });
   }
 
   _buttonRow() => Row(
@@ -197,17 +185,30 @@ class ItemBuilderState extends State<ItemBuilder> {
         ],
       );
 
-  _contentWarning() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(_note.contentWarning),
-          _contentWarningToggle,
-          Divider(
-            height: 2,
-          ),
-        ],
-      );
+  _contentWarning(bool hasButton) {
+    Widget _contentWarningToggle = Container();
+    if (hasButton) {
+      _contentWarningToggle = RaisedButton(
+          child: Text("Toggle content"),
+          color: Colors.red,
+          onPressed: () {
+            setState(() {
+              _contentWarningToggled = !_contentWarningToggled;
+            });
+          });
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(_note.contentWarning),
+        _contentWarningToggle,
+        Divider(
+          height: 2,
+        ),
+      ],
+    );
+  }
 
   _body(String bodyText) {
     setState(() {
@@ -460,11 +461,6 @@ class ItemBuilderState extends State<ItemBuilder> {
       _item = widget.item;
       _note = _item;
 
-      if (widget.item.contentWarning != null &&
-          widget.item.contentWarning != "") {
-        _contentWarningView = _contentWarning();
-      }
-
       if (_item.notificationType != null) {
         _isNotification = true;
         if (_item.notificationNote != null) {
@@ -485,6 +481,18 @@ class ItemBuilderState extends State<ItemBuilder> {
       } else {
         favouriteColour = Colors.white;
       }
+
+      if (_firstbuild == true) {
+        if (_note.contentWarning != null && _note.contentWarning != "") {
+          if (_note.body != "") {
+            _contentWarningView = _contentWarning(true);
+            _contentWarningToggled = false;
+          } else {
+            _contentWarningView = _contentWarning(false);
+          }
+        }
+      }
+      _firstbuild = false;
     });
 
     if (_isNotification) {
