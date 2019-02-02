@@ -14,11 +14,11 @@ class User {
   String acct;
 
   User({username, nickname, id, host, avatarUrl, url}) {
-    this.username = username;
-    this.nickname = nickname;
-    this.id = id;
-    this.host = host;
-    this.avatarUrl = avatarUrl;
+    this.username = username?? "";
+    this.nickname = nickname?? "";
+    this.id = id?? "";
+    this.host = host ?? "";
+    this.avatarUrl = avatarUrl ?? "";
     this.url = this.host + "/@" + this.username;
     this.acct = this.username + "@" + this.host;
   }
