@@ -169,6 +169,8 @@ class Item {
         this.contentWarning = v["cw"] ?? null;
         this.mentions = mentions;
 
+        this.body = this.body.replaceAll("\n", "<br>");
+
         if (v["type"] != null && v["deletedAt"] == null) {
           this.isRead = v["isRead"];
           this.notificationType = v["type"];

@@ -83,11 +83,13 @@ class User {
     this.url = this.host + "/@" + this.username;
     this.avatarUrl = v["avatarUrl"];
     this.bannerUrl = v["bannerUrl"];
-    this.description = v["description"];
+    this.description = v["description"] ?? "";
     this.fields = newFields;
     this.followersCount = v['followersCount'];
     this.followingCount = v['followingCount'];
     this.statusCount = v['notesCount'];
+
+    this.description = this.description.replaceAll("\n", "<br>");
   }
 
   User.fromMastodon(Map v, Instance instance) {
