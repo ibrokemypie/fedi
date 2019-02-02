@@ -74,7 +74,7 @@ Future<List> getMisskeyTimeline(
 
     returned.forEach((v) {
       var status = Item.fromMisskey(v, instance);
-      if (status != null) newStatuses.add(status);
+      if (status != null && status.id != null) newStatuses.add(status);
     });
 
     if (currentStatuses != null) {

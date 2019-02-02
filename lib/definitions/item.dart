@@ -106,7 +106,8 @@ class Item {
     if (v["user"] != null &&
         v["id"] != null &&
         v["deletedAt"] == null &&
-        !v.containsKey("deletedAt")) {
+        !v.containsKey("deletedAt") &&
+        !(v["note"] != null && v["note"].containsKey("deletedAt"))) {
       try {
         List<Attachment> attachments = new List();
         List jsonAttachments = v["media"] ?? [];
@@ -185,7 +186,9 @@ class Item {
   }
 
   Item.fromMastodon(Map v, Instance instance) {
-    if (v["account"] != null && v["id"] != null) {
+    if (v["account"] != null &&
+        v["id"] != null &&
+        !(v["note"] != null && v["status"].containsKey("deleted_at"))) {
       try {
         List<Attachment> attachments = new List();
         List jsonAttachments = v["media_attachments"] ?? [];
