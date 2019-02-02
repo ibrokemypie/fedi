@@ -1,6 +1,7 @@
 import 'package:fedi/definitions/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/api/getuser.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/views/statusbody.dart';
@@ -9,10 +10,10 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as markdown;
 
 class UserProfile extends StatefulWidget {
-  final User user;
+  final String userId;
   final Instance instance;
 
-  UserProfile({this.user, this.instance});
+  UserProfile({this.userId, this.instance});
   @override
   UserProfileState createState() => new UserProfileState();
 }
@@ -21,6 +22,7 @@ class UserProfileState extends State<UserProfile>
     with SingleTickerProviderStateMixin {
   User _user;
   TabController _tabController;
+  Widget _contents = new Center(child: CircularProgressIndicator());
 
   _bio() {
     String html = markdown.markdownToHtml(_user.description);
@@ -106,13 +108,25 @@ class UserProfileState extends State<UserProfile>
     ]);
   }
 
+  _initialiseWidget() async {
+    User newUser = await getUserFromId(widget.instance, widget.userId);
+    setState(() {
+      _user = newUser;
+      _contents = ListView(
+        children: <Widget>[
+          _bio(),
+        ],
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     setState(() {
-      _user = widget.user;
       _tabController = TabController(vsync: this, length: 4);
     });
+    _initialiseWidget();
   }
 
   _tabs() {
@@ -149,12 +163,6 @@ class UserProfileState extends State<UserProfile>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(),
-        body: ListView(
-          children: <Widget>[
-            _bio(),
-          ],
-        ));
+    return Scaffold(appBar: AppBar(), body: _contents);
   }
 }

@@ -246,13 +246,12 @@ class ItemBuilderState extends State<ItemBuilder> {
       );
 
   _showUserPage(String targetUserId) async {
-    User targetUser = await getUserFromId(_instance, targetUserId);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => UserProfile(
                   instance: _instance,
-                  user: targetUser,
+                  userId: targetUserId,
                 )));
   }
 

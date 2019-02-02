@@ -206,7 +206,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         MaterialPageRoute(
             builder: (context) => UserProfile(
                   instance: _instance,
-                  user: _currentUser,
+                  userId: _currentUser.id,
                 )));
   }
 
