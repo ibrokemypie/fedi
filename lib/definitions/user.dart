@@ -14,7 +14,7 @@ class User {
   String url;
   String acct;
   String description;
-  List<Map<String, String>> fields;
+  List<Map<String, dynamic>> fields;
   int followersCount;
   int followingCount;
   int statusCount;
@@ -64,11 +64,11 @@ class User {
   }
 
   User.fromMisskey(Map v, Instance instance) {
-    List<Map<String, String>> newFields = new List();
+    List<Map<String, dynamic>> newFields = new List();
     List jsonFields = v["fields"] ?? [];
 
     if (jsonFields.length > 0) {
-      for (Map<String, String> field in jsonFields) {
+      for (Map<String, dynamic> field in jsonFields) {
         if (field != null) {
           newFields.add(field);
         }
