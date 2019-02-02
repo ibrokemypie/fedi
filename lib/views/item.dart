@@ -41,22 +41,31 @@ class ItemBuilderState extends State<ItemBuilder> {
   Item _note;
 
   void _toggleFavourite() async {
-    bool success;
     if (_note.favourited != true) {
-      success = favouritePost(_instance, widget.authCode, _note.id);
-      if (success) {
+      try {
+        await favouritePost(_instance, widget.authCode, _note.id);
         setState(() {
           _note.favourited = true;
           _note.favCount += 1;
         });
+      } catch (e) {
+        print(e);
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString()),
+        ));
       }
     } else {
-      success = unFavouritePost(_instance, widget.authCode, _note.id);
-      if (success) {
+      try {
+        await unFavouritePost(_instance, widget.authCode, _note.id);
         setState(() {
           _note.favourited = false;
           _note.favCount -= 1;
         });
+      } catch (e) {
+        print(e);
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString()),
+        ));
       }
     }
   }
