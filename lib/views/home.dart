@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:fedi/api/gettimeline.dart';
 import 'package:fedi/api/getcurrentuser.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -221,7 +222,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: NetworkImage(_currentUser.bannerUrl),
+                    image: CachedNetworkImageProvider(_currentUser.bannerUrl),
                     fit: BoxFit.cover,
                   )),
                   child: Column(
@@ -233,8 +234,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                               EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                           child: GestureDetector(
                             child: CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage(_currentUser.avatarUrl),
+                              backgroundImage: CachedNetworkImageProvider(
+                                  _currentUser.avatarUrl),
                               radius: 28,
                             ),
                             onTap: _showUserPage,

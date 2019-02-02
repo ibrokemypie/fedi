@@ -8,6 +8,7 @@ import 'package:fedi/views/statusbody.dart';
 import 'package:html2md/html2md.dart' as html2md;
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UserProfile extends StatefulWidget {
   final String userId;
@@ -33,7 +34,7 @@ class UserProfileState extends State<UserProfile>
           Container(
               padding: EdgeInsets.only(bottom: 40.0),
               child: Image(
-                image: NetworkImage(_user.bannerUrl),
+                image: CachedNetworkImageProvider(_user.bannerUrl),
                 fit: BoxFit.cover,
                 height: 128,
                 width: double.infinity,
@@ -44,8 +45,11 @@ class UserProfileState extends State<UserProfile>
             child: ClipRRect(
                 borderRadius: new BorderRadius.circular(10.0),
                 child: Container(
-                  child: Image.network(_user.avatarUrl,
-                      height: 80.0, width: 80.0, fit: BoxFit.cover),
+                  child: Image(
+                      image: CachedNetworkImageProvider(_user.avatarUrl),
+                      height: 80.0,
+                      width: 80.0,
+                      fit: BoxFit.cover),
                   color: Colors.grey[900],
                 )),
           )
