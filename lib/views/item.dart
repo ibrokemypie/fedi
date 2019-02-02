@@ -71,12 +71,17 @@ class ItemBuilderState extends State<ItemBuilder> {
   }
 
   void _renote() async {
-    bool success = await renotePost(_instance, widget.authCode, _note.id);
-    if (success) {
+    try {
+      await renotePost(_instance, widget.authCode, _note.id);
       setState(() {
         // widget.status.renoted = true;
         _note.renoteCount += 1;
       });
+    } catch (e) {
+      print(e);
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
     }
   }
 
