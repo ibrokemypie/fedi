@@ -25,6 +25,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   TabController _tabController;
   String _currentTab;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AnimationController _dropdownButtonRotations;
   bool _dropdownOpen = false;
@@ -76,28 +77,35 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   Future<void> _newStatuses(String timeline) async {
     List<Item> statusList;
-    statusList = await getTimeline(_instance, _authCode, timeline);
-
     try {
+      statusList = await getTimeline(_instance, _authCode, timeline);
+
       setState(() {
         _tabStatuses[timeline] = statusList;
         _populateTabs();
       });
     } catch (e) {
       print(e);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
     }
   }
 
   Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
-    statusList = await getTimeline(_instance, _authCode, timeline);
     try {
+      statusList = await getTimeline(_instance, _authCode, timeline);
+
       setState(() {
         _tabStatuses[timeline] = statusList;
         _populateTabs();
       });
     } catch (e) {
       print(e);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
       return false;
     }
     return true;
@@ -118,32 +126,39 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     if (auth == false || userAuth == null || instanceUrl == null) {
       _logout(context);
     } else {
-      Instance newInstance = await Instance.fromUrl(instanceUrl);
+      try {
+        Instance newInstance = await Instance.fromUrl(instanceUrl);
 
-      setState(() {
-        _instance = newInstance;
-        _authCode = userAuth;
-      });
-
-      if (currentUser == null) {
-        currentUser = await getCurrentUser(_instance, _authCode);
-      }
-
-      if (currentUser == null) {
-        _logout(context);
-      } else {
         setState(() {
-          _currentUser = currentUser;
-
-          print(_currentUser.username);
-
-          _tabController.addListener(_tabChange);
-          _currentTab = _tabNames.elementAt(_tabController.index);
-
-          _newButton = _postStatus;
-
-          _populateTabs();
+          _instance = newInstance;
+          _authCode = userAuth;
         });
+
+        if (currentUser == null) {
+          currentUser = await getCurrentUser(_instance, _authCode);
+        }
+
+        if (currentUser == null) {
+          _logout(context);
+        } else {
+          setState(() {
+            _currentUser = currentUser;
+
+            print(_currentUser.username);
+
+            _tabController.addListener(_tabChange);
+            _currentTab = _tabNames.elementAt(_tabController.index);
+
+            _newButton = _postStatus;
+
+            _populateTabs();
+          });
+        }
+      } catch (e) {
+        print(e);
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(e.toString()),
+        ));
       }
     }
   }
@@ -315,6 +330,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: TabBar(
           controller: _tabController,
