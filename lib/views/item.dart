@@ -4,6 +4,7 @@ import 'package:fedi/api/favourite.dart';
 import 'package:fedi/api/renote.dart';
 import 'package:fedi/api/unfavourite.dart';
 import 'package:fedi/api/getuser.dart';
+import 'package:fedi/api/delete.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/definitions/mention.dart';
 import 'package:fedi/definitions/user.dart';
@@ -44,7 +45,12 @@ class ItemBuilderState extends State<ItemBuilder> {
   bool _isRenote = false;
   bool _isNotification = false;
   Item _note;
-
+  List<PopupMenuEntry<String>> _menuButtonItems = [
+    const PopupMenuItem<String>(
+      value: "details",
+      child: Text('Details'),
+    ),
+  ];
   bool _firstbuild;
 
   void _toggleFavourite() async {
@@ -105,7 +111,6 @@ class ItemBuilderState extends State<ItemBuilder> {
       }
     }
     print(prefill);
-
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -131,10 +136,40 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
+  void _deleteButton() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Delete note?"),
+            content: Text("Thiis cannot be undone."),
+            actions: <Widget>[
+              new FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: Text("Delete"),
+                onPressed: () {
+                  deletePost(_instance, widget.authCode, _note.id);
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   void _moreButtonAction(String action) {
     switch (action) {
       case "details":
         _showContext();
+        break;
+      case "delete":
+        _deleteButton();
+        break;
     }
   }
 
@@ -183,12 +218,7 @@ class ItemBuilderState extends State<ItemBuilder> {
           ]),
           PopupMenuButton(
             icon: Icon(Icons.more_horiz),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  const PopupMenuItem<String>(
-                    value: "details",
-                    child: Text('Details'),
-                  ),
-                ],
+            itemBuilder: (BuildContext context) => _menuButtonItems,
             onSelected: _moreButtonAction,
           )
         ],
@@ -500,7 +530,16 @@ class ItemBuilderState extends State<ItemBuilder> {
             _contentWarningView = _contentWarning(false);
           }
         }
+        if (_note.author.id == widget.currentUser.id) {
+          _menuButtonItems.add(
+            const PopupMenuItem<String>(
+              value: "delete",
+              child: Text('Delete'),
+            ),
+          );
+        }
       }
+
       _firstbuild = false;
     });
 
