@@ -176,6 +176,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         authCode: _authCode,
         statuses: _tabStatuses[timelineName],
         inittimeline: () => _initTimeline(timelineName),
+        currentUser: _currentUser,
       ),
       key: Key(timelineName),
       onRefresh: () => _newStatuses(timelineName),

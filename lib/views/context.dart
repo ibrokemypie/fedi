@@ -3,16 +3,22 @@ import 'package:fedi/definitions/item.dart';
 import 'package:fedi/api/context.dart';
 import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/user.dart';
 import 'dart:async';
 
 class StatusContext extends StatefulWidget {
   final Instance instance;
   final String authCode;
   final String statusId;
+  final User currentUser;
   final Item originalStatus;
 
   StatusContext(
-      {this.instance, this.authCode, this.statusId, this.originalStatus});
+      {this.instance,
+      this.authCode,
+      this.statusId,
+      this.currentUser,
+      this.originalStatus});
   @override
   StatusContextState createState() => new StatusContextState();
 }
@@ -53,8 +59,13 @@ class StatusContextState extends State<StatusContext> {
         if (index >= statusList.length) {
           return null;
         }
-        return ItemBuilder(widget.instance, widget.authCode, statusList[index],
-            true, Key(statusList[index].id));
+        return ItemBuilder(
+            instance: widget.instance,
+            authCode: widget.authCode,
+            item: statusList[index],
+            isContext: true,
+            currentUser: widget.currentUser,
+            key: Key(statusList[index].id));
       },
     );
   }

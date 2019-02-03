@@ -21,9 +21,15 @@ class ItemBuilder extends StatefulWidget {
   final Item item;
   final bool isContext;
   final Key key;
+  final User currentUser;
 
   ItemBuilder(
-      this.instance, this.authCode, this.item, this.isContext, this.key);
+      {this.instance,
+      this.authCode,
+      this.item,
+      this.isContext,
+      this.key,
+      this.currentUser});
   @override
   ItemBuilderState createState() => new ItemBuilderState();
 }
@@ -89,11 +95,13 @@ class ItemBuilderState extends State<ItemBuilder> {
   void _reply() async {
     String prefill = "@" + _note.author.acct + " ";
     for (Mention mentionObject in _note.mentions) {
-      if (mentionObject.acct != null) {
-        prefill = prefill + "@" + mentionObject.acct + " ";
-      } else {
-        User mentionedUser = await getUserFromId(_instance, mentionObject.id);
-        prefill = prefill + "@" + mentionedUser.acct + " ";
+      if (mentionObject.id != widget.currentUser.id) {
+        if (mentionObject.acct != null) {
+          prefill = prefill + "@" + mentionObject.acct + " ";
+        } else {
+          User mentionedUser = await getUserFromId(_instance, mentionObject.id);
+          prefill = prefill + "@" + mentionedUser.acct + " ";
+        }
       }
     }
     print(prefill);
@@ -118,6 +126,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                   authCode: widget.authCode,
                   instance: _instance,
                   statusId: _note.id,
+                  currentUser: widget.currentUser,
                   originalStatus: _note,
                 )));
   }

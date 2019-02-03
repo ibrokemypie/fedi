@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/views/item.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/user.dart';
 import 'package:fedi/api/gettimeline.dart';
 import 'dart:async';
 
@@ -10,6 +11,7 @@ class TimeLine extends StatefulWidget {
   final String authCode;
   final List<Item> statuses;
   final Function inittimeline;
+  final User currentUser;
   final Key key;
 
   TimeLine(
@@ -17,6 +19,7 @@ class TimeLine extends StatefulWidget {
       this.authCode,
       this.statuses,
       this.inittimeline,
+      this.currentUser,
       this.key});
   @override
   TimeLineState createState() => new TimeLineState();
@@ -38,8 +41,13 @@ class TimeLineState extends State<TimeLine> {
         if (index >= _statuses.length) {
           return null;
         }
-        return ItemBuilder(widget.instance, widget.authCode, _statuses[index],
-            false, Key(_statuses[index].id));
+        return ItemBuilder(
+            instance: widget.instance,
+            authCode: widget.authCode,
+            item: _statuses[index],
+            isContext: false,
+            currentUser: widget.currentUser,
+            key: Key(_statuses[index].id));
       },
     );
   }
