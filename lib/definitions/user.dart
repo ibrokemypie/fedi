@@ -81,8 +81,8 @@ class User {
     this.acct = this.username + "@" + this.host;
     this.id = v["id"];
     this.url = this.host + "/@" + this.username;
-    this.avatarUrl = v["avatarUrl"];
-    this.bannerUrl = v["bannerUrl"];
+    this.avatarUrl = v["avatarUrl"] ?? "";
+    this.bannerUrl = v["bannerUrl"] ?? "";
     this.description = v["description"] ?? "";
     this.fields = newFields;
     this.followersCount = v['followersCount'];
@@ -110,8 +110,8 @@ class User {
     this.acct = v["acct"];
     this.id = v["id"];
     this.url = v["url"];
-    this.avatarUrl = v["avatar"] ?? v["avatar_static"];
-    this.bannerUrl = v["header"] ?? v["header_static"];
+    this.avatarUrl = v["avatar"] ?? v["avatar_static"] ?? "";
+    this.bannerUrl = v["header"] ?? v["header_static"] ?? "";
     this.description = v["note"];
     this.fields = newFields;
     this.followersCount = v['followers_count'];
