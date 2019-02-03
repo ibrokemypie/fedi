@@ -231,8 +231,10 @@ class PostState extends State<Post> {
                             maxLines: maxLines,
                             onChanged: textUpdated,
                             decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Write away!'),
+                              border: InputBorder.none,
+                              hintText: 'Write away!',
+                              counterText: "",
+                            ),
                           ))),
             ]),
             bottomNavigationBar: Transform.translate(
