@@ -1,16 +1,9 @@
 # fedi
 
-A new Flutter project.
+The fediverse is made up of various servers running different backends, such as Mastodon, Pleroma and Misskey, which communicate to eachother over one protocol. This is all well and good, but many backends communicate to clients with different protocols, meaning most client apps only support a subset of backends.
 
-## Getting Started
+fedi is a client designed from the ground up to easily support multiple backends within the same app.
 
-This project is a starting point for a Flutter application.
+Releases holds apks built every now and then, though for the latest build it may be better to build it yourself for now.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+[Current feature todo list](https://github.com/ibrokemypie/fedi/projects/1)
