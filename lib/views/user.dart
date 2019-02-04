@@ -244,33 +244,33 @@ class UserProfileState extends State<UserProfile>
   }
 
   _initialiseWidget() async {
-    // try {
-    User newUser = await getUserFromId(widget.instance, widget.userId);
-    setState(() {
-      _user = newUser;
+    try {
+      User newUser = await getUserFromId(widget.instance, widget.userId);
+      setState(() {
+        _user = newUser;
 
-      _postTabController.addListener(_tabChange);
-      _currentTab = _tabNames.elementAt(_postTabController.index);
+        _postTabController.addListener(_tabChange);
+        _currentTab = _tabNames.elementAt(_postTabController.index);
 
-      _populateTabs();
+        _populateTabs();
 
-      _contents = ListView(
-        children: <Widget>[
-          _bio(),
-          StickyHeader(
-            header: _postTabs(),
-            content: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: _postTabViews()),
-          ),
-        ],
-      );
-    });
-    //   } catch (e) {
-    //     print(e);
-    //     _scaffoldKey.currentState
-    //         .showSnackBar(SnackBar(content: Text(e.toString())));
-    //   }
+        _contents = ListView(
+          children: <Widget>[
+            _bio(),
+            StickyHeader(
+              header: _postTabs(),
+              content: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: _postTabViews()),
+            ),
+          ],
+        );
+      });
+    } catch (e) {
+      print(e);
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
