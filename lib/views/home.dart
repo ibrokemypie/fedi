@@ -224,6 +224,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
             builder: (context) => UserProfile(
                   instance: _instance,
                   userId: _currentUser.id,
+                  currentUser: _currentUser,
+                  authCode: _authCode,
                 )));
   }
 

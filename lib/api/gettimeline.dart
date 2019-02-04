@@ -7,20 +7,24 @@ import 'package:fedi/definitions/shared.dart';
 
 Future<List<Item>> getTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId}) async {
+    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
   List<Item> statuses;
 
   switch (instance.type) {
     case "misskey":
       {
         statuses = await getMisskeyTimeline(instance, authCode, timelineName,
-            currentStatuses: currentStatuses, sinceId: sinceId);
+            currentStatuses: currentStatuses,
+            sinceId: sinceId,
+            targetUserId: targetUserId);
         break;
       }
     case "mastodon":
       {
         statuses = await getMastodonTimeline(instance, authCode, timelineName,
-            currentStatuses: currentStatuses, sinceId: sinceId);
+            currentStatuses: currentStatuses,
+            sinceId: sinceId,
+            targetUserId: targetUserId);
         break;
       }
     default:
@@ -33,10 +37,23 @@ Future<List<Item>> getTimeline(
 
 Future<List> getMisskeyTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId}) async {
+    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
   List<Item> newStatuses = new List();
-  Map<String, dynamic> params;
+  Map<String, dynamic> params = new Map();
   String actionPath;
+
+  if (sinceId == null) {
+    params = Map.from({
+      "limit": 40,
+      "i": authCode,
+    });
+  } else {
+    params = Map.from({
+      "limit": 40,
+      "i": authCode,
+      "SinceId": sinceId,
+    });
+  }
 
   switch (timelineName) {
     case "home":
@@ -51,19 +68,18 @@ Future<List> getMisskeyTimeline(
     case "notifications":
       actionPath = "/api/i/notifications";
       break;
-  }
-
-  if (sinceId == null) {
-    params = Map.from({
-      "limit": 40,
-      "i": authCode,
-    });
-  } else {
-    params = Map.from({
-      "limit": 40,
-      "i": authCode,
-      "SinceId": sinceId,
-    });
+    case "user":
+      actionPath = "/api/users/notes";
+      params.addAll({"userId": targetUserId});
+      break;
+    case "user_media":
+      actionPath = "/api/users/notes";
+      params.addAll({"userId": targetUserId, "mediaOnly": true});
+      break;
+    case "user_replies":
+      actionPath = "/api/users/notes";
+      params.addAll({"userId": targetUserId, "includeReplies": true});
+      break;
   }
 
   final response =
@@ -90,7 +106,7 @@ Future<List> getMisskeyTimeline(
 
 Future<List> getMastodonTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId}) async {
+    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
   String actionPath;
@@ -119,6 +135,18 @@ Future<List> getMastodonTimeline(
       break;
     case "notifications":
       actionPath = "/api/v1/notifications";
+      break;
+    case "user":
+      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      params.addAll({"exclude_replies": "true"});
+      break;
+    case "user_media":
+      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      params.addAll({"only_media": "true"});
+      break;
+    case "user_replies":
+      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      params.addAll({"exclude_replies": "false"});
       break;
   }
 

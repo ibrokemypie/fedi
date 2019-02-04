@@ -349,6 +349,8 @@ class ItemBuilderState extends State<ItemBuilder> {
             builder: (context) => UserProfile(
                   instance: _instance,
                   userId: targetUserId,
+                  currentUser: widget.currentUser,
+                  authCode: widget.authCode,
                 )));
   }
 
