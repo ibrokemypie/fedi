@@ -178,6 +178,43 @@ class ItemBuilderState extends State<ItemBuilder> {
     super.initState();
     setState(() {
       _firstbuild = true;
+
+      _instance = widget.instance;
+      _item = widget.item;
+      _note = _item;
+
+      if (_item.notificationType != null) {
+        _isNotification = true;
+        if (_item.notificationNote != null) {
+          _note = _item.notificationNote;
+          if (_item.notificationNote.renote != null) {
+            _isRenote = true;
+            _note = _item.notificationNote.renote;
+          }
+        }
+      } else {
+        if (_item.renote != null) {
+          _isRenote = true;
+          _note = _item.renote;
+        }
+      }
+
+      if (_note.contentWarning != null && _note.contentWarning != "") {
+        if (_note.body != "") {
+          _contentWarningView = _contentWarning(true);
+          _contentWarningToggled = false;
+        } else {
+          _contentWarningView = _contentWarning(false);
+        }
+      }
+      if (_note.author.id == widget.currentUser.id) {
+        _menuButtonItems.add(
+          const PopupMenuItem<String>(
+            value: "delete",
+            child: Text('Delete'),
+          ),
+        );
+      }
     });
   }
 
@@ -496,51 +533,11 @@ class ItemBuilderState extends State<ItemBuilder> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      _instance = widget.instance;
-      _item = widget.item;
-      _note = _item;
-
-      if (_item.notificationType != null) {
-        _isNotification = true;
-        if (_item.notificationNote != null) {
-          _note = _item.notificationNote;
-          if (_item.notificationNote.renote != null) {
-            _isRenote = true;
-            _note = _item.notificationNote.renote;
-          }
-        }
-      } else {
-        if (_item.renote != null) {
-          _isRenote = true;
-          _note = _item.renote;
-        }
-      }
       if (_note.favourited == true || (_note.myReaction != null)) {
         favouriteColour = Colors.yellow;
       } else {
         favouriteColour = Colors.white;
       }
-
-      if (_firstbuild == true) {
-        if (_note.contentWarning != null && _note.contentWarning != "") {
-          if (_note.body != "") {
-            _contentWarningView = _contentWarning(true);
-            _contentWarningToggled = false;
-          } else {
-            _contentWarningView = _contentWarning(false);
-          }
-        }
-        if (_note.author.id == widget.currentUser.id) {
-          _menuButtonItems.add(
-            const PopupMenuItem<String>(
-              value: "delete",
-              child: Text('Delete'),
-            ),
-          );
-        }
-      }
-
-      _firstbuild = false;
     });
 
     if (_isNotification) {
