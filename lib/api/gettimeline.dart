@@ -74,7 +74,7 @@ Future<List> getMisskeyTimeline(
       break;
     case "user_media":
       actionPath = "/api/users/notes";
-      params.addAll({"userId": targetUserId, "mediaOnly": true});
+      params.addAll({"userId": targetUserId, "withFiles": true});
       break;
     case "user_replies":
       actionPath = "/api/users/notes";

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/api/getuser.dart';
 import 'dart:async';
-import 'package:fedi/views/timeline.dart';
+import 'package:fedi/views/usertimeline.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/views/statusbody.dart';
@@ -40,16 +40,16 @@ class UserProfileState extends State<UserProfile>
   Map<String, List<Item>> _tabStatuses;
 
   List<Widget> _postTabWidgets = new List.of([
-    new Center(
+    Center(
       child: CircularProgressIndicator(),
     ),
-    new Center(
+    Center(
       child: CircularProgressIndicator(),
     ),
-    new Center(
+    Center(
       child: CircularProgressIndicator(),
     ),
-    new Center(
+    Center(
       child: CircularProgressIndicator(),
     ),
   ]);
@@ -103,18 +103,7 @@ class UserProfileState extends State<UserProfile>
       setState(() {
         _tabStatuses[timeline] = statusList;
         _populateTabs();
-
-        _contents = ListView(
-          children: <Widget>[
-            _bio(),
-            StickyHeader(
-              header: _postTabs(),
-              content: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: _postTabViews()),
-            ),
-          ],
-        );
+        _populateContents();
       });
     } catch (e) {
       print(e);
@@ -133,18 +122,7 @@ class UserProfileState extends State<UserProfile>
       setState(() {
         _tabStatuses[timeline] = statusList;
         _populateTabs();
-
-        _contents = ListView(
-          children: <Widget>[
-            _bio(),
-            StickyHeader(
-              header: _postTabs(),
-              content: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: _postTabViews()),
-            ),
-          ],
-        );
+        _populateContents();
       });
     } catch (e) {
       print(e);
@@ -243,6 +221,19 @@ class UserProfileState extends State<UserProfile>
     ]);
   }
 
+  _populateContents() {
+    _contents = SingleChildScrollView(
+        child: Column(
+      children: <Widget>[
+        _bio(),
+        StickyHeader(
+          header: _postTabs(),
+          content: _postTabViews(),
+        ),
+      ],
+    ));
+  }
+
   _initialiseWidget() async {
     try {
       User newUser = await getUserFromId(widget.instance, widget.userId);
@@ -253,18 +244,7 @@ class UserProfileState extends State<UserProfile>
         _currentTab = _tabNames.elementAt(_postTabController.index);
 
         _populateTabs();
-
-        _contents = ListView(
-          children: <Widget>[
-            _bio(),
-            StickyHeader(
-              header: _postTabs(),
-              content: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: _postTabViews()),
-            ),
-          ],
-        );
+        _populateContents();
       });
     } catch (e) {
       print(e);
@@ -295,7 +275,9 @@ class UserProfileState extends State<UserProfile>
   }
 
   _postTabs() {
-    return TabBar(
+    return Container(
+      color: Colors.grey,
+        child: TabBar(
       controller: _postTabController,
       tabs: <Widget>[
         Tab(
@@ -311,14 +293,17 @@ class UserProfileState extends State<UserProfile>
           child: Text("Pinned"),
         ),
       ],
-    );
+    ));
   }
 
   _postTabViews() {
-    return TabBarView(
-      controller: _postTabController,
-      children: _postTabWidgets,
-    );
+    return Container(
+        child: Container(
+            height: double.maxFinite,
+            child: TabBarView(
+              controller: _postTabController,
+              children: _postTabWidgets,
+            )));
   }
 
   @override
