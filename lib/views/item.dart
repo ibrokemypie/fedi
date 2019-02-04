@@ -264,14 +264,19 @@ class ItemBuilderState extends State<ItemBuilder> {
   _contentWarning(bool hasButton) {
     Widget _contentWarningToggle = Container();
     if (hasButton) {
-      _contentWarningToggle = RaisedButton(
-          child: Text("Toggle content"),
-          color: Colors.red,
-          onPressed: () {
-            setState(() {
-              _contentWarningToggled = !_contentWarningToggled;
-            });
-          });
+      _contentWarningToggle = Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            RaisedButton(
+                child: Text("Toggle content"),
+                color: Colors.red,
+                onPressed: () {
+                  setState(() {
+                    _contentWarningToggled = !_contentWarningToggled;
+                  });
+                }),
+            Text(_note.body.length.toString())
+          ]);
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
