@@ -12,14 +12,16 @@ import 'package:image_picker/image_picker.dart';
 class Post extends StatefulWidget {
   final Instance instance;
   final String authCode;
-  final String preFill;
+  final String preFillBody;
+  final String preFillContentWarning;
   final String visibility;
   final String replyTo;
 
   Post(
       {this.instance,
       this.authCode,
-      this.preFill,
+      this.preFillBody,
+      this.preFillContentWarning,
       this.replyTo,
       this.visibility});
   @override
@@ -36,7 +38,8 @@ class PostState extends State<Post> {
   bool hasCw;
   String contentWarning;
   String replyTo;
-  TextEditingController textController;
+  TextEditingController bodyTextController;
+  TextEditingController cwTextController;
   List<Attachment> _attachmentList = new List();
   List<File> _mediaList = new List();
   bool _posted = false;
@@ -176,7 +179,7 @@ class PostState extends State<Post> {
       if (chars <= widget.instance.maxChars) {
         await _uploadAttachments();
         NewPost post = NewPost(visibility,
-            content: textController.text,
+            content: bodyTextController.text,
             contentWarning: contentWarning,
             replyTo: replyTo,
             attachments: _attachmentList);
@@ -198,14 +201,32 @@ class PostState extends State<Post> {
   @override
   void initState() {
     super.initState();
+    replyTo = widget.replyTo;
+    bodyTextController = TextEditingController(text: widget.preFillBody ?? "");
+    cwTextController =
+        TextEditingController(text: widget.preFillContentWarning ?? "");
     submitAction = newPost;
     visibility = widget.visibility ?? "public";
-    contentWarningField = new Container();
+
+    if (widget.preFillContentWarning != null) {
+      hasCw = true;
+      contentWarning = widget.preFillContentWarning;
+      contentWarningField = new Container(
+          child: FormField(
+        builder: (FormFieldState<int> state) => TextField(
+              controller: cwTextController,
+              onChanged: _contentWarningUpdated,
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(16),
+                  hintText: "Content Warning"),
+            ),
+      ));
+    } else {
+      contentWarningField = new Container();
+    }
     mediaRow = new Container(
       height: 0,
     );
-    replyTo = widget.replyTo;
-    textController = TextEditingController(text: widget.preFill ?? "");
   }
 
   @override
@@ -226,7 +247,7 @@ class PostState extends State<Post> {
                       builder: (FormFieldState<int> state) => TextField(
                             autofocus: true,
                             maxLength: widget.instance.maxChars,
-                            controller: textController,
+                            controller: bodyTextController,
                             keyboardType: TextInputType.multiline,
                             maxLines: maxLines,
                             onChanged: textUpdated,

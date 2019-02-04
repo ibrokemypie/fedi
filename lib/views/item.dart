@@ -118,7 +118,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                   instance: _instance,
                   authCode: widget.authCode,
                   replyTo: _note.id,
-                  preFill: prefill,
+                  preFillBody: prefill,
+                  preFillContentWarning: _note.contentWarning,
                   visibility: _note.visibility,
                 )));
   }
