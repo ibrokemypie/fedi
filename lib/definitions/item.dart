@@ -165,7 +165,7 @@ class Item {
         this.attachments = attachments;
         this.emoji = postEmojis;
         this.favourited =
-            v["isFavorited"] ?? (v["myReaction"] ?? false) ?? false;
+            v["isFavorited"] ?? (v["myReaction"] != null) ?? false;
         this.favCount = countreacts(v["reactionCounts"]) ?? null;
         this.contentWarning = v["cw"] ?? null;
         this.mentions = mentions;
