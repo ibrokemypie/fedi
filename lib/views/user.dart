@@ -116,8 +116,14 @@ class UserProfileState extends State<UserProfile>
   Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline,
-          targetUserId: _user.id);
+      if (timeline != "pinned") {
+        statusList = await getTimeline(_instance, _authCode, timeline,
+            targetUserId: _user.id);
+      } else {
+        if (_user.pinnedStatuses != null) {
+          statusList = _user.pinnedStatuses;
+        }
+      }
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -260,7 +266,7 @@ class UserProfileState extends State<UserProfile>
       _instance = widget.instance;
       _authCode = widget.authCode;
       _currentUser = widget.currentUser;
-      _tabNames = new List.of(["user", "user_replies", "user_media", "public"]);
+      _tabNames = new List.of(["user", "user_replies", "user_media", "pinned"]);
       _postTabController = TabController(vsync: this, length: 4);
     });
 
@@ -276,24 +282,24 @@ class UserProfileState extends State<UserProfile>
 
   _postTabs() {
     return Container(
-      color: Colors.grey,
+        color: Colors.grey,
         child: TabBar(
-      controller: _postTabController,
-      tabs: <Widget>[
-        Tab(
-          child: Text("Posts"),
-        ),
-        Tab(
-          child: Text("With Replies"),
-        ),
-        Tab(
-          child: Text("Media"),
-        ),
-        Tab(
-          child: Text("Pinned"),
-        ),
-      ],
-    ));
+          controller: _postTabController,
+          tabs: <Widget>[
+            Tab(
+              child: Text("Posts"),
+            ),
+            Tab(
+              child: Text("With Replies"),
+            ),
+            Tab(
+              child: Text("Media"),
+            ),
+            Tab(
+              child: Text("Pinned"),
+            ),
+          ],
+        ));
   }
 
   _postTabViews() {
