@@ -148,6 +148,10 @@ Future<List> getMastodonTimeline(
       actionPath = "/api/v1/" + targetUserId + "/statuses";
       params.addAll({"exclude_replies": "false"});
       break;
+    case "user_pins":
+      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      params.addAll({"pinned": "true"});
+      break;
   }
 
   final response = await http.get(

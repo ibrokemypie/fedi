@@ -116,12 +116,15 @@ class UserProfileState extends State<UserProfile>
   Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
     try {
-      if (timeline != "pinned") {
+      if (timeline != "user_pinned") {
         statusList = await getTimeline(_instance, _authCode, timeline,
             targetUserId: _user.id);
       } else {
         if (_user.pinnedStatuses != null) {
           statusList = _user.pinnedStatuses;
+        } else {
+          statusList = await getTimeline(_instance, _authCode, timeline,
+              targetUserId: _user.id);
         }
       }
 
@@ -266,7 +269,8 @@ class UserProfileState extends State<UserProfile>
       _instance = widget.instance;
       _authCode = widget.authCode;
       _currentUser = widget.currentUser;
-      _tabNames = new List.of(["user", "user_replies", "user_media", "pinned"]);
+      _tabNames =
+          new List.of(["user", "user_replies", "user_media", "user_pinned"]);
       _postTabController = TabController(vsync: this, length: 4);
     });
 
