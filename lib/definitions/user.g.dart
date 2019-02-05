@@ -19,7 +19,8 @@ User _$UserFromJson(Map<String, dynamic> json) {
       fields: json['fields'],
       followersCount: json['followersCount'],
       followingCount: json['followingCount'],
-      statusCount: json['statusCount'])
+      statusCount: json['statusCount'],
+      pinnedStatuses: json['pinnedStatuses'])
     ..acct = json['acct'] as String;
 }
 
@@ -36,5 +37,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'fields': instance.fields,
       'followersCount': instance.followersCount,
       'followingCount': instance.followingCount,
-      'statusCount': instance.statusCount
+      'statusCount': instance.statusCount,
+      'pinnedStatuses': instance.pinnedStatuses
     };

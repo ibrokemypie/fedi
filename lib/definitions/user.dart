@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:fedi/definitions/instance.dart';
+import 'package:fedi/definitions/item.dart';
 
 part 'user.g.dart';
 
@@ -18,6 +19,7 @@ class User {
   int followersCount;
   int followingCount;
   int statusCount;
+  List<Item> pinnedStatuses;
 
   User(
       {username,
@@ -31,7 +33,8 @@ class User {
       fields,
       followersCount,
       followingCount,
-      statusCount}) {
+      statusCount,
+      pinnedStatuses}) {
     this.username = username ?? "";
     this.nickname = nickname ?? "";
     this.id = id ?? "";
@@ -45,6 +48,7 @@ class User {
     this.followersCount = this.followersCount;
     this.followingCount = this.followingCount;
     this.statusCount = this.statusCount;
+    this.pinnedStatuses = this.pinnedStatuses;
   }
 
   User.fromJson(Map json) {
@@ -61,16 +65,27 @@ class User {
     this.followersCount = json['followersCount'];
     this.followingCount = json['followingCount'];
     this.statusCount = json['statusCount'];
+    this.pinnedStatuses = json['pinnedStatuses'];
   }
 
   User.fromMisskey(Map v, Instance instance) {
     List<Map<String, dynamic>> newFields = new List();
     List jsonFields = v["fields"] ?? [];
+    List<Item> newPins = new List();
+    List jsonPins = v["pinnedNotes"];
 
     if (jsonFields.length > 0) {
       for (Map<String, dynamic> field in jsonFields) {
         if (field != null) {
           newFields.add(field);
+        }
+      }
+    }
+
+    if (jsonPins != null && jsonPins.length > 0) {
+      for (Map<String, dynamic> pin in jsonPins) {
+        if (pin != null) {
+          newPins.add(Item.fromMisskey(pin, instance));
         }
       }
     }
@@ -88,7 +103,7 @@ class User {
     this.followersCount = v['followersCount'];
     this.followingCount = v['followingCount'];
     this.statusCount = v['notesCount'];
-
+    this.pinnedStatuses = newPins;
     this.description = this.description.replaceAll("\n", "<br>");
   }
 
