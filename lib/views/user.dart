@@ -3,16 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fedi/definitions/instance.dart';
 import 'package:fedi/api/getuser.dart';
 import 'dart:async';
-import 'package:fedi/views/usertimeline.dart';
+import 'package:fedi/views/timeline.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fedi/definitions/item.dart';
-import 'package:fedi/views/statusbody.dart';
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:fedi/api/gettimeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 
 class UserProfile extends StatefulWidget {
   final String userId;
@@ -54,6 +50,26 @@ class UserProfileState extends State<UserProfile>
     ),
   ]);
 
+  _postTabs() {
+    return TabBar(
+      controller: _postTabController,
+      tabs: <Widget>[
+        Tab(
+          child: Text("Posts"),
+        ),
+        Tab(
+          child: Text("With Replies"),
+        ),
+        Tab(
+          child: Text("Media"),
+        ),
+        Tab(
+          child: Text("Pinned"),
+        ),
+      ],
+    );
+  }
+
   _tabChange() {
     setState(() {
       _currentTab = _tabNames[_postTabController.index];
@@ -74,16 +90,6 @@ class UserProfileState extends State<UserProfile>
     );
   }
 
-  _populateTabs() {
-    List<Widget> newtabs = new List();
-    for (String name in _tabNames) {
-      newtabs.add(_timelineWidget(name));
-    }
-    setState(() {
-      _postTabWidgets = newtabs;
-    });
-  }
-
   _initTabStatuses() {
     Map<String, List<Item>> newtabstatuses = new Map();
     for (String name in _tabNames) {
@@ -102,8 +108,8 @@ class UserProfileState extends State<UserProfile>
 
       setState(() {
         _tabStatuses[timeline] = statusList;
-        _populateTabs();
-        _populateContents();
+        // _populateTabs();
+        _initContents();
       });
     } catch (e) {
       print(e);
@@ -131,7 +137,7 @@ class UserProfileState extends State<UserProfile>
       setState(() {
         _tabStatuses[timeline] = statusList;
         _populateTabs();
-        _populateContents();
+        _initContents();
       });
     } catch (e) {
       print(e);
@@ -143,104 +149,135 @@ class UserProfileState extends State<UserProfile>
     return true;
   }
 
-  _bio() {
+  Widget _bio() {
     String html = markdown.markdownToHtml(_user.description);
     String bio = html;
-    return Column(children: <Widget>[
-      Stack(
-        children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(bottom: 40.0),
-              child: Image(
-                image: CachedNetworkImageProvider(_user.bannerUrl),
-                fit: BoxFit.cover,
-                height: 128,
-                width: double.infinity,
-              )),
-          Positioned(
-            bottom: 0.0,
-            left: 16.0,
-            child: ClipRRect(
-                borderRadius: new BorderRadius.circular(10.0),
-                child: Container(
-                  child: Image(
-                      image: CachedNetworkImageProvider(_user.avatarUrl),
-                      height: 80.0,
-                      width: 80.0,
-                      fit: BoxFit.cover),
-                  color: Colors.grey[900],
-                )),
-          )
-        ],
-      ),
-      Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                _user.nickname,
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "@" + _user.acct,
-                        style:
-                            TextStyle(fontSize: 14.0, color: Colors.grey[100]),
-                      ),
-                    ],
-                  )),
-              Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Html(
-                    data: bio,
-                    defaultTextStyle: TextStyle(color: Colors.grey[350]),
-                    renderNewlines: false,
-                  )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+
+    return FlexibleSpaceBar(
+        collapseMode: CollapseMode.pin,
+        background: Container(
+            color: Colors.grey[800],
+            child: Column(children: <Widget>[
+              Stack(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Text(
-                        _user.followersCount.toString() + "\nFollowers",
-                        textAlign: TextAlign.center,
+                      padding: EdgeInsets.only(bottom: 40.0),
+                      child: Image(
+                        image: CachedNetworkImageProvider(_user.bannerUrl),
+                        fit: BoxFit.cover,
+                        height: 128,
+                        width: double.infinity,
                       )),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Text(
-                        _user.followingCount.toString() + "\nFollows",
-                        textAlign: TextAlign.center,
-                      )),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Text(
-                        _user.statusCount.toString() + "\nPosts",
-                        textAlign: TextAlign.center,
-                      )),
+                  Positioned(
+                    bottom: 0.0,
+                    left: 16.0,
+                    child: ClipRRect(
+                        borderRadius: new BorderRadius.circular(10.0),
+                        child: Container(
+                          child: Image(
+                              image:
+                                  CachedNetworkImageProvider(_user.avatarUrl),
+                              height: 80.0,
+                              width: 80.0,
+                              fit: BoxFit.cover),
+                          color: Colors.grey[900],
+                        )),
+                  )
                 ],
-              )
-            ],
-          )),
-    ]);
+              ),
+              Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        _user.nickname,
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                          padding: EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "@" + _user.acct,
+                                style: TextStyle(
+                                    fontSize: 14.0, color: Colors.grey[100]),
+                              ),
+                            ],
+                          )),
+                      Container(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Html(
+                            data: bio,
+                            defaultTextStyle:
+                                TextStyle(color: Colors.grey[350]),
+                            renderNewlines: false,
+                          )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Text(
+                                _user.followersCount.toString() + "\nFollowers",
+                                textAlign: TextAlign.center,
+                              )),
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Text(
+                                _user.followingCount.toString() + "\nFollows",
+                                textAlign: TextAlign.center,
+                              )),
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Text(
+                                _user.statusCount.toString() + "\nPosts",
+                                textAlign: TextAlign.center,
+                              )),
+                        ],
+                      )
+                    ],
+                  )),
+            ])));
   }
 
-  _populateContents() {
-    _contents = SingleChildScrollView(
-        child: Column(
-      children: <Widget>[
-        _bio(),
-        StickyHeader(
-          header: _postTabs(),
-          content: _postTabViews(),
+  _initContents() {
+    setState(() {
+      _contents = NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              flexibleSpace: _bio(),
+              titleSpacing: 0.0,
+              pinned: true,
+              floating: true,
+              actions: <Widget>[],
+              leading: new Container(),
+              expandedHeight: 500,
+              forceElevated: boxIsScrolled,
+              backgroundColor: Colors.grey[800],
+              bottom: _postTabs(),
+            )
+          ];
+        },
+        body: TabBarView(
+          controller: _postTabController,
+          children: _postTabWidgets,
         ),
-      ],
-    ));
+      );
+    });
+  }
+
+  _populateTabs() {
+    List<Widget> _newWidgets = new List();
+    for (String tab in _tabNames) {
+      _newWidgets.add(_timelineWidget(tab));
+    }
+    _postTabWidgets = _newWidgets;
   }
 
   _initialiseWidget() async {
@@ -251,9 +288,9 @@ class UserProfileState extends State<UserProfile>
 
         _postTabController.addListener(_tabChange);
         _currentTab = _tabNames.elementAt(_postTabController.index);
-
+        _initTabStatuses();
         _populateTabs();
-        _populateContents();
+        _initContents();
       });
     } catch (e) {
       print(e);
@@ -282,38 +319,6 @@ class UserProfileState extends State<UserProfile>
   void dispose() {
     _postTabController.dispose();
     super.dispose();
-  }
-
-  _postTabs() {
-    return Container(
-        color: Colors.grey,
-        child: TabBar(
-          controller: _postTabController,
-          tabs: <Widget>[
-            Tab(
-              child: Text("Posts"),
-            ),
-            Tab(
-              child: Text("With Replies"),
-            ),
-            Tab(
-              child: Text("Media"),
-            ),
-            Tab(
-              child: Text("Pinned"),
-            ),
-          ],
-        ));
-  }
-
-  _postTabViews() {
-    return Container(
-        child: Container(
-            height: double.maxFinite,
-            child: TabBarView(
-              controller: _postTabController,
-              children: _postTabWidgets,
-            )));
   }
 
   @override
