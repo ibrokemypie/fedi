@@ -137,19 +137,19 @@ Future<List> getMastodonTimeline(
       actionPath = "/api/v1/notifications";
       break;
     case "user":
-      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"exclude_replies": "true"});
       break;
     case "user_media":
-      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"only_media": "true"});
       break;
     case "user_replies":
-      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"exclude_replies": "false"});
       break;
     case "user_pins":
-      actionPath = "/api/v1/" + targetUserId + "/statuses";
+      actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"pinned": "true"});
       break;
   }
