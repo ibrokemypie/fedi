@@ -22,7 +22,7 @@ class Relationship {
   Relationship.fromMisskey(Map json) {
     this.followedByMe = json['isFollowing'] ?? null;
     this.followingMe = json['isFollowed'] ?? null;
-    this.requestedFollow = json['requestedFollow'] ?? null;
+    this.requestedFollow = json['hasPendingFollowRequestFromYou'] ?? null;
     this.blocked = json['isBlocked'] ?? null;
     this.muted = json['isMuted'] ?? null;
   }
