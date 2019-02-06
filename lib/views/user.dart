@@ -6,6 +6,8 @@ import 'dart:async';
 import 'package:fedi/views/timeline.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fedi/definitions/item.dart';
+import 'package:fedi/definitions/relationship.dart';
+import 'package:fedi/api/relationship.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:fedi/api/gettimeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,6 +26,7 @@ class UserProfile extends StatefulWidget {
 class UserProfileState extends State<UserProfile>
     with SingleTickerProviderStateMixin {
   User _user;
+  Relationship _relationship;
   Instance _instance;
   String _authCode;
   TabController _postTabController;
@@ -149,6 +152,25 @@ class UserProfileState extends State<UserProfile>
     return true;
   }
 
+  Widget _followsYou() {
+    if (_relationship.followingMe) {
+      return Container(
+        alignment: Alignment.center,
+        width: 80,
+        height: 25,
+        child: Text(
+          "Follows you",
+          style: TextStyle(color: Colors.blue,fontSize: 12),
+        ),
+        decoration: BoxDecoration(
+            borderRadius: new BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Colors.blue, style: BorderStyle.solid,width: 2)),
+      );
+    } else {
+      return Container();
+    }
+  }
+
   Widget _bio() {
     String html = markdown.markdownToHtml(_user.description);
     String bio = html;
@@ -209,6 +231,7 @@ class UserProfileState extends State<UserProfile>
                               ),
                             ],
                           )),
+                      _followsYou(),
                       Container(
                           padding: EdgeInsets.symmetric(vertical: 8.0),
                           child: Html(
@@ -282,9 +305,12 @@ class UserProfileState extends State<UserProfile>
 
   _initialiseWidget() async {
     try {
-      User newUser = await getUserFromId(widget.instance, widget.userId);
+      User newUser = await getUserFromId(_instance, widget.userId);
+      Relationship relationship =
+          await getRelationship(_instance, _authCode, widget.userId);
       setState(() {
         _user = newUser;
+        _relationship = relationship;
 
         _postTabController.addListener(_tabChange);
         _currentTab = _tabNames.elementAt(_postTabController.index);
