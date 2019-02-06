@@ -148,7 +148,7 @@ Future<List> getMastodonTimeline(
       actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"exclude_replies": "false"});
       break;
-    case "user_pins":
+    case "user_pinned":
       actionPath = "/api/v1/accounts/" + targetUserId + "/statuses";
       params.addAll({"pinned": "true"});
       break;
