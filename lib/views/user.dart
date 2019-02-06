@@ -9,6 +9,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/relationship.dart';
 import 'package:fedi/api/relationship.dart';
+import 'package:fedi/api/followuser.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:fedi/api/gettimeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -160,6 +161,19 @@ class UserProfileState extends State<UserProfile>
     return true;
   }
 
+  _followUnfollow(String action) async {
+    if (action == "follow") {
+      await followUser(_instance, _authCode, _user.id);
+    }
+
+    Relationship relationship =
+        await getRelationship(_instance, _authCode, widget.userId);
+    setState(() {
+      _relationship = relationship;
+      _initContents();
+    });
+  }
+
   Widget _followsYou() {
     if (_relationship.followingMe) {
       return Container(
@@ -207,14 +221,15 @@ class UserProfileState extends State<UserProfile>
             ]),
         onPressed: () => {},
       );
-    } else if (_relationship.requestedFollow != null && _relationship.requestedFollow) {
+    } else if (_relationship.requestedFollow != null &&
+        _relationship.requestedFollow) {
       return FloatingActionButton(
         backgroundColor: Colors.red,
         child: Icon(
           Icons.hourglass_full,
           color: Colors.white,
         ),
-        onPressed: () => {},
+        onPressed: () => _followUnfollow("follow"),
       );
     } else {
       return FloatingActionButton(
@@ -223,7 +238,7 @@ class UserProfileState extends State<UserProfile>
           Icons.person_add,
           color: Colors.white,
         ),
-        onPressed: () => {},
+        onPressed: () => _followUnfollow("follow"),
       );
     }
   }
@@ -251,7 +266,6 @@ class UserProfileState extends State<UserProfile>
                     bottom: 0.0,
                     left: 16.0,
                     right: 16.0,
-                    // width: double.maxFinite,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
