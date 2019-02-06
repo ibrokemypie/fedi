@@ -10,6 +10,7 @@ import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/relationship.dart';
 import 'package:fedi/api/relationship.dart';
 import 'package:fedi/api/followuser.dart';
+import 'package:fedi/api/unfollowuser.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:fedi/api/gettimeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -164,6 +165,8 @@ class UserProfileState extends State<UserProfile>
   _followUnfollow(String action) async {
     if (action == "follow") {
       await followUser(_instance, _authCode, _user.id);
+    } else if (action == "unfollow") {
+      await unFollowUser(_instance, _authCode, _user.id);
     }
 
     Relationship relationship =
@@ -219,7 +222,7 @@ class UserProfileState extends State<UserProfile>
                         color: Colors.white),
                   )),
             ]),
-        onPressed: () => {},
+        onPressed: () => _followUnfollow("unfollow"),
       );
     } else if (_relationship.requestedFollow != null &&
         _relationship.requestedFollow) {
@@ -229,7 +232,7 @@ class UserProfileState extends State<UserProfile>
           Icons.hourglass_full,
           color: Colors.white,
         ),
-        onPressed: () => _followUnfollow("follow"),
+        onPressed: () => _followUnfollow("unfollow"),
       );
     } else {
       return FloatingActionButton(
