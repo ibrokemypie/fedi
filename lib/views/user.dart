@@ -198,51 +198,55 @@ class UserProfileState extends State<UserProfile>
   }
 
   Widget _followButton() {
-    if (_relationship.followedByMe) {
-      return FloatingActionButton(
-        backgroundColor: Colors.red,
-        child: Stack(
-            overflow: Overflow.visible,
-            alignment: Alignment.centerLeft,
-            children: <Widget>[
-              Positioned(
-                  left: 13,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  )),
-              Positioned(
-                  left: 30,
-                  bottom: 22,
-                  child: Text(
-                    "x",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  )),
-            ]),
-        onPressed: () => _followUnfollow("unfollow"),
-      );
-    } else if (_relationship.requestedFollow != null &&
-        _relationship.requestedFollow) {
-      return FloatingActionButton(
-        backgroundColor: Colors.red,
-        child: Icon(
-          Icons.hourglass_full,
-          color: Colors.white,
-        ),
-        onPressed: () => _followUnfollow("unfollow"),
-      );
+    if (_user.id != _currentUser.id) {
+      if (_relationship.followedByMe) {
+        return FloatingActionButton(
+          backgroundColor: Colors.red,
+          child: Stack(
+              overflow: Overflow.visible,
+              alignment: Alignment.centerLeft,
+              children: <Widget>[
+                Positioned(
+                    left: 13,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )),
+                Positioned(
+                    left: 30,
+                    bottom: 22,
+                    child: Text(
+                      "x",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    )),
+              ]),
+          onPressed: () => _followUnfollow("unfollow"),
+        );
+      } else if (_relationship.requestedFollow != null &&
+          _relationship.requestedFollow) {
+        return FloatingActionButton(
+          backgroundColor: Colors.red,
+          child: Icon(
+            Icons.hourglass_full,
+            color: Colors.white,
+          ),
+          onPressed: () => _followUnfollow("unfollow"),
+        );
+      } else {
+        return FloatingActionButton(
+          backgroundColor: Colors.blue,
+          child: Icon(
+            Icons.person_add,
+            color: Colors.white,
+          ),
+          onPressed: () => _followUnfollow("follow"),
+        );
+      }
     } else {
-      return FloatingActionButton(
-        backgroundColor: Colors.blue,
-        child: Icon(
-          Icons.person_add,
-          color: Colors.white,
-        ),
-        onPressed: () => _followUnfollow("follow"),
-      );
+      return Container();
     }
   }
 
