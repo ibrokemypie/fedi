@@ -53,20 +53,19 @@ Future<Relationship> getMisskeyRelationship(
 
 Future<Relationship> getMastodonRelationship(
     Instance instance, String authCode, String userId) async {
-  Map<String, dynamic> params;
   String actionPath = "/api/v1/accounts/relationships";
 
-  params = Map.from({"id": userId});
+  String paramString = "?id=" + userId;
 
-  final response = await http.post(instance.uri + actionPath,
-      body: params, headers: {"Authorization": "bearer " + authCode});
+  final response = await http.get(instance.uri + actionPath + paramString,
+      headers: {"Authorization": "bearer " + authCode});
 
   if (response.statusCode == 200) {
-    Map<String, dynamic> returned = json.decode(response.body);
+    Map<String, dynamic> returned = json.decode(response.body)[0];
 
     return Relationship.fromMastodon(returned);
   } else {
-    throw Exception('Failed to load post ' +
-        (instance.uri + actionPath + json.encode(params)));
+    throw Exception(
+        'Failed to load post ' + (instance.uri + actionPath + paramString));
   }
 }
