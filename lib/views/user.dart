@@ -254,9 +254,8 @@ class UserProfileState extends State<UserProfile>
     String html = markdown.markdownToHtml(_user.description);
     String bio = html;
 
-    return FlexibleSpaceBar(
-        collapseMode: CollapseMode.pin,
-        background: Container(
+    return SliverToBoxAdapter(
+        child: Container(
             color: Colors.grey[800],
             child: Column(children: <Widget>[
               Stack(
@@ -359,16 +358,15 @@ class UserProfileState extends State<UserProfile>
       _contents = NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
           return <Widget>[
+            _bio(),
             SliverAppBar(
-              flexibleSpace: _bio(),
-              titleSpacing: 0.0,
               pinned: true,
               floating: true,
               actions: <Widget>[],
+              expandedHeight: 0,
               leading: new Container(),
-              expandedHeight: 500,
               forceElevated: boxIsScrolled,
-              backgroundColor: Colors.grey[800],
+              backgroundColor: Colors.grey[600],
               bottom: _postTabs(),
             )
           ];
