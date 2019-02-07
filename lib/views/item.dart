@@ -142,9 +142,9 @@ class ItemBuilderState extends State<ItemBuilder> {
   }
 
   void _remoteButton() async {
-    print(_note.url);
-    if (await canLaunch(_note.url)) {
-      await launch(_note.url, enableJavaScript: true);
+    print(_note.remoteUrl);
+    if (await canLaunch(_note.remoteUrl)) {
+      await launch(_note.remoteUrl, enableJavaScript: true);
     } else {
       throw 'Could not launch $_note.url';
     }

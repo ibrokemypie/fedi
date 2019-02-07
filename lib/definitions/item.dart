@@ -14,7 +14,8 @@ class Item {
   String id;
   String date;
   User author;
-  String url;
+  String remoteUrl;
+  String localUrl;
   String contentWarning;
   String body;
   String visibility;
@@ -35,7 +36,8 @@ class Item {
       id,
       date,
       author,
-      url,
+      remoteUrl,
+      localUrl,
       contentWarning,
       body,
       visibility,
@@ -54,7 +56,8 @@ class Item {
     this.id = id;
     this.date = date;
     this.author = author;
-    this.url = url;
+    this.remoteUrl = remoteUrl;
+    this.localUrl = localUrl;
     this.contentWarning = contentWarning;
     this.body = body;
     this.visibility = visibility.toLowerCase();
@@ -76,7 +79,8 @@ class Item {
     this.id = json['id'];
     this.date = json['date'];
     this.author = json['author'];
-    this.url = json['url'];
+    this.remoteUrl = json['remoteUrl'];
+    this.localUrl = json['localUrl'];
     this.contentWarning = json['cw'];
     this.body = json['body'];
     this.visibility = json['visibility'].toString().toLowerCase();
@@ -161,7 +165,8 @@ class Item {
         this.attachments = attachments;
         this.myReaction = v["myReaction"] ?? null;
         this.visibility = v["visibility"] ?? null;
-        this.url = v["uri"];
+        this.remoteUrl = v["uri"];
+        this.localUrl = instance.uri + "/notes/" + this.id;
         this.attachments = attachments;
         this.emoji = postEmojis;
         this.favourited =
@@ -239,7 +244,9 @@ class Item {
         this.emoji = postEmojis;
         this.myReaction = null;
         this.visibility = v["visibility"] ?? null;
-        this.url = v["url"];
+        this.remoteUrl = v["url"];
+        this.localUrl =
+            instance.uri + "/users/" + author.username + "/statuses/" + this.id;
         this.favourited = v["favourited"] ?? false;
         this.favCount = v["favourites_count"];
         this.contentWarning = v["spoiler_text"] ?? null;
