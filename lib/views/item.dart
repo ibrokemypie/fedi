@@ -15,6 +15,7 @@ import 'package:fedi/views/statusbody.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:fedi/views/user.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -47,11 +48,14 @@ class ItemBuilderState extends State<ItemBuilder> {
   Item _note;
   List<PopupMenuEntry<String>> _menuButtonItems = [
     const PopupMenuItem<String>(
+      value: "openRemote",
+      child: Text('Open remote URL in browser'),
+    ),
+    const PopupMenuItem<String>(
       value: "details",
       child: Text('Context'),
     ),
   ];
-  bool _firstbuild;
 
   void _toggleFavourite() async {
     if (_note.favourited != true) {
@@ -137,6 +141,15 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
+  void _remoteButton() async {
+    print(_note.url);
+    if (await canLaunch(_note.url)) {
+      await launch(_note.url, enableJavaScript: true);
+    } else {
+      throw 'Could not launch $_note.url';
+    }
+  }
+
   void _deleteButton() async {
     showDialog(
         context: context,
@@ -171,6 +184,9 @@ class ItemBuilderState extends State<ItemBuilder> {
       case "delete":
         _deleteButton();
         break;
+      case "openRemote":
+        _remoteButton();
+        break;
     }
   }
 
@@ -178,8 +194,6 @@ class ItemBuilderState extends State<ItemBuilder> {
   void initState() {
     super.initState();
     setState(() {
-      _firstbuild = true;
-
       _instance = widget.instance;
       _item = widget.item;
       _note = _item;
