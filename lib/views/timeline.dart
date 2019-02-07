@@ -10,7 +10,9 @@ class TimeLine extends StatefulWidget {
   final Instance instance;
   final String authCode;
   final List<Item> statuses;
-  final Function inittimeline;
+  final Function initTimeline;
+  final Function newStatuses;
+  final Function oldStatuses;
   final User currentUser;
   final Key key;
 
@@ -18,7 +20,9 @@ class TimeLine extends StatefulWidget {
       {this.instance,
       this.authCode,
       this.statuses,
-      this.inittimeline,
+      this.initTimeline,
+      this.newStatuses,
+      this.oldStatuses,
       this.currentUser,
       this.key});
   @override
@@ -55,7 +59,7 @@ class TimeLineState extends State<TimeLine> {
   @override
   Widget build(BuildContext context) {
     if (widget.statuses == null || widget.statuses.length == 0) {
-      widget.inittimeline();
+      widget.initTimeline();
     } else {
       setState(() {
         _statuses = widget.statuses;
