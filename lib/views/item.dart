@@ -16,6 +16,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:fedi/views/user.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 class ItemBuilder extends StatefulWidget {
   final Instance instance;
@@ -54,6 +55,10 @@ class ItemBuilderState extends State<ItemBuilder> {
     const PopupMenuItem<String>(
       value: "openLocal",
       child: Text('Open in browser'),
+    ),
+    const PopupMenuItem<String>(
+      value: "copy",
+      child: Text('Copy contents'),
     ),
     const PopupMenuItem<String>(
       value: "details",
@@ -189,6 +194,12 @@ class ItemBuilderState extends State<ItemBuilder> {
         });
   }
 
+  void _copyButton() async {
+    Clipboard.setData(new ClipboardData(text: _note.body));
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text("Contents copied to clipboard")));
+  }
+
   void _moreButtonAction(String action) {
     switch (action) {
       case "details":
@@ -202,6 +213,9 @@ class ItemBuilderState extends State<ItemBuilder> {
         break;
       case "openLocal":
         _localButton();
+        break;
+      case "copy":
+        _copyButton();
         break;
     }
   }
