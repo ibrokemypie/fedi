@@ -48,7 +48,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   List<PopupMenuEntry<String>> _menuButtonItems = [
     const PopupMenuItem<String>(
       value: "details",
-      child: Text('Details'),
+      child: Text('Context'),
     ),
   ];
   bool _firstbuild;
