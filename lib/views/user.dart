@@ -118,7 +118,8 @@ class UserProfileState extends State<UserProfile>
     List<Item> statusList;
     try {
       statusList = await getTimeline(_instance, _authCode, timeline,
-          targetUserId: _user.id);
+          currentStatuses: _tabStatuses[timeline],
+          sinceId: _tabStatuses[timeline][0].id);
 
       setState(() {
         _tabStatuses[timeline] = statusList;

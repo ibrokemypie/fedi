@@ -78,7 +78,9 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   Future<void> _newStatuses(String timeline) async {
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline);
+      statusList = await getTimeline(_instance, _authCode, timeline,
+          currentStatuses: _tabStatuses[timeline],
+          sinceId: _tabStatuses[timeline][0].id);
 
       setState(() {
         _tabStatuses[timeline] = statusList;
