@@ -7,7 +7,10 @@ import 'package:fedi/definitions/shared.dart';
 
 Future<List<Item>> getTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
+    {List<Item> currentStatuses,
+    String sinceId,
+    String untilId,
+    String targetUserId}) async {
   List<Item> statuses;
 
   switch (instance.type) {
@@ -16,6 +19,7 @@ Future<List<Item>> getTimeline(
         statuses = await getMisskeyTimeline(instance, authCode, timelineName,
             currentStatuses: currentStatuses,
             sinceId: sinceId,
+            untilId: untilId,
             targetUserId: targetUserId);
         break;
       }
@@ -24,6 +28,7 @@ Future<List<Item>> getTimeline(
         statuses = await getMastodonTimeline(instance, authCode, timelineName,
             currentStatuses: currentStatuses,
             sinceId: sinceId,
+            untilId: untilId,
             targetUserId: targetUserId);
         break;
       }
@@ -37,22 +42,25 @@ Future<List<Item>> getTimeline(
 
 Future<List> getMisskeyTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
+    {List<Item> currentStatuses,
+    String sinceId,
+    String untilId,
+    String targetUserId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params = new Map();
   String actionPath;
 
-  if (sinceId == null) {
-    params = Map.from({
-      "limit": 40,
-      "i": authCode,
-    });
-  } else {
-    params = Map.from({
-      "limit": 40,
-      "i": authCode,
-      "SinceId": sinceId,
-    });
+  params = Map.from({
+    "limit": 40,
+    "i": authCode,
+  });
+
+  if (sinceId != null) {
+    params.addAll({"SinceId": sinceId});
+  }
+
+  if (untilId != null) {
+    params.addAll({"untilId": untilId});
   }
 
   switch (timelineName) {
@@ -94,7 +102,11 @@ Future<List> getMisskeyTimeline(
     });
 
     if (currentStatuses != null) {
-      return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+      if (sinceId != null) {
+        return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+      } else {
+        return new List<Item>.from(currentStatuses)..addAll(newStatuses);
+      }
     }
 
     return newStatuses;
@@ -106,20 +118,24 @@ Future<List> getMisskeyTimeline(
 
 Future<List> getMastodonTimeline(
     Instance instance, String authCode, String timelineName,
-    {List<Item> currentStatuses, String sinceId, String targetUserId}) async {
+    {List<Item> currentStatuses,
+    String sinceId,
+    String untilId,
+    String targetUserId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
   String actionPath;
 
-  if (sinceId == null) {
-    params = Map.from({
-      "limit": "40",
-    });
-  } else {
-    params = Map.from({
-      "limit": "40",
-      "since_id": sinceId,
-    });
+  params = Map.from({
+    "limit": "40",
+  });
+
+  if (sinceId != null) {
+    params.addAll({"since_id": sinceId});
+  }
+
+  if (untilId != null) {
+    params.addAll({"max_id": untilId});
   }
 
   switch (timelineName) {
@@ -167,7 +183,11 @@ Future<List> getMastodonTimeline(
     });
 
     if (currentStatuses != null) {
-      return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+      if (sinceId != null) {
+        return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+      } else {
+        return new List<Item>.from(currentStatuses)..addAll(newStatuses);
+      }
     }
 
     return newStatuses;

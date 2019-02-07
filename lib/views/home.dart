@@ -94,6 +94,25 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _oldStatuses(String timeline) async {
+    List<Item> statusList;
+    try {
+      statusList = await getTimeline(_instance, _authCode, timeline,
+          currentStatuses: _tabStatuses[timeline],
+          untilId: _tabStatuses[timeline].last.id);
+
+      setState(() {
+        _tabStatuses[timeline] = statusList;
+        _populateTabs();
+      });
+    } catch (e) {
+      print(e);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+    }
+  }
+
   Future<bool> _initTimeline(String timeline) async {
     List<Item> statusList;
     try {
@@ -180,6 +199,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         initTimeline: () => _initTimeline(timelineName),
         currentUser: _currentUser,
         newStatuses: () => _newStatuses(timelineName),
+        oldStatuses: () => _oldStatuses(timelineName),
       ),
       key: Key(timelineName),
       onRefresh: () => _newStatuses(timelineName),

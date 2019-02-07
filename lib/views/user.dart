@@ -98,6 +98,7 @@ class UserProfileState extends State<UserProfile>
         initTimeline: () => _initTimeline(timelineName),
         currentUser: _currentUser,
         newStatuses: () => _newStatuses(timelineName),
+                oldStatuses: () => _oldStatuses(timelineName),
       ),
       key: Key(timelineName),
       onRefresh: () => _newStatuses(timelineName),
@@ -120,6 +121,26 @@ class UserProfileState extends State<UserProfile>
       statusList = await getTimeline(_instance, _authCode, timeline,
           currentStatuses: _tabStatuses[timeline],
           sinceId: _tabStatuses[timeline][0].id);
+
+      setState(() {
+        _tabStatuses[timeline] = statusList;
+        // _populateTabs();
+        _initContents();
+      });
+    } catch (e) {
+      print(e);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+    }
+  }
+
+  Future<void> _oldStatuses(String timeline) async {
+    List<Item> statusList;
+    try {
+      statusList = await getTimeline(_instance, _authCode, timeline,
+          currentStatuses: _tabStatuses[timeline],
+          untilId: _tabStatuses[timeline][0].id);
 
       setState(() {
         _tabStatuses[timeline] = statusList;

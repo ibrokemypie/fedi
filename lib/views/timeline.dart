@@ -32,14 +32,22 @@ class TimeLine extends StatefulWidget {
 class TimeLineState extends State<TimeLine> {
   Widget contents = new Center(child: CircularProgressIndicator());
   List<Item> _statuses = new List();
+  ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
+    _controller.addListener(() {
+      if (_controller.position.atEdge) {
+        if (_controller.position.pixels != 0) widget.oldStatuses();
+      }
+    });
   }
 
   Widget statusListView() {
     return new ListView.builder(
+      controller: _controller,
       itemBuilder: (context, i) {
         final index = i;
         if (index >= _statuses.length) {
