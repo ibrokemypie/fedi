@@ -52,6 +52,10 @@ class ItemBuilderState extends State<ItemBuilder> {
       child: Text('Open remote URL in browser'),
     ),
     const PopupMenuItem<String>(
+      value: "openLocal",
+      child: Text('Open in browser'),
+    ),
+    const PopupMenuItem<String>(
       value: "details",
       child: Text('Context'),
     ),
@@ -150,6 +154,15 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
+  void _localButton() async {
+    print(_note.localUrl);
+    if (await canLaunch(_note.localUrl)) {
+      await launch(_note.localUrl, enableJavaScript: true);
+    } else {
+      throw 'Could not launch $_note.url';
+    }
+  }
+
   void _deleteButton() async {
     showDialog(
         context: context,
@@ -186,6 +199,9 @@ class ItemBuilderState extends State<ItemBuilder> {
         break;
       case "openRemote":
         _remoteButton();
+        break;
+      case "openLocal":
+        _localButton();
         break;
     }
   }
