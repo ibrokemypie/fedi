@@ -32,24 +32,20 @@ class TimeLine extends StatefulWidget {
 class TimeLineState extends State<TimeLine> {
   Widget contents = new Center(child: CircularProgressIndicator());
   List<Item> _statuses = new List();
-  ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
-    _controller.addListener(() {
-      if (_controller.position.atEdge) {
-        if (_controller.position.pixels != 0) widget.oldStatuses();
-      }
-    });
   }
 
   Widget statusListView() {
     return new ListView.builder(
-      controller: _controller,
-      itemBuilder: (context, i) {
-        final index = i;
+      itemBuilder: (context, index) {
+        if (index == _statuses.length) {
+          return new RefreshIndicatorItem(widget.oldStatuses);
+        }
+
         if (index >= _statuses.length) {
           return null;
         }
@@ -76,5 +72,31 @@ class TimeLineState extends State<TimeLine> {
     }
 
     return contents;
+  }
+}
+
+class RefreshIndicatorItem extends StatefulWidget {
+  final Function oldStatuses;
+
+  RefreshIndicatorItem(this.oldStatuses);
+  @override
+  RefreshIndicatorItemState createState() => new RefreshIndicatorItemState();
+}
+
+class RefreshIndicatorItemState extends State<RefreshIndicatorItem> {
+  @override
+  void initState() {
+    super.initState();
+    widget.oldStatuses();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
