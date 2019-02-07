@@ -51,45 +51,66 @@ class StatusFileState extends State<StatusFile> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isVisible) {
-      return Stack(
-        children: <Widget>[
-          FlatButton(
-            onPressed: () => widget.showImage(_files, widget.fileNumber),
-            child: Image.network(
-              _file.thumbnailUrl,
-              fit: BoxFit.cover,
+    if (_file.thumbnailUrl != null &&
+        _file.fileUrl != null &&
+        _file.id != null) {
+      if (_isVisible) {
+        return Stack(
+          children: <Widget>[
+            FlatButton(
+              onPressed: () => widget.showImage(_files, widget.fileNumber),
+              child: Image.network(
+                _file.thumbnailUrl,
+                fit: BoxFit.cover,
+                height: 200,
+              ),
+            ),
+            _toggleButton
+          ],
+        );
+      } else {
+        return InkWell(
+            onTap: toggleVisible,
+            child: Container(
+              width: 200,
               height: 200,
-            ),
-          ),
-          _toggleButton
-        ],
-      );
+              color: Colors.grey[900],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Marked Sensitive",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text("Tap to view"),
+                ],
+              ),
+            ));
+      }
     } else {
-      return InkWell(
-          onTap: toggleVisible,
-          child: Container(
-            width: 200,
-            height: 200,
-            color: Colors.grey[900],
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Marked Sensitive",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text("Tap to view"),
-              ],
+      return Container(
+        width: 200,
+        height: 200,
+        color: Colors.grey[900],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Image Missing",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          ));
+          ],
+        ),
+      );
     }
   }
 }
 
 Widget singleFile(Item status, int fileNumber, Function showImage) {
-  return Container(child: StatusFile(status.attachments, fileNumber, showImage));
+  return Container(
+      child: StatusFile(status.attachments, fileNumber, showImage));
 }
 
 Widget fileRow(Item status, int startAt, Function showImage) {
