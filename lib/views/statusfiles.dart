@@ -7,8 +7,9 @@ class StatusFile extends StatefulWidget {
   final List<Attachment> files;
   final int fileNumber;
   final Function showImage;
+  final bool isRow;
 
-  StatusFile(this.files, this.fileNumber, this.showImage);
+  StatusFile(this.files, this.fileNumber, this.showImage, this.isRow);
   @override
   StatusFileState createState() => new StatusFileState();
 }
@@ -18,6 +19,7 @@ class StatusFileState extends State<StatusFile> {
   List<Attachment> _files;
   Attachment _file;
   Widget _toggleButton = Container();
+  Widget _imageWidget;
 
   @override
   void initState() {
@@ -55,45 +57,48 @@ class StatusFileState extends State<StatusFile> {
         _file.fileUrl != null &&
         _file.id != null) {
       if (_isVisible) {
-        return Stack(
-          children: <Widget>[
-            FlatButton(
-              onPressed: () => widget.showImage(_files, widget.fileNumber),
-              child: Image.network(
-                _file.thumbnailUrl,
-                fit: BoxFit.cover,
-                height: 200,
-              ),
-            ),
-            _toggleButton
-          ],
-        );
-      } else {
-        return InkWell(
-            onTap: toggleVisible,
-            child: Container(
-              width: 200,
-              height: 200,
-              color: Colors.grey[900],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Marked Sensitive",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+        _imageWidget = Container(
+            height: 200,
+            color: Colors.grey[900],
+            padding: EdgeInsets.all(5),
+            child: Stack(
+              children: <Widget>[
+                Center(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(0),
+                  onPressed: () => widget.showImage(_files, widget.fileNumber),
+                  child: Image.network(
+                    _file.thumbnailUrl,
+                    fit: BoxFit.cover,
                   ),
-                  Text("Tap to view"),
-                ],
-              ),
+                )),
+                _toggleButton
+              ],
             ));
+      } else {
+        _imageWidget = Container(
+            height: 200,
+            child: InkWell(
+                onTap: toggleVisible,
+                child: Container(
+                  color: Colors.grey[900],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Marked Sensitive",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text("Tap to view"),
+                    ],
+                  ),
+                )));
       }
     } else {
-      return Container(
-        width: 200,
+      _imageWidget = Container(
         height: 200,
-        color: Colors.grey[900],
-        child: Column(
+        color: Colors.grey[900],child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -105,24 +110,26 @@ class StatusFileState extends State<StatusFile> {
         ),
       );
     }
+
+    return _imageWidget;
   }
 }
 
 Widget singleFile(Item status, int fileNumber, Function showImage) {
-  return Container(
-      child: StatusFile(status.attachments, fileNumber, showImage));
+  return FractionallySizedBox(
+        widthFactor: 1,
+        child:Container(child:StatusFile(status.attachments, fileNumber, showImage, false)));
 }
 
 Widget fileRow(Item status, int startAt, Function showImage) {
-  return FittedBox(
-      child: Row(
+  return  Row(
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
-      StatusFile(status.attachments, startAt, showImage),
-      StatusFile(status.attachments, startAt + 1, showImage),
+      Expanded(child:StatusFile(status.attachments, startAt, showImage, true)),
+      Expanded(child:StatusFile(status.attachments, startAt + 1, showImage, true)),
     ],
-  ));
+  );
 }
 
 class statusFiles extends StatelessWidget {
