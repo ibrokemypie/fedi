@@ -31,6 +31,7 @@ class Item {
   Item notificationNote;
   List<Emoji> emoji;
   List<Mention> mentions;
+  String replyId;
 
   Item(
       id,
@@ -52,7 +53,7 @@ class Item {
       isRead,
       notificationNote,
       emoji,
-      mentions) {
+      mentions,replyId) {
     this.id = id;
     this.date = date;
     this.author = author;
@@ -73,6 +74,7 @@ class Item {
     this.notificationNote = notificationNote;
     this.emoji = emoji;
     this.mentions = mentions;
+    this.replyId = replyId;
   }
 
   Item.fromJson(Map json) {
@@ -96,6 +98,7 @@ class Item {
     this.notificationNote = json['notificationNote'];
     this.emoji = json['emoji'];
     this.mentions = json['mentions'];
+    this.replyId = json['replyId'];
   }
 
   Item.fromMisskey(Map v, Instance instance) {
@@ -158,6 +161,7 @@ class Item {
         // }
 
         this.id = v["id"];
+        this.replyId = v["replyId"];
         this.date = v["createdAt"];
         this.body = v["text"] ?? "";
         this.renoteCount = v["renoteCount"] ?? 0;
@@ -236,6 +240,7 @@ class Item {
         }
 
         this.id = v["id"];
+        this.replyId = v["in_reply_to_id"];
         this.date = v["created_at"];
         this.body = v["content"] ?? "";
         this.renoteCount = v["reblogs_count"] ?? 0;

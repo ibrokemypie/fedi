@@ -45,6 +45,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   Instance _instance;
   Item _item;
   bool _isRenote = false;
+  bool _isReply = false;
   bool _isNotification = false;
   Item _note;
   List<PopupMenuEntry<String>> _menuButtonItems = [
@@ -241,6 +242,8 @@ class ItemBuilderState extends State<ItemBuilder> {
         if (_item.renote != null) {
           _isRenote = true;
           _note = _item.renote;
+        } else if (_item.replyId != null) {
+          _isReply = true;
         }
       }
 
@@ -417,44 +420,62 @@ class ItemBuilderState extends State<ItemBuilder> {
         height: 4,
       );
 
-  _renotedBy() => Expanded(
+  _notificationText() => Expanded(
+        child: Text(_item.author.nickname +
+            notificationTypeString(_item.notificationType)),
+      );
+
+  _renoteReplyRow() {
+    String destinationId = _note.replyId ?? _note.id;
+
+    Widget avatar;
+    avatar = GestureDetector(
+      child: CircleAvatar(
+        radius: 16,
+        backgroundImage: new CachedNetworkImageProvider(_item.author.avatarUrl),
+      ),
+      onTap: () => _showUserPage(_item.author.id),
+    );
+    // }
+
+    Widget textRow;
+    if (_isReply) {
+      textRow = Expanded(
+          child: Row(
+        children: <Widget>[
+          Icon(Icons.reply),
+          Text("replied to a status"),
+        ],
+      ));
+    } else {
+      textRow = Expanded(
           child: Row(
         children: <Widget>[
           Icon(Icons.repeat),
           Text("renoted by " + _item.author.nickname),
         ],
       ));
+    }
 
-  _notificationText() => Expanded(
-        child: Text(_item.author.nickname +
-            notificationTypeString(_item.notificationType)),
-      );
-
-  _renoteRow() => Material(
-        elevation: 1,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          color: Colors.red,
-          child: Row(
-            children: <Widget>[
-              Container(
-                alignment: FractionalOffset.topCenter,
-                padding: const EdgeInsets.only(left: 16.0, right: 4),
-                child: GestureDetector(
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundImage:
-                        new CachedNetworkImageProvider(_item.author.avatarUrl),
-                  ),
-                  onTap: () => _showUserPage(_item.author.id),
-                ),
-              ),
-              _renotedBy(),
-              _visibilityIcon()
-            ],
+    return GestureDetector(
+        onTap: _showContext,
+        child: Material(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            color: Colors.red,
+            child: Row(
+              children: <Widget>[
+                Container(
+                    alignment: FractionalOffset.topCenter,
+                    padding: const EdgeInsets.only(left: 16.0, right: 4),
+                    child: avatar),
+                textRow,
+                _visibilityIcon()
+              ],
+            ),
           ),
-        ),
-      );
+        ));
+  }
 
   _notificationRow() => Material(
         elevation: 1,
@@ -507,8 +528,8 @@ class ItemBuilderState extends State<ItemBuilder> {
         _divider(),
       ];
 
-  _renoteTile() => <Widget>[
-        _renoteRow(),
+  _renoteReplyTile() => <Widget>[
+        _renoteReplyRow(),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -594,8 +615,8 @@ class ItemBuilderState extends State<ItemBuilder> {
 
     if (_isNotification) {
       return Container(child: Column(children: _notificationTile()));
-    } else if (_isRenote) {
-      return Container(child: Column(children: _renoteTile()));
+    } else if (_isRenote || _isReply && !widget.isContext) {
+      return Container(child: Column(children: _renoteReplyTile()));
     } else {
       return Container(child: Column(children: _statusTile()));
     }
