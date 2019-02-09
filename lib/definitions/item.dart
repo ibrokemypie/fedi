@@ -193,7 +193,7 @@ class Item {
   Item.fromMastodon(Map v, Instance instance) {
     if (v["account"] != null &&
         v["id"] != null &&
-        !(v["note"] != null && v["status"].containsKey("deleted_at"))) {
+        !(v["status"] != null && v["status"].containsKey("deleted_at"))) {
       try {
         List<Attachment> attachments = new List();
         List jsonAttachments = v["media_attachments"] ?? [];
