@@ -49,20 +49,20 @@ class ItemBuilderState extends State<ItemBuilder> {
   Item _note;
   List<PopupMenuEntry<String>> _menuButtonItems = [
     const PopupMenuItem<String>(
-      value: "openRemote",
-      child: Text('Open remote URL in browser'),
-    ),
-    const PopupMenuItem<String>(
-      value: "openLocal",
-      child: Text('Open in browser'),
+      value: "details",
+      child: Text('Context'),
     ),
     const PopupMenuItem<String>(
       value: "copy",
       child: Text('Copy contents'),
     ),
     const PopupMenuItem<String>(
-      value: "details",
-      child: Text('Context'),
+      value: "openLocal",
+      child: Text('Open in browser'),
+    ),
+    const PopupMenuItem<String>(
+      value: "openRemote",
+      child: Text('Open remote URL in browser'),
     ),
   ];
 
