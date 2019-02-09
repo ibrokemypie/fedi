@@ -132,11 +132,11 @@ Widget fileRow(Item status, int startAt, Function showImage) {
   );
 }
 
-class statusFiles extends StatelessWidget {
-  bool isContext;
-  Function moreButtonAction;
-  Item status;
-  statusFiles(this.isContext, this.moreButtonAction, this.status);
+class StatusFiles extends StatelessWidget {
+  final bool isContext;
+  final Function moreButtonAction;
+  final Item status;
+  StatusFiles(this.isContext, this.moreButtonAction, this.status);
 
   @override
   Widget build(BuildContext context) {
