@@ -29,6 +29,32 @@ class TimeLine extends StatefulWidget {
   TimeLineState createState() => new TimeLineState();
 }
 
+class NewStatusesItem extends StatefulWidget {
+  final Function oldStatuses;
+
+  NewStatusesItem(this.oldStatuses);
+  @override
+  NewStatusesItemState createState() => new NewStatusesItemState();
+}
+
+class NewStatusesItemState extends State<NewStatusesItem> {
+  @override
+  void initState() {
+    super.initState();
+    widget.oldStatuses();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
 class TimeLineState extends State<TimeLine> {
   Widget contents = new Center(child: CircularProgressIndicator());
   List<Item> _statuses = new List();
@@ -36,14 +62,13 @@ class TimeLineState extends State<TimeLine> {
   @override
   void initState() {
     super.initState();
-
   }
 
   Widget statusListView() {
     return new ListView.builder(
       itemBuilder: (context, index) {
         if (index == _statuses.length) {
-          return new RefreshIndicatorItem(widget.oldStatuses);
+          return new NewStatusesItem(widget.oldStatuses);
         }
 
         if (index >= _statuses.length) {
@@ -72,31 +97,5 @@ class TimeLineState extends State<TimeLine> {
     }
 
     return contents;
-  }
-}
-
-class RefreshIndicatorItem extends StatefulWidget {
-  final Function oldStatuses;
-
-  RefreshIndicatorItem(this.oldStatuses);
-  @override
-  RefreshIndicatorItemState createState() => new RefreshIndicatorItemState();
-}
-
-class RefreshIndicatorItemState extends State<RefreshIndicatorItem> {
-  @override
-  void initState() {
-    super.initState();
-    widget.oldStatuses();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }
