@@ -105,11 +105,16 @@ Future<Tuple3> getMisskeyTimeline(
     });
 
     List<Item> toReturn;
+    String newestId;
+    String oldestId;
 
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
-        newStatuses.removeAt(0);
-        toReturn = new List<Item>.from(newStatuses)..addAll(currentStatuses);
+        if (newStatuses.length > 0) {
+          newStatuses.removeAt(0);
+        }
+        toReturn = new List<Item>.from(newStatuses.reversed)
+          ..addAll(currentStatuses);
       } else {
         toReturn = new List<Item>.from(currentStatuses)..addAll(newStatuses);
       }
@@ -117,7 +122,7 @@ Future<Tuple3> getMisskeyTimeline(
       toReturn = newStatuses;
     }
 
-    return Tuple3<List<Item>, String, String>(toReturn, null, null);
+    return Tuple3<List<Item>, String, String>(toReturn, newestId, oldestId);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
@@ -193,11 +198,16 @@ Future<Tuple3> getMastodonTimeline(
     });
 
     List<Item> toReturn;
+    String newestId;
+    String oldestId;
 
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
-        newStatuses.removeAt(0);
-        toReturn = new List<Item>.from(newStatuses)..addAll(currentStatuses);
+        if (newStatuses.length > 0) {
+          newStatuses.removeAt(0);
+        }
+        toReturn = new List<Item>.from(newStatuses.reversed)
+          ..addAll(currentStatuses);
       } else {
         toReturn = new List<Item>.from(currentStatuses)..addAll(newStatuses);
       }
@@ -205,7 +215,7 @@ Future<Tuple3> getMastodonTimeline(
       toReturn = newStatuses;
     }
 
-    return Tuple3<List<Item>, String, String>(toReturn, null, null);
+    return Tuple3<List<Item>, String, String>(toReturn, newestId, oldestId);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
