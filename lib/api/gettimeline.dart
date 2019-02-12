@@ -57,7 +57,7 @@ Future<List> getMisskeyTimeline(
 
   if (currentStatuses != null && currentStatuses.length > 0) {
     if (sinceId) {
-      params.addAll({"sinceId": currentStatuses[0].id});
+      params.addAll({"sinceId": currentStatuses[1].id});
     }
 
     if (untilId) {
@@ -105,6 +105,7 @@ Future<List> getMisskeyTimeline(
 
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
+        newStatuses.removeAt(0);
         return new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
         return new List<Item>.from(currentStatuses)..addAll(newStatuses);
@@ -134,7 +135,7 @@ Future<List> getMastodonTimeline(
 
   if (currentStatuses != null && currentStatuses.length > 0) {
     if (sinceId) {
-      params.addAll({"since_id": currentStatuses[0].id});
+      params.addAll({"since_id": currentStatuses[1].id});
     }
 
     if (untilId) {
@@ -188,6 +189,7 @@ Future<List> getMastodonTimeline(
 
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
+        newStatuses.removeAt(0);
         return new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
         return new List<Item>.from(currentStatuses)..addAll(newStatuses);
