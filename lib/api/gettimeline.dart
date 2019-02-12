@@ -57,7 +57,7 @@ Future<List> getMisskeyTimeline(
 
   if (currentStatuses != null && currentStatuses.length > 0) {
     if (sinceId) {
-      params.addAll({"SinceId": currentStatuses[0].id});
+      params.addAll({"sinceId": currentStatuses[0].id});
     }
 
     if (untilId) {
