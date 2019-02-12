@@ -98,7 +98,7 @@ class UserProfileState extends State<UserProfile>
         initTimeline: () => _initTimeline(timelineName),
         currentUser: _currentUser,
         newStatuses: () => _newStatuses(timelineName),
-                oldStatuses: () => _oldStatuses(timelineName),
+        oldStatuses: () => _oldStatuses(timelineName),
       ),
       key: Key(timelineName),
       onRefresh: () => _newStatuses(timelineName),
@@ -119,8 +119,7 @@ class UserProfileState extends State<UserProfile>
     List<Item> statusList;
     try {
       statusList = await getTimeline(_instance, _authCode, timeline,
-          currentStatuses: _tabStatuses[timeline],
-          sinceId: _tabStatuses[timeline][0].id);
+          currentStatuses: _tabStatuses[timeline], sinceId: true);
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -139,8 +138,7 @@ class UserProfileState extends State<UserProfile>
     List<Item> statusList;
     try {
       statusList = await getTimeline(_instance, _authCode, timeline,
-          currentStatuses: _tabStatuses[timeline],
-          untilId: _tabStatuses[timeline][0].id);
+          currentStatuses: _tabStatuses[timeline], untilId: true);
 
       setState(() {
         _tabStatuses[timeline] = statusList;

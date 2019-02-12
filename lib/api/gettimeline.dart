@@ -8,8 +8,8 @@ import 'package:fedi/definitions/shared.dart';
 Future<List<Item>> getTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
-    String sinceId,
-    String untilId,
+    bool sinceId = false,
+    bool untilId = false,
     String targetUserId}) async {
   List<Item> statuses;
 
@@ -43,8 +43,8 @@ Future<List<Item>> getTimeline(
 Future<List> getMisskeyTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
-    String sinceId,
-    String untilId,
+    bool sinceId,
+    bool untilId,
     String targetUserId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params = new Map();
@@ -55,12 +55,14 @@ Future<List> getMisskeyTimeline(
     "i": authCode,
   });
 
-  if (sinceId != null) {
-    params.addAll({"SinceId": sinceId});
-  }
+  if (currentStatuses != null && currentStatuses.length > 0) {
+    if (sinceId) {
+      params.addAll({"SinceId": currentStatuses[0].id});
+    }
 
-  if (untilId != null) {
-    params.addAll({"untilId": untilId});
+    if (untilId) {
+      params.addAll({"untilId": currentStatuses.last.id});
+    }
   }
 
   switch (timelineName) {
@@ -101,8 +103,8 @@ Future<List> getMisskeyTimeline(
       if (status != null && status.id != null) newStatuses.add(status);
     });
 
-    if (currentStatuses != null) {
-      if (sinceId != null) {
+    if (currentStatuses != null && currentStatuses.length > 0) {
+      if (sinceId) {
         return new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
         return new List<Item>.from(currentStatuses)..addAll(newStatuses);
@@ -119,8 +121,8 @@ Future<List> getMisskeyTimeline(
 Future<List> getMastodonTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
-    String sinceId,
-    String untilId,
+    bool sinceId,
+    bool untilId,
     String targetUserId}) async {
   List<Item> newStatuses = new List();
   Map<String, dynamic> params;
@@ -130,12 +132,14 @@ Future<List> getMastodonTimeline(
     "limit": "40",
   });
 
-  if (sinceId != null) {
-    params.addAll({"since_id": sinceId});
-  }
+  if (currentStatuses != null && currentStatuses.length > 0) {
+    if (sinceId) {
+      params.addAll({"since_id": currentStatuses[0].id});
+    }
 
-  if (untilId != null) {
-    params.addAll({"max_id": untilId});
+    if (untilId) {
+      params.addAll({"max_id": currentStatuses.last.id});
+    }
   }
 
   switch (timelineName) {
@@ -182,8 +186,8 @@ Future<List> getMastodonTimeline(
       if (status != null) newStatuses.add(status);
     });
 
-    if (currentStatuses != null) {
-      if (sinceId != null) {
+    if (currentStatuses != null && currentStatuses.length > 0) {
+      if (sinceId) {
         return new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
         return new List<Item>.from(currentStatuses)..addAll(newStatuses);

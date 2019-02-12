@@ -73,8 +73,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     List<Item> statusList;
     try {
       statusList = await getTimeline(_instance, _authCode, timeline,
-          currentStatuses: _tabStatuses[timeline],
-          sinceId: _tabStatuses[timeline][0].id);
+          currentStatuses: _tabStatuses[timeline], sinceId: true);
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -92,8 +91,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     List<Item> statusList;
     try {
       statusList = await getTimeline(_instance, _authCode, timeline,
-          currentStatuses: _tabStatuses[timeline],
-          untilId: _tabStatuses[timeline].last.id);
+          currentStatuses: _tabStatuses[timeline], untilId: true);
 
       setState(() {
         _tabStatuses[timeline] = statusList;
