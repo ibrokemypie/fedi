@@ -67,12 +67,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                   instance: _instance,
                   authCode: _authCode,
                 )));
-    setState(() {
-      List<Item> _newlist = List();
-      _newlist.add(_newStatus);
-      _newlist.addAll(_tabStatuses[_currentTab]);
-      _tabStatuses[_currentTab] = _newlist;
-    });
   }
 
   Future<void> _newStatuses(String timeline) async {
