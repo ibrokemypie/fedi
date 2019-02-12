@@ -14,6 +14,7 @@ import 'package:fedi/api/unfollowuser.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:fedi/api/gettimeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tuple/tuple.dart';
 
 class UserProfile extends StatefulWidget {
   final String userId;
@@ -116,10 +117,12 @@ class UserProfileState extends State<UserProfile>
   }
 
   Future<void> _newStatuses(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline,
+      timelineReturn = await getTimeline(_instance, _authCode, timeline,
           currentStatuses: _tabStatuses[timeline], sinceId: true);
+      statusList = timelineReturn.item1;
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -135,10 +138,12 @@ class UserProfileState extends State<UserProfile>
   }
 
   Future<void> _oldStatuses(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline,
+      timelineReturn = await getTimeline(_instance, _authCode, timeline,
           currentStatuses: _tabStatuses[timeline], untilId: true);
+      statusList = timelineReturn.item1;
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -154,17 +159,20 @@ class UserProfileState extends State<UserProfile>
   }
 
   Future<bool> _initTimeline(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
       if (timeline != "user_pinned") {
-        statusList = await getTimeline(_instance, _authCode, timeline,
+        timelineReturn = await getTimeline(_instance, _authCode, timeline,
             targetUserId: _user.id);
+        statusList = timelineReturn.item1;
       } else {
         if (_user.pinnedStatuses != null) {
           statusList = _user.pinnedStatuses;
         } else {
-          statusList = await getTimeline(_instance, _authCode, timeline,
+          timelineReturn = await getTimeline(_instance, _authCode, timeline,
               targetUserId: _user.id);
+          statusList = timelineReturn.item1;
         }
       }
 

@@ -37,6 +37,7 @@ dependencies:
   image_picker: ^0.5.0+1
   flutter_html: ^0.9.3
   url_launcher: ^5.0.0
+  tuple: ^1.0.2
 
 dev_dependencies:
   flutter_test:

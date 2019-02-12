@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'package:fedi/api/gettimeline.dart';
 import 'package:fedi/api/getcurrentuser.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tuple/tuple.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -70,10 +71,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future<void> _newStatuses(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline,
+      timelineReturn = await getTimeline(_instance, _authCode, timeline,
           currentStatuses: _tabStatuses[timeline], sinceId: true);
+      statusList = timelineReturn.item1;
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -88,10 +91,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future<void> _oldStatuses(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline,
+      timelineReturn = await getTimeline(_instance, _authCode, timeline,
           currentStatuses: _tabStatuses[timeline], untilId: true);
+      statusList = timelineReturn.item1;
 
       setState(() {
         _tabStatuses[timeline] = statusList;
@@ -106,9 +111,11 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future<bool> _initTimeline(String timeline) async {
+    Tuple3 timelineReturn;
     List<Item> statusList;
     try {
-      statusList = await getTimeline(_instance, _authCode, timeline);
+      timelineReturn = await getTimeline(_instance, _authCode, timeline);
+      statusList = timelineReturn.item1;
 
       setState(() {
         _tabStatuses[timeline] = statusList;

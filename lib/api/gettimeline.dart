@@ -4,14 +4,15 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:fedi/definitions/item.dart';
 import 'package:fedi/definitions/shared.dart';
+import 'package:tuple/tuple.dart';
 
-Future<List<Item>> getTimeline(
+Future<Tuple3> getTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
     bool sinceId = false,
     bool untilId = false,
     String targetUserId}) async {
-  List<Item> statuses;
+  Tuple3 statuses;
 
   switch (instance.type) {
     case "misskey":
@@ -40,7 +41,7 @@ Future<List<Item>> getTimeline(
   return statuses;
 }
 
-Future<List> getMisskeyTimeline(
+Future<Tuple3> getMisskeyTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
     bool sinceId,
@@ -103,23 +104,27 @@ Future<List> getMisskeyTimeline(
       if (status != null && status.id != null) newStatuses.add(status);
     });
 
+    List<Item> toReturn;
+
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
         newStatuses.removeAt(0);
-        return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+        toReturn = new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
-        return new List<Item>.from(currentStatuses)..addAll(newStatuses);
+        toReturn = new List<Item>.from(currentStatuses)..addAll(newStatuses);
       }
+    } else {
+      toReturn = newStatuses;
     }
 
-    return newStatuses;
+    return Tuple3<List<Item>, String, String>(toReturn, null, null);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
   }
 }
 
-Future<List> getMastodonTimeline(
+Future<Tuple3> getMastodonTimeline(
     Instance instance, String authCode, String timelineName,
     {List<Item> currentStatuses,
     bool sinceId,
@@ -187,16 +192,20 @@ Future<List> getMastodonTimeline(
       if (status != null) newStatuses.add(status);
     });
 
+    List<Item> toReturn;
+
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
         newStatuses.removeAt(0);
-        return new List<Item>.from(newStatuses)..addAll(currentStatuses);
+        toReturn = new List<Item>.from(newStatuses)..addAll(currentStatuses);
       } else {
-        return new List<Item>.from(currentStatuses)..addAll(newStatuses);
+        toReturn = new List<Item>.from(currentStatuses)..addAll(newStatuses);
       }
+    } else {
+      toReturn = newStatuses;
     }
 
-    return newStatuses;
+    return Tuple3<List<Item>, String, String>(toReturn, null, null);
   } else {
     throw Exception('Failed to load post ' +
         (instance.uri + actionPath + json.encode(params)));
