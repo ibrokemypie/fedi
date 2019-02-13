@@ -111,7 +111,12 @@ Future<Tuple3> getMisskeyTimeline(
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
         if (newStatuses.length > 0) {
-          newStatuses.removeAt(0);
+          if (newStatuses.first.id == currentStatuses.first.id) {
+            newStatuses.removeAt(0);
+          } else {
+            newestId = newStatuses.last.id;
+            oldestId = newStatuses.first.id;
+          }
         }
         toReturn = new List<Item>.from(newStatuses.reversed)
           ..addAll(currentStatuses);
@@ -204,7 +209,12 @@ Future<Tuple3> getMastodonTimeline(
     if (currentStatuses != null && currentStatuses.length > 0) {
       if (sinceId) {
         if (newStatuses.length > 0) {
-          newStatuses.removeAt(0);
+          if (newStatuses.first.id == currentStatuses.first.id) {
+            newStatuses.removeAt(0);
+          } else {
+            newestId = newStatuses.last.id;
+            oldestId = newStatuses.first.id;
+          }
         }
         toReturn = new List<Item>.from(newStatuses.reversed)
           ..addAll(currentStatuses);
