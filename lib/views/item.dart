@@ -416,10 +416,6 @@ class ItemBuilderState extends State<ItemBuilder> {
             ]),
       );
 
-  _divider() => Divider(
-        height: 4,
-      );
-
   _renoteReplyRow() {
     String destinationId = _note.replyId ?? _note.id;
 
@@ -494,7 +490,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             )),
           ],
         ),
-        _divider(),
+        ItemDivider(),
       ];
 
   _renoteReplyTile() => <Widget>[
@@ -518,7 +514,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             )),
           ],
         ),
-        _divider(),
+        ItemDivider(),
       ];
 
   _notificationTile() {
@@ -546,7 +542,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             )),
           ],
         ),
-        _divider(),
+        ItemDivider(),
       ]);
     } else {
       Content.addAll([
@@ -566,7 +562,7 @@ class ItemBuilderState extends State<ItemBuilder> {
             )),
           ],
         ),
-        _divider(),
+        ItemDivider(),
       ]);
     }
     return Content;
@@ -638,6 +634,15 @@ class NotificationText extends StatelessWidget {
     return Expanded(
       child: Text(
           item.author.nickname + notificationTypeString(item.notificationType)),
+    );
+  }
+}
+
+class ItemDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 4,
     );
   }
 }
