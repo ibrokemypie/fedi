@@ -335,8 +335,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         ));
   }
 
-  _date() => Text(timeago.format(DateTime.parse(_item.date)) + " ");
-
   _statusTile() => <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +350,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
-                      _date(),
+                      Date(_note.date),
                       VisibilityIcon(_note.visibility)
                     ])),
                 Body(_note, _instance, _contentWarningToggled,
@@ -386,7 +384,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 AuthorRow(_note.author.nickname, _note.author.acct,
-                    Row(children: <Widget>[_date()])),
+                    Row(children: <Widget>[Date(_note.date)])),
                 Body(_note, _instance, _contentWarningToggled,
                     _contentWarningView),
                 Files(StatusFiles(widget.isContext, _showContextAction, _note)),
@@ -425,7 +423,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
-                      _date(),
+                      Date(_note.date),
                       VisibilityIcon(_note.visibility)
                     ])),
                 Body(_note, _instance, _contentWarningToggled,
@@ -461,7 +459,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
-                      _date(),
+                      Date(_note.date),
                       VisibilityIcon(_note.visibility)
                     ])),
               ],
@@ -773,5 +771,16 @@ class ContentWarning extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class Date extends StatelessWidget {
+  final String date;
+
+  Date(this.date);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(timeago.format(DateTime.parse(date)) + " ");
   }
 }
