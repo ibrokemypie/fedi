@@ -38,7 +38,7 @@ class ItemBuilder extends StatefulWidget {
 }
 
 class ItemBuilderState extends State<ItemBuilder> {
-  Color favouriteColour = Colors.white;
+  Color _favouriteColour = Colors.white;
   bool _contentWarningToggled = true;
   Widget _contentWarningView = Container();
   Widget _bodyTextWidget = Container();
@@ -266,49 +266,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     });
   }
 
-  _buttonRow() => Row(
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(children: <Widget>[
-            // Reply
-            Row(children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.reply),
-                onPressed: _reply,
-              ),
-              Text(_note.replyCount.toString()),
-            ]),
-
-            // Boost
-            Row(children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.repeat),
-                onPressed: _renote,
-              ),
-              Text(_note.renoteCount.toString()),
-            ]),
-
-            // Favourite
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.star),
-                  onPressed: _toggleFavourite,
-                  color: favouriteColour,
-                ),
-                Text(_note.favCount.toString()),
-              ],
-            ),
-          ]),
-          PopupMenuButton(
-            icon: Icon(Icons.more_horiz),
-            itemBuilder: (BuildContext context) => _menuButtonItems,
-            onSelected: _moreButtonAction,
-          )
-        ],
-      );
-
   _contentWarning(bool hasButton) {
     Widget _contentWarningToggle = Container();
     if (hasButton) {
@@ -485,7 +442,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
                 _files(StatusFiles(widget.isContext, _showContext, _note)),
-                _buttonRow(),
+                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                    _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
           ],
@@ -509,7 +467,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                     Row(children: <Widget>[_date()])),
                 _body(_note.body),
                 _files(StatusFiles(widget.isContext, _showContext, _note)),
-                _buttonRow(),
+                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                    _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
           ],
@@ -537,7 +496,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                     Row(children: <Widget>[_date(), _visibilityIcon()])),
                 _body(_note.body),
                 _files(StatusFiles(widget.isContext, _showContext, _note)),
-                _buttonRow(),
+                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                    _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
           ],
@@ -572,9 +532,9 @@ class ItemBuilderState extends State<ItemBuilder> {
   Widget build(BuildContext context) {
     setState(() {
       if (_note.favourited == true || (_note.myReaction != null)) {
-        favouriteColour = Colors.yellow;
+        _favouriteColour = Colors.yellow;
       } else {
-        favouriteColour = Colors.white;
+        _favouriteColour = Colors.white;
       }
     });
 
@@ -643,6 +603,74 @@ class ItemDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Divider(
       height: 4,
+    );
+  }
+}
+
+class ButtonRow extends StatelessWidget {
+  final Item note;
+
+  final Function replyAction;
+  final Function renoteAction;
+  final Function favouriteAction;
+  final Function menuAction;
+
+  final Color favouriteColour;
+
+  final List<PopupMenuEntry<String>> menuItems;
+
+  ButtonRow(
+      this.note,
+      this.replyAction,
+      this.renoteAction,
+      this.favouriteAction,
+      this.favouriteColour,
+      this.menuAction,
+      this.menuItems);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      // crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Row(children: <Widget>[
+          // Reply
+          Row(children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.reply),
+              onPressed: replyAction,
+            ),
+            Text(note.replyCount.toString()),
+          ]),
+
+          // Boost
+          Row(children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.repeat),
+              onPressed: renoteAction,
+            ),
+            Text(note.renoteCount.toString()),
+          ]),
+
+          // Favourite
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.star),
+                onPressed: favouriteAction,
+                color: favouriteColour,
+              ),
+              Text(note.favCount.toString()),
+            ],
+          ),
+        ]),
+        PopupMenuButton(
+          icon: Icon(Icons.more_horiz),
+          itemBuilder: (BuildContext context) => menuItems,
+          onSelected: menuAction,
+        )
+      ],
     );
   }
 }
