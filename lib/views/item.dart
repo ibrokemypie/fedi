@@ -220,6 +220,12 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
+  void _toggleCw() {
+    setState(() {
+      _contentWarningToggled = !_contentWarningToggled;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -248,10 +254,10 @@ class ItemBuilderState extends State<ItemBuilder> {
 
       if (_note.contentWarning != null && _note.contentWarning != "") {
         if (_note.body != "") {
-          _contentWarningView = _contentWarning(true);
+          _contentWarningView = ContentWarning(_note, true, _toggleCw);
           _contentWarningToggled = false;
         } else {
-          _contentWarningView = _contentWarning(false);
+          _contentWarningView = ContentWarning(_note, false, _toggleCw);
         }
       }
       if (_note.author.id == widget.currentUser.id) {
@@ -263,36 +269,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         );
       }
     });
-  }
-
-  _contentWarning(bool hasButton) {
-    Widget _contentWarningToggle = Container();
-    if (hasButton) {
-      _contentWarningToggle = Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            RaisedButton(
-                child: Text("Toggle content"),
-                color: Colors.red,
-                onPressed: () {
-                  setState(() {
-                    _contentWarningToggled = !_contentWarningToggled;
-                  });
-                }),
-            Text(_note.body.length.toString())
-          ]);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Text(_note.contentWarning),
-        _contentWarningToggle,
-        Divider(
-          height: 2,
-        ),
-      ],
-    );
   }
 
   _showUserPage(String targetUserId) async {
@@ -760,6 +736,42 @@ class AuthorRow extends StatelessWidget {
                 ]),
             Text(accountName),
           ]),
+    );
+  }
+}
+
+class ContentWarning extends StatelessWidget {
+  final Item note;
+  final bool hasButton;
+  final Function toggleCw;
+
+  ContentWarning(this.note, this.hasButton, this.toggleCw);
+
+  @override
+  Widget build(BuildContext context) {
+    Widget _contentWarningToggle = Container();
+    if (hasButton) {
+      _contentWarningToggle = Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            RaisedButton(
+              child: Text("Toggle content"),
+              color: Colors.red,
+              onPressed: toggleCw,
+            ),
+            Text(note.body.length.toString())
+          ]);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(note.contentWarning),
+        _contentWarningToggle,
+        Divider(
+          height: 2,
+        ),
+      ],
     );
   }
 }
