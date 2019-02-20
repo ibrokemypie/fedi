@@ -41,7 +41,6 @@ class ItemBuilderState extends State<ItemBuilder> {
   Color _favouriteColour = Colors.white;
   bool _contentWarningToggled = true;
   Widget _contentWarningView = Container();
-  Widget _bodyTextWidget = Container();
   Instance _instance;
   Item _item;
   bool _isRenote = false;
@@ -296,23 +295,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     );
   }
 
-  _body(String bodyText) {
-    setState(() {
-      if (_contentWarningToggled == true) {
-        _bodyTextWidget = PostBody(_instance, _note);
-      } else {
-        _bodyTextWidget = Container();
-      }
-    });
-
-    return Container(
-      padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[_contentWarningView, _bodyTextWidget]),
-    );
-  }
-
   _files(Widget files) => Container(
         padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
         child: files,
@@ -419,7 +401,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                       _date(),
                       VisibilityIcon(_note.visibility)
                     ])),
-                _body(_note.body),
+                Body(_note, _instance, _contentWarningToggled,
+                    _contentWarningView),
                 _files(
                     StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
@@ -451,7 +434,8 @@ class ItemBuilderState extends State<ItemBuilder> {
               children: <Widget>[
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
-                _body(_note.body),
+                Body(_note, _instance, _contentWarningToggled,
+                    _contentWarningView),
                 _files(
                     StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
@@ -492,7 +476,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                       _date(),
                       VisibilityIcon(_note.visibility)
                     ])),
-                _body(_note.body),
+                Body(_note, _instance, _contentWarningToggled,
+                    _contentWarningView),
                 _files(
                     StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
@@ -734,6 +719,33 @@ class Avatar extends StatelessWidget {
         ),
         onTap: () => showUserPage(user.id),
       ),
+    );
+  }
+}
+
+class Body extends StatelessWidget {
+  final Item note;
+  final Instance instance;
+  final bool contentToggled;
+  final Widget contentWarningView;
+
+  Body(this.note, this.instance, this.contentToggled, this.contentWarningView);
+
+  @override
+  Widget build(BuildContext context) {
+    var _bodyTextWidget;
+
+    if (contentToggled == true) {
+      _bodyTextWidget = PostBody(instance, note);
+    } else {
+      _bodyTextWidget = Container();
+    }
+
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[contentWarningView, _bodyTextWidget]),
     );
   }
 }
