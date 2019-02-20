@@ -320,17 +320,6 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _accountName(String name) => Text(name);
 
-  _nickName(String nick) => Container(
-        padding: const EdgeInsets.only(right: 8.0),
-        child: Text(
-          nick,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-
   _visibilityIcon() => Container(
       padding: const EdgeInsets.only(right: 16.0),
       child: Icon(visIcon(_note.visibility), size: 16.0));
@@ -366,7 +355,7 @@ class ItemBuilderState extends State<ItemBuilder> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Flexible(child: _nickName(nickName)),
+                    Flexible(child: Nickname(nickName)),
                     trailing,
                   ]),
               _accountName(accountName),
@@ -672,5 +661,25 @@ class ButtonRow extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+class Nickname extends StatelessWidget {
+  final String nickname;
+
+  Nickname(this.nickname);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: Text(
+          nickname,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
   }
 }
