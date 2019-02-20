@@ -1,5 +1,3 @@
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:flutter/material.dart';
@@ -18,24 +16,30 @@ class PostBody extends StatefulWidget {
 
 class PostBodyState extends State<PostBody> {
   String _postText;
-  void _linkHandler(String link) {
-    if (link.startsWith(new RegExp(r'(https://|ftp://|http://|mailto://)'))) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Webpage(url: link)));
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _postText = html2md.convert(markdown.markdownToHtml(widget.status.body));
+
+    if (widget.instance.type == "misskey") {
+      _postText = markdown.markdownToHtml(widget.status.body);
+    } else {
+      _postText = widget.status.body;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Html(
       data: _postText,
-      onLinkTap: _linkHandler,
+      blockSpacing: 0,
+      onLinkTap: (String link) {
+        if (link
+            .startsWith(new RegExp(r'(https://|ftp://|http://|mailto://)'))) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Webpage(url: link)));
+        }
+      },
     );
   }
 }
