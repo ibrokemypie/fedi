@@ -295,11 +295,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     );
   }
 
-  _files(Widget files) => Container(
-        padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
-        child: files,
-      );
-
   _accountName(String name) => Text(name);
 
   _showUserPage(String targetUserId) async {
@@ -403,8 +398,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     ])),
                 Body(_note, _instance, _contentWarningToggled,
                     _contentWarningView),
-                _files(
-                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
                     _note,
                     _replyAction,
@@ -436,8 +430,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     Row(children: <Widget>[_date()])),
                 Body(_note, _instance, _contentWarningToggled,
                     _contentWarningView),
-                _files(
-                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
                     _note,
                     _replyAction,
@@ -478,8 +471,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     ])),
                 Body(_note, _instance, _contentWarningToggled,
                     _contentWarningView),
-                _files(
-                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
                 ButtonRow(
                     _note,
                     _replyAction,
@@ -746,6 +738,19 @@ class Body extends StatelessWidget {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[contentWarningView, _bodyTextWidget]),
+    );
+  }
+}
+
+class Files extends StatelessWidget {
+  final Widget files;
+  Files(this.files);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
+      child: files,
     );
   }
 }
