@@ -67,7 +67,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     ),
   ];
 
-  void _toggleFavourite() async {
+  void _toggleFavouriteAction() async {
     if (_note.favourited != true) {
       try {
         await favouritePost(_instance, widget.authCode, _note.id);
@@ -97,7 +97,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
-  void _renote() async {
+  void _renoteAction() async {
     try {
       await renotePost(_instance, widget.authCode, _note.id);
       setState(() {
@@ -112,7 +112,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
-  void _reply() async {
+  void _replyAction() async {
     String prefill = "@" + _note.author.acct + " ";
     for (Mention mentionObject in _note.mentions) {
       if (mentionObject.id != widget.currentUser.id) {
@@ -138,7 +138,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
-  void _showContext() {
+  void _showContextAction() {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -151,7 +151,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 )));
   }
 
-  void _remoteButton() async {
+  void _remoteButtonAction() async {
     print(_note.remoteUrl);
     if (await canLaunch(_note.remoteUrl)) {
       await launch(_note.remoteUrl, enableJavaScript: true);
@@ -160,7 +160,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
-  void _localButton() async {
+  void _localButtonAction() async {
     print(_note.localUrl);
     if (await canLaunch(_note.localUrl)) {
       await launch(_note.localUrl, enableJavaScript: true);
@@ -169,7 +169,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
   }
 
-  void _deleteButton() async {
+  void _deleteButtonAction() async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -195,7 +195,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         });
   }
 
-  void _copyButton() async {
+  void _copyButtonAction() async {
     Clipboard.setData(new ClipboardData(text: _note.body));
     Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text("Contents copied to clipboard")));
@@ -204,19 +204,19 @@ class ItemBuilderState extends State<ItemBuilder> {
   void _moreButtonAction(String action) {
     switch (action) {
       case "details":
-        _showContext();
+        _showContextAction();
         break;
       case "delete":
-        _deleteButton();
+        _deleteButtonAction();
         break;
       case "openRemote":
-        _remoteButton();
+        _remoteButtonAction();
         break;
       case "openLocal":
-        _localButton();
+        _localButtonAction();
         break;
       case "copy":
-        _copyButton();
+        _copyButtonAction();
         break;
     }
   }
@@ -391,7 +391,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     }
 
     return GestureDetector(
-        onTap: _showContext,
+        onTap: _showContextAction,
         child: Material(
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -431,8 +431,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                       VisibilityIcon(_note.visibility)
                     ])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContext, _note)),
-                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
                     _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
@@ -456,8 +456,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContext, _note)),
-                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
                     _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
@@ -490,8 +490,8 @@ class ItemBuilderState extends State<ItemBuilder> {
                       VisibilityIcon(_note.visibility)
                     ])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContext, _note)),
-                ButtonRow(_note, _reply, _renote, _toggleFavourite,
+                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
                     _favouriteColour, _moreButtonAction, _menuButtonItems),
               ],
             )),
