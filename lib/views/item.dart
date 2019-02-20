@@ -420,11 +420,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         height: 4,
       );
 
-  _notificationText() => Expanded(
-        child: Text(_item.author.nickname +
-            notificationTypeString(_item.notificationType)),
-      );
-
   _renoteReplyRow() {
     String destinationId = _note.replyId ?? _note.id;
 
@@ -477,32 +472,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         ));
   }
 
-  _notificationRow() => Material(
-        elevation: 1,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          color: Colors.red,
-          child: Row(
-            children: <Widget>[
-              Container(
-                alignment: FractionalOffset.topCenter,
-                padding: const EdgeInsets.only(left: 16.0, right: 4),
-                child: GestureDetector(
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundImage:
-                        new CachedNetworkImageProvider(_item.author.avatarUrl),
-                  ),
-                  onTap: () => _showUserPage(_item.author.id),
-                ),
-              ),
-              notificationTypeIcon(_item.notificationType),
-              _notificationText(),
-            ],
-          ),
-        ),
-      );
-
   _date() => Text(timeago.format(DateTime.parse(_item.date)) + " ");
 
   _statusTile() => <Widget>[
@@ -554,7 +523,7 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _notificationTile() {
     List<Widget> Content = <Widget>[
-      _notificationRow(),
+      NotificationRow(_item, _showUserPage),
     ];
     if (_item.notificationType != "follow") {
       Content.addAll([
@@ -620,5 +589,55 @@ class ItemBuilderState extends State<ItemBuilder> {
     } else {
       return Container(child: Column(children: _statusTile()));
     }
+  }
+}
+
+class NotificationRow extends StatelessWidget {
+  final Item item;
+  final Function showUserPage;
+
+  NotificationRow(this.item, this.showUserPage);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      elevation: 1,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        color: Colors.red,
+        child: Row(
+          children: <Widget>[
+            Container(
+              alignment: FractionalOffset.topCenter,
+              padding: const EdgeInsets.only(left: 16.0, right: 4),
+              child: GestureDetector(
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundImage:
+                      new CachedNetworkImageProvider(item.author.avatarUrl),
+                ),
+                onTap: () => showUserPage(item.author.id),
+              ),
+            ),
+            notificationTypeIcon(item.notificationType),
+            NotificationText(item),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NotificationText extends StatelessWidget {
+  final Item item;
+
+  NotificationText(this.item);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Text(
+          item.author.nickname + notificationTypeString(item.notificationType)),
+    );
   }
 }
