@@ -48,6 +48,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   bool _isNotification = false;
   bool _isContext = false;
   Item _note;
+  Key _key;
   List<PopupMenuEntry<String>> _menuButtonItems = [
     const PopupMenuItem<String>(
       value: "details",
@@ -248,6 +249,8 @@ class ItemBuilderState extends State<ItemBuilder> {
       _isContext = widget.isContext;
       _note = _item;
 
+      _key = Key(_item.id + _note.id);
+
       if (_item.notificationType != null) {
         _isNotification = true;
         if (_item.notificationNote != null) {
@@ -268,10 +271,10 @@ class ItemBuilderState extends State<ItemBuilder> {
 
       if (_note.contentWarning != null && _note.contentWarning != "") {
         if (_note.body != "") {
-          _contentWarningView = ContentWarning(_note, true, _toggleCw);
+          _contentWarningView = ContentWarning(_note, true, _toggleCw, _key);
           _contentWarningToggled = false;
         } else {
-          _contentWarningView = ContentWarning(_note, false, _toggleCw);
+          _contentWarningView = ContentWarning(_note, false, _toggleCw, _key);
         }
       }
       if (_note.author.id == widget.currentUser.id) {
@@ -284,42 +287,6 @@ class ItemBuilderState extends State<ItemBuilder> {
       }
     });
   }
-
-  _statusTile() => <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Avatar(_note.author, _showUserPageAction),
-
-            // Content
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(
-                    _note.author.nickname,
-                    _note.author.acct,
-                    Row(children: <Widget>[
-                      Date(_note.date),
-                      VisibilityIcon(_note.visibility)
-                    ])),
-                Body(_note, _instance, _contentWarningToggled,
-                    _contentWarningView),
-                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(
-                    _note,
-                    _replyAction,
-                    _renoteAction,
-                    _toggleFavouriteAction,
-                    _favouriteColour,
-                    _moreButtonAction,
-                    _menuButtonItems),
-              ],
-            )),
-          ],
-        ),
-        ItemDivider(),
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +313,8 @@ class ItemBuilderState extends State<ItemBuilder> {
           _contentWarningToggled,
           _contentWarningView,
           _menuButtonItems,
-          _favouriteColour);
+          _favouriteColour,
+          _key);
     } else if (_isRenote || _isReply && !widget.isContext) {
       return RenoteReplyWidget(
           _note,
@@ -363,10 +331,108 @@ class ItemBuilderState extends State<ItemBuilder> {
           _contentWarningToggled,
           _contentWarningView,
           _menuButtonItems,
-          _favouriteColour);
+          _favouriteColour,
+          _key);
     } else {
-      return Container(child: Column(children: _statusTile()));
+      return StatusWidget(
+          _note,
+          _item,
+          _instance,
+          _showUserPageAction,
+          _showContextAction,
+          _replyAction,
+          _renoteAction,
+          _toggleFavouriteAction,
+          _moreButtonAction,
+          _isContext,
+          _contentWarningToggled,
+          _contentWarningView,
+          _menuButtonItems,
+          _favouriteColour,
+          _key);
     }
+  }
+}
+
+class StatusWidget extends StatelessWidget {
+  final Item note;
+  final Item item;
+  final Instance instance;
+  final Function showUserPageAction;
+  final Function showContextAction;
+  final Function replyAction;
+  final Function renoteAction;
+  final Function toggleFavouriteAction;
+  final Function moreButtonAction;
+  final bool isContext;
+  final bool contentWarningToggled;
+  final Widget contentWarningView;
+  final List<PopupMenuEntry<String>> menuButtonItems;
+  final Color favouriteColour;
+  final Key key;
+
+  StatusWidget(
+      this.note,
+      this.item,
+      this.instance,
+      this.showUserPageAction,
+      this.showContextAction,
+      this.replyAction,
+      this.renoteAction,
+      this.toggleFavouriteAction,
+      this.moreButtonAction,
+      this.isContext,
+      this.contentWarningToggled,
+      this.contentWarningView,
+      this.menuButtonItems,
+      this.favouriteColour,
+      this.key);
+
+  _statusTile() => <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Avatar(note.author, showUserPageAction, ValueKey("avatar")),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  AuthorRow(
+                      note.author.nickname,
+                      note.author.acct,
+                      Row(children: <Widget>[
+                        Date(note.date, ValueKey("date")),
+                        VisibilityIcon(
+                            note.visibility, ValueKey("visibilityicon"))
+                      ]),
+                      ValueKey("authorrow")),
+                  Body(note, instance, contentWarningToggled,
+                      contentWarningView, ValueKey("body")),
+                  Files(StatusFiles(isContext, showContextAction, note),
+                      ValueKey("files")),
+                  ButtonRow(
+                      note,
+                      replyAction,
+                      renoteAction,
+                      toggleFavouriteAction,
+                      favouriteColour,
+                      moreButtonAction,
+                      menuButtonItems,
+                      ValueKey("buttons")),
+                ],
+              ),
+              key: ValueKey("content"),
+            ),
+          ],
+        ),
+        ItemDivider(),
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Column(children: _statusTile()));
   }
 }
 
@@ -386,6 +452,7 @@ class RenoteReplyWidget extends StatelessWidget {
   final Widget contentWarningView;
   final List<PopupMenuEntry<String>> menuButtonItems;
   final Color favouriteColour;
+  final Key key;
 
   RenoteReplyWidget(
       this.note,
@@ -402,35 +469,46 @@ class RenoteReplyWidget extends StatelessWidget {
       this.contentWarningToggled,
       this.contentWarningView,
       this.menuButtonItems,
-      this.favouriteColour);
+      this.favouriteColour,
+      this.key);
 
   _renoteReplyTile() => <Widget>[
         ReplyRenoteRow(
-            note, item, isReply, showUserPageAction, showContextAction),
+            note, item, isReply, showUserPageAction, showContextAction, key),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(note.author, showUserPageAction),
+            Avatar(note.author, showUserPageAction, ValueKey("avatar")),
 
             // Content
             Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(note.author.nickname, note.author.acct,
-                    Row(children: <Widget>[Date(note.date)])),
-                Body(note, instance, contentWarningToggled, contentWarningView),
-                Files(StatusFiles(isContext, showContextAction, note)),
-                ButtonRow(
-                    note,
-                    replyAction,
-                    renoteAction,
-                    toggleFavouriteAction,
-                    favouriteColour,
-                    moreButtonAction,
-                    menuButtonItems),
-              ],
-            )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  AuthorRow(
+                      note.author.nickname,
+                      note.author.acct,
+                      Row(children: <Widget>[
+                        Date(note.date, ValueKey("date"))
+                      ]),
+                      ValueKey("authorrow")),
+                  Body(note, instance, contentWarningToggled,
+                      contentWarningView, ValueKey("body")),
+                  Files(StatusFiles(isContext, showContextAction, note),
+                      ValueKey("files")),
+                  ButtonRow(
+                      note,
+                      replyAction,
+                      renoteAction,
+                      toggleFavouriteAction,
+                      favouriteColour,
+                      moreButtonAction,
+                      menuButtonItems,
+                      ValueKey("buttons")),
+                ],
+              ),
+              key: ValueKey("contents"),
+            ),
           ],
         ),
         ItemDivider(),
@@ -457,6 +535,7 @@ class NotificationWidget extends StatelessWidget {
   final Widget contentWarningView;
   final List<PopupMenuEntry<String>> menuButtonItems;
   final Color favouriteColour;
+  final Key key;
 
   NotificationWidget(
       this.note,
@@ -472,43 +551,51 @@ class NotificationWidget extends StatelessWidget {
       this.contentWarningToggled,
       this.contentWarningView,
       this.menuButtonItems,
-      this.favouriteColour);
+      this.favouriteColour,
+      this.key);
 
   notificationTile() {
     List<Widget> content = <Widget>[
-      NotificationRow(item, showUserPageAction),
+      NotificationRow(item, showUserPageAction, key),
     ];
     if (item.notificationType != "follow") {
       content.addAll([
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(note.author, showUserPageAction),
+            Avatar(note.author, showUserPageAction, ValueKey("avatar")),
 
             // Content
             Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(
-                    note.author.nickname,
-                    note.author.acct,
-                    Row(children: <Widget>[
-                      Date(note.date),
-                      VisibilityIcon(note.visibility)
-                    ])),
-                Body(note, instance, contentWarningToggled, contentWarningView),
-                Files(StatusFiles(isContext, showContextAction, note)),
-                ButtonRow(
-                    note,
-                    replyAction,
-                    renoteAction,
-                    toggleFavouriteAction,
-                    favouriteColour,
-                    moreButtonAction,
-                    menuButtonItems),
-              ],
-            )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  AuthorRow(
+                      note.author.nickname,
+                      note.author.acct,
+                      Row(children: <Widget>[
+                        Date(note.date, ValueKey("date")),
+                        VisibilityIcon(
+                            note.visibility, ValueKey("visibilityicon"))
+                      ]),
+                      ValueKey("authorrow")),
+                  Body(note, instance, contentWarningToggled,
+                      contentWarningView, ValueKey("body")),
+                  Files(StatusFiles(isContext, showContextAction, note),
+                      ValueKey("files")),
+                  ButtonRow(
+                      note,
+                      replyAction,
+                      renoteAction,
+                      toggleFavouriteAction,
+                      favouriteColour,
+                      moreButtonAction,
+                      menuButtonItems,
+                      ValueKey("buttons")),
+                ],
+              ),
+              key: ValueKey("contents"),
+            ),
           ],
         ),
         ItemDivider(),
@@ -518,22 +605,26 @@ class NotificationWidget extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(note.author, showUserPageAction),
+            Avatar(note.author, showUserPageAction, ValueKey("avatar")),
 
             // Content
             Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(
-                    note.author.nickname,
-                    note.author.acct,
-                    Row(children: <Widget>[
-                      Date(note.date),
-                      VisibilityIcon(note.visibility)
-                    ])),
-              ],
-            )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  AuthorRow(
+                      note.author.nickname,
+                      note.author.acct,
+                      Row(children: <Widget>[
+                        Date(note.date, ValueKey("date")),
+                        VisibilityIcon(
+                            note.visibility, ValueKey("visibilityicon"))
+                      ]),
+                      ValueKey("authorrow")),
+                ],
+              ),
+              key: ValueKey("contents"),
+            ),
           ],
         ),
         ItemDivider(),
@@ -551,8 +642,9 @@ class NotificationWidget extends StatelessWidget {
 class NotificationRow extends StatelessWidget {
   final Item item;
   final Function showUserPage;
+  final Key key;
 
-  NotificationRow(this.item, this.showUserPage);
+  NotificationRow(this.item, this.showUserPage, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -574,9 +666,10 @@ class NotificationRow extends StatelessWidget {
                 ),
                 onTap: () => showUserPage(item.author.id),
               ),
+              key: ValueKey("avatar"),
             ),
             notificationTypeIcon(item.notificationType),
-            NotificationText(item),
+            NotificationText(item, key),
           ],
         ),
       ),
@@ -586,8 +679,9 @@ class NotificationRow extends StatelessWidget {
 
 class NotificationText extends StatelessWidget {
   final Item item;
+  final Key key;
 
-  NotificationText(this.item);
+  NotificationText(this.item, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -619,6 +713,8 @@ class ButtonRow extends StatelessWidget {
 
   final List<PopupMenuEntry<String>> menuItems;
 
+  final Key key;
+
   ButtonRow(
       this.note,
       this.replyAction,
@@ -626,7 +722,8 @@ class ButtonRow extends StatelessWidget {
       this.favouriteAction,
       this.favouriteColour,
       this.menuAction,
-      this.menuItems);
+      this.menuItems,
+      this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -642,16 +739,19 @@ class ButtonRow extends StatelessWidget {
               onPressed: replyAction,
             ),
             Text(note.replyCount.toString()),
-          ]),
+          ], key: ValueKey("replybutton")),
 
           // Boost
-          Row(children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.repeat),
-              onPressed: renoteAction,
-            ),
-            Text(note.renoteCount.toString()),
-          ]),
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.repeat),
+                onPressed: renoteAction,
+              ),
+              Text(note.renoteCount.toString()),
+            ],
+            key: ValueKey("boostbutton"),
+          ),
 
           // Favourite
           Row(
@@ -671,14 +771,16 @@ class ButtonRow extends StatelessWidget {
           onSelected: menuAction,
         )
       ],
+      key: ValueKey("favouritebutton"),
     );
   }
 }
 
 class Nickname extends StatelessWidget {
   final String nickname;
+  final Key key;
 
-  Nickname(this.nickname);
+  Nickname(this.nickname, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -691,27 +793,33 @@ class Nickname extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      key: key,
     );
   }
 }
 
 class VisibilityIcon extends StatelessWidget {
   final String visibility;
-  VisibilityIcon(this.visibility);
+  final Key key;
+
+  VisibilityIcon(this.visibility, this.key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: Icon(visIcon(visibility), size: 16.0));
+      padding: const EdgeInsets.only(right: 16.0),
+      child: Icon(visIcon(visibility), size: 16.0),
+      key: key,
+    );
   }
 }
 
 class Avatar extends StatelessWidget {
   final User user;
   final Function showUserPage;
+  final Key key;
 
-  Avatar(this.user, this.showUserPage);
+  Avatar(this.user, this.showUserPage, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -724,6 +832,7 @@ class Avatar extends StatelessWidget {
         ),
         onTap: () => showUserPage(user.id),
       ),
+      key: key,
     );
   }
 }
@@ -733,8 +842,10 @@ class Body extends StatelessWidget {
   final Instance instance;
   final bool contentToggled;
   final Widget contentWarningView;
+  final Key key;
 
-  Body(this.note, this.instance, this.contentToggled, this.contentWarningView);
+  Body(this.note, this.instance, this.contentToggled, this.contentWarningView,
+      this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -751,19 +862,23 @@ class Body extends StatelessWidget {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[contentWarningView, _bodyTextWidget]),
+      key: key,
     );
   }
 }
 
 class Files extends StatelessWidget {
   final Widget files;
-  Files(this.files);
+  final Key key;
+
+  Files(this.files, this.key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
       child: files,
+      key: key,
     );
   }
 }
@@ -772,8 +887,9 @@ class AuthorRow extends StatelessWidget {
   final String nickName;
   final String accountName;
   final Widget trailing;
+  final Key key;
 
-  AuthorRow(this.nickName, this.accountName, this.trailing);
+  AuthorRow(this.nickName, this.accountName, this.trailing, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -785,11 +901,12 @@ class AuthorRow extends StatelessWidget {
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Flexible(child: Nickname(nickName)),
+                  Flexible(child: Nickname(nickName, key)),
                   trailing,
                 ]),
             Text(accountName),
           ]),
+      key: key,
     );
   }
 }
@@ -798,8 +915,9 @@ class ContentWarning extends StatelessWidget {
   final Item note;
   final bool hasButton;
   final Function toggleCw;
+  final Key key;
 
-  ContentWarning(this.note, this.hasButton, this.toggleCw);
+  ContentWarning(this.note, this.hasButton, this.toggleCw, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -826,18 +944,23 @@ class ContentWarning extends StatelessWidget {
           height: 2,
         ),
       ],
+      key: key,
     );
   }
 }
 
 class Date extends StatelessWidget {
   final String date;
+  final Key key;
 
-  Date(this.date);
+  Date(this.date, this.key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(timeago.format(DateTime.parse(date)) + " ");
+    return Text(
+      timeago.format(DateTime.parse(date)) + " ",
+      key: key,
+    );
   }
 }
 
@@ -847,9 +970,10 @@ class ReplyRenoteRow extends StatelessWidget {
   final bool isReply;
   final Function showUserPageAction;
   final Function showContextAction;
+  final Key key;
 
   ReplyRenoteRow(this.note, this.item, this.isReply, this.showUserPageAction,
-      this.showContextAction);
+      this.showContextAction, this.key);
 
   @override
   Widget build(BuildContext context) {
@@ -862,6 +986,7 @@ class ReplyRenoteRow extends StatelessWidget {
         backgroundImage: new CachedNetworkImageProvider(item.author.avatarUrl),
       ),
       onTap: () => showUserPageAction(item.author.id),
+      key: key,
     );
     // }
 
@@ -885,22 +1010,24 @@ class ReplyRenoteRow extends StatelessWidget {
     }
 
     return GestureDetector(
-        onTap: showContextAction,
-        child: Material(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            color: Colors.red,
-            child: Row(
-              children: <Widget>[
-                Container(
-                    alignment: FractionalOffset.topCenter,
-                    padding: const EdgeInsets.only(left: 16.0, right: 4),
-                    child: avatar),
-                textRow,
-                VisibilityIcon(note.visibility)
-              ],
-            ),
+      onTap: showContextAction,
+      child: Material(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          color: Colors.red,
+          child: Row(
+            children: <Widget>[
+              Container(
+                  alignment: FractionalOffset.topCenter,
+                  padding: const EdgeInsets.only(left: 16.0, right: 4),
+                  child: avatar),
+              textRow,
+              VisibilityIcon(note.visibility, key)
+            ],
           ),
-        ));
+        ),
+      ),
+      key: key,
+    );
   }
 }
