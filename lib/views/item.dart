@@ -321,39 +321,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         ItemDivider(),
       ];
 
-  _renoteReplyTile() => <Widget>[
-        ReplyRenoteRow(
-            _note, _item, _isReply, _showUserPageAction, _showContextAction),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Avatar(_note.author, _showUserPageAction),
-
-            // Content
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(_note.author.nickname, _note.author.acct,
-                    Row(children: <Widget>[Date(_note.date)])),
-                Body(_note, _instance, _contentWarningToggled,
-                    _contentWarningView),
-                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(
-                    _note,
-                    _replyAction,
-                    _renoteAction,
-                    _toggleFavouriteAction,
-                    _favouriteColour,
-                    _moreButtonAction,
-                    _menuButtonItems),
-              ],
-            )),
-          ],
-        ),
-        ItemDivider(),
-      ];
-
   @override
   Widget build(BuildContext context) {
     setState(() {
@@ -381,10 +348,97 @@ class ItemBuilderState extends State<ItemBuilder> {
           _menuButtonItems,
           _favouriteColour);
     } else if (_isRenote || _isReply && !widget.isContext) {
-      return Container(child: Column(children: _renoteReplyTile()));
+      return RenoteReplyWidget(
+          _note,
+          _item,
+          _instance,
+          _showUserPageAction,
+          _showContextAction,
+          _replyAction,
+          _renoteAction,
+          _toggleFavouriteAction,
+          _moreButtonAction,
+          _isReply,
+          _isContext,
+          _contentWarningToggled,
+          _contentWarningView,
+          _menuButtonItems,
+          _favouriteColour);
     } else {
       return Container(child: Column(children: _statusTile()));
     }
+  }
+}
+
+class RenoteReplyWidget extends StatelessWidget {
+  final Item note;
+  final Item item;
+  final Instance instance;
+  final Function showUserPageAction;
+  final Function showContextAction;
+  final Function replyAction;
+  final Function renoteAction;
+  final Function toggleFavouriteAction;
+  final Function moreButtonAction;
+  final bool isReply;
+  final bool isContext;
+  final bool contentWarningToggled;
+  final Widget contentWarningView;
+  final List<PopupMenuEntry<String>> menuButtonItems;
+  final Color favouriteColour;
+
+  RenoteReplyWidget(
+      this.note,
+      this.item,
+      this.instance,
+      this.showUserPageAction,
+      this.showContextAction,
+      this.replyAction,
+      this.renoteAction,
+      this.toggleFavouriteAction,
+      this.moreButtonAction,
+      this.isReply,
+      this.isContext,
+      this.contentWarningToggled,
+      this.contentWarningView,
+      this.menuButtonItems,
+      this.favouriteColour);
+
+  _renoteReplyTile() => <Widget>[
+        ReplyRenoteRow(
+            note, item, isReply, showUserPageAction, showContextAction),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Avatar(note.author, showUserPageAction),
+
+            // Content
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                AuthorRow(note.author.nickname, note.author.acct,
+                    Row(children: <Widget>[Date(note.date)])),
+                Body(note, instance, contentWarningToggled, contentWarningView),
+                Files(StatusFiles(isContext, showContextAction, note)),
+                ButtonRow(
+                    note,
+                    replyAction,
+                    renoteAction,
+                    toggleFavouriteAction,
+                    favouriteColour,
+                    moreButtonAction,
+                    menuButtonItems),
+              ],
+            )),
+          ],
+        ),
+        ItemDivider(),
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Column(children: _renoteReplyTile()));
   }
 }
 
