@@ -226,6 +226,18 @@ class ItemBuilderState extends State<ItemBuilder> {
     });
   }
 
+  _showUserPageAction(String targetUserId) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UserProfile(
+                  instance: _instance,
+                  userId: targetUserId,
+                  currentUser: widget.currentUser,
+                  authCode: widget.authCode,
+                )));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -271,70 +283,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     });
   }
 
-  _showUserPageAction(String targetUserId) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => UserProfile(
-                  instance: _instance,
-                  userId: targetUserId,
-                  currentUser: widget.currentUser,
-                  authCode: widget.authCode,
-                )));
-  }
-
-  _renoteReplyRow() {
-    String destinationId = _note.replyId ?? _note.id;
-
-    Widget avatar;
-    avatar = GestureDetector(
-      child: CircleAvatar(
-        radius: 16,
-        backgroundImage: new CachedNetworkImageProvider(_item.author.avatarUrl),
-      ),
-      onTap: () => _showUserPageAction(_item.author.id),
-    );
-    // }
-
-    Widget textRow;
-    if (_isReply) {
-      textRow = Expanded(
-          child: Row(
-        children: <Widget>[
-          Icon(Icons.reply),
-          Text("replied to a status"),
-        ],
-      ));
-    } else {
-      textRow = Expanded(
-          child: Row(
-        children: <Widget>[
-          Icon(Icons.repeat),
-          Text("renoted by " + _item.author.nickname),
-        ],
-      ));
-    }
-
-    return GestureDetector(
-        onTap: _showContextAction,
-        child: Material(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            color: Colors.red,
-            child: Row(
-              children: <Widget>[
-                Container(
-                    alignment: FractionalOffset.topCenter,
-                    padding: const EdgeInsets.only(left: 16.0, right: 4),
-                    child: avatar),
-                textRow,
-                VisibilityIcon(_note.visibility)
-              ],
-            ),
-          ),
-        ));
-  }
-
   _statusTile() => <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +320,8 @@ class ItemBuilderState extends State<ItemBuilder> {
       ];
 
   _renoteReplyTile() => <Widget>[
-        _renoteReplyRow(),
+        ReplyRenoteRow(
+            _note, _item, _isReply, _showUserPageAction, _showContextAction),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -782,5 +731,69 @@ class Date extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(timeago.format(DateTime.parse(date)) + " ");
+  }
+}
+
+class ReplyRenoteRow extends StatelessWidget {
+  final Item note;
+  final Item item;
+  final bool isReply;
+  final Function showUserPageAction;
+  final Function showContextAction;
+
+  ReplyRenoteRow(this.note, this.item, this.isReply, this.showUserPageAction,
+      this.showContextAction);
+
+  @override
+  Widget build(BuildContext context) {
+    String destinationId = note.replyId ?? note.id;
+
+    Widget avatar;
+    avatar = GestureDetector(
+      child: CircleAvatar(
+        radius: 16,
+        backgroundImage: new CachedNetworkImageProvider(item.author.avatarUrl),
+      ),
+      onTap: () => showUserPageAction(item.author.id),
+    );
+    // }
+
+    Widget textRow;
+    if (isReply) {
+      textRow = Expanded(
+          child: Row(
+        children: <Widget>[
+          Icon(Icons.reply),
+          Text("replied to a status"),
+        ],
+      ));
+    } else {
+      textRow = Expanded(
+          child: Row(
+        children: <Widget>[
+          Icon(Icons.repeat),
+          Text("renoted by " + item.author.nickname),
+        ],
+      ));
+    }
+
+    return GestureDetector(
+        onTap: showContextAction,
+        child: Material(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            color: Colors.red,
+            child: Row(
+              children: <Widget>[
+                Container(
+                    alignment: FractionalOffset.topCenter,
+                    padding: const EdgeInsets.only(left: 16.0, right: 4),
+                    child: avatar),
+                textRow,
+                VisibilityIcon(note.visibility)
+              ],
+            ),
+          ),
+        ));
   }
 }
