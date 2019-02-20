@@ -271,7 +271,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     });
   }
 
-  _showUserPage(String targetUserId) async {
+  _showUserPageAction(String targetUserId) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -292,7 +292,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         radius: 16,
         backgroundImage: new CachedNetworkImageProvider(_item.author.avatarUrl),
       ),
-      onTap: () => _showUserPage(_item.author.id),
+      onTap: () => _showUserPageAction(_item.author.id),
     );
     // }
 
@@ -341,7 +341,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(_note.author, _showUserPage),
+            Avatar(_note.author, _showUserPageAction),
 
             // Content
             Expanded(
@@ -378,7 +378,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(_note.author, _showUserPage),
+            Avatar(_note.author, _showUserPageAction),
 
             // Content
             Expanded(
@@ -407,14 +407,14 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _notificationTile() {
     List<Widget> Content = <Widget>[
-      NotificationRow(_item, _showUserPage),
+      NotificationRow(_item, _showUserPageAction),
     ];
     if (_item.notificationType != "follow") {
       Content.addAll([
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(_note.author, _showUserPage),
+            Avatar(_note.author, _showUserPageAction),
 
             // Content
             Expanded(
@@ -450,7 +450,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Avatar(_note.author, _showUserPage),
+            Avatar(_note.author, _showUserPageAction),
 
             // Content
             Expanded(
