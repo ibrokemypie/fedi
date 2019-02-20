@@ -295,8 +295,6 @@ class ItemBuilderState extends State<ItemBuilder> {
     );
   }
 
-  _accountName(String name) => Text(name);
-
   _showUserPage(String targetUserId) async {
     Navigator.push(
         context,
@@ -308,21 +306,6 @@ class ItemBuilderState extends State<ItemBuilder> {
                   authCode: widget.authCode,
                 )));
   }
-
-  _authorRow(String nickName, String accountName, Widget trailing) => Container(
-        padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Flexible(child: Nickname(nickName)),
-                    trailing,
-                  ]),
-              _accountName(accountName),
-            ]),
-      );
 
   _renoteReplyRow() {
     String destinationId = _note.replyId ?? _note.id;
@@ -389,7 +372,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(
+                AuthorRow(
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
@@ -426,7 +409,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(_note.author.nickname, _note.author.acct,
+                AuthorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
                 Body(_note, _instance, _contentWarningToggled,
                     _contentWarningView),
@@ -462,7 +445,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(
+                AuthorRow(
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
@@ -498,7 +481,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(
+                AuthorRow(
                     _note.author.nickname,
                     _note.author.acct,
                     Row(children: <Widget>[
@@ -751,6 +734,32 @@ class Files extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(bottom: 8.0, right: 32.0),
       child: files,
+    );
+  }
+}
+
+class AuthorRow extends StatelessWidget {
+  final String nickName;
+  final String accountName;
+  final Widget trailing;
+
+  AuthorRow(this.nickName, this.accountName, this.trailing);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Flexible(child: Nickname(nickName)),
+                  trailing,
+                ]),
+            Text(accountName),
+          ]),
     );
   }
 }
