@@ -46,6 +46,7 @@ class ItemBuilderState extends State<ItemBuilder> {
   bool _isRenote = false;
   bool _isReply = false;
   bool _isNotification = false;
+  bool _isContext = false;
   Item _note;
   List<PopupMenuEntry<String>> _menuButtonItems = [
     const PopupMenuItem<String>(
@@ -244,6 +245,7 @@ class ItemBuilderState extends State<ItemBuilder> {
     setState(() {
       _instance = widget.instance;
       _item = widget.item;
+      _isContext = widget.isContext;
       _note = _item;
 
       if (_item.notificationType != null) {
@@ -352,75 +354,6 @@ class ItemBuilderState extends State<ItemBuilder> {
         ItemDivider(),
       ];
 
-  _notificationTile() {
-    List<Widget> Content = <Widget>[
-      NotificationRow(_item, _showUserPageAction),
-    ];
-    if (_item.notificationType != "follow") {
-      Content.addAll([
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Avatar(_note.author, _showUserPageAction),
-
-            // Content
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(
-                    _note.author.nickname,
-                    _note.author.acct,
-                    Row(children: <Widget>[
-                      Date(_note.date),
-                      VisibilityIcon(_note.visibility)
-                    ])),
-                Body(_note, _instance, _contentWarningToggled,
-                    _contentWarningView),
-                Files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(
-                    _note,
-                    _replyAction,
-                    _renoteAction,
-                    _toggleFavouriteAction,
-                    _favouriteColour,
-                    _moreButtonAction,
-                    _menuButtonItems),
-              ],
-            )),
-          ],
-        ),
-        ItemDivider(),
-      ]);
-    } else {
-      Content.addAll([
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Avatar(_note.author, _showUserPageAction),
-
-            // Content
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AuthorRow(
-                    _note.author.nickname,
-                    _note.author.acct,
-                    Row(children: <Widget>[
-                      Date(_note.date),
-                      VisibilityIcon(_note.visibility)
-                    ])),
-              ],
-            )),
-          ],
-        ),
-        ItemDivider(),
-      ]);
-    }
-    return Content;
-  }
-
   @override
   Widget build(BuildContext context) {
     setState(() {
@@ -432,12 +365,132 @@ class ItemBuilderState extends State<ItemBuilder> {
     });
 
     if (_isNotification) {
-      return Container(child: Column(children: _notificationTile()));
+      return NotificationWidget(
+          _note,
+          _item,
+          _instance,
+          _showUserPageAction,
+          _showContextAction,
+          _replyAction,
+          _renoteAction,
+          _toggleFavouriteAction,
+          _moreButtonAction,
+          _isContext,
+          _contentWarningToggled,
+          _contentWarningView,
+          _menuButtonItems,
+          _favouriteColour);
     } else if (_isRenote || _isReply && !widget.isContext) {
       return Container(child: Column(children: _renoteReplyTile()));
     } else {
       return Container(child: Column(children: _statusTile()));
     }
+  }
+}
+
+class NotificationWidget extends StatelessWidget {
+  final Item note;
+  final Item item;
+  final Instance instance;
+  final Function showUserPageAction;
+  final Function showContextAction;
+  final Function replyAction;
+  final Function renoteAction;
+  final Function toggleFavouriteAction;
+  final Function moreButtonAction;
+  final bool isContext;
+  final bool contentWarningToggled;
+  final Widget contentWarningView;
+  final List<PopupMenuEntry<String>> menuButtonItems;
+  final Color favouriteColour;
+
+  NotificationWidget(
+      this.note,
+      this.item,
+      this.instance,
+      this.showUserPageAction,
+      this.showContextAction,
+      this.replyAction,
+      this.renoteAction,
+      this.toggleFavouriteAction,
+      this.moreButtonAction,
+      this.isContext,
+      this.contentWarningToggled,
+      this.contentWarningView,
+      this.menuButtonItems,
+      this.favouriteColour);
+
+  notificationTile() {
+    List<Widget> content = <Widget>[
+      NotificationRow(item, showUserPageAction),
+    ];
+    if (item.notificationType != "follow") {
+      content.addAll([
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Avatar(note.author, showUserPageAction),
+
+            // Content
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                AuthorRow(
+                    note.author.nickname,
+                    note.author.acct,
+                    Row(children: <Widget>[
+                      Date(note.date),
+                      VisibilityIcon(note.visibility)
+                    ])),
+                Body(note, instance, contentWarningToggled, contentWarningView),
+                Files(StatusFiles(isContext, showContextAction, note)),
+                ButtonRow(
+                    note,
+                    replyAction,
+                    renoteAction,
+                    toggleFavouriteAction,
+                    favouriteColour,
+                    moreButtonAction,
+                    menuButtonItems),
+              ],
+            )),
+          ],
+        ),
+        ItemDivider(),
+      ]);
+    } else {
+      content.addAll([
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Avatar(note.author, showUserPageAction),
+
+            // Content
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                AuthorRow(
+                    note.author.nickname,
+                    note.author.acct,
+                    Row(children: <Widget>[
+                      Date(note.date),
+                      VisibilityIcon(note.visibility)
+                    ])),
+              ],
+            )),
+          ],
+        ),
+        ItemDivider(),
+      ]);
+    }
+    return content;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Column(children: notificationTile()));
   }
 }
 
