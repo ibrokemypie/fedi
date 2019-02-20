@@ -320,10 +320,6 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _accountName(String name) => Text(name);
 
-  _visibilityIcon() => Container(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: Icon(visIcon(_note.visibility), size: 16.0));
-
   _avatar(User user) => Container(
         alignment: FractionalOffset.topCenter,
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
@@ -407,7 +403,7 @@ class ItemBuilderState extends State<ItemBuilder> {
                     padding: const EdgeInsets.only(left: 16.0, right: 4),
                     child: avatar),
                 textRow,
-                _visibilityIcon()
+                VisibilityIcon(_note.visibility)
               ],
             ),
           ),
@@ -427,8 +423,13 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(_note.author.nickname, _note.author.acct,
-                    Row(children: <Widget>[_date(), _visibilityIcon()])),
+                _authorRow(
+                    _note.author.nickname,
+                    _note.author.acct,
+                    Row(children: <Widget>[
+                      _date(),
+                      VisibilityIcon(_note.visibility)
+                    ])),
                 _body(_note.body),
                 _files(StatusFiles(widget.isContext, _showContext, _note)),
                 ButtonRow(_note, _reply, _renote, _toggleFavourite,
@@ -481,8 +482,13 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(_note.author.nickname, _note.author.acct,
-                    Row(children: <Widget>[_date(), _visibilityIcon()])),
+                _authorRow(
+                    _note.author.nickname,
+                    _note.author.acct,
+                    Row(children: <Widget>[
+                      _date(),
+                      VisibilityIcon(_note.visibility)
+                    ])),
                 _body(_note.body),
                 _files(StatusFiles(widget.isContext, _showContext, _note)),
                 ButtonRow(_note, _reply, _renote, _toggleFavourite,
@@ -505,8 +511,13 @@ class ItemBuilderState extends State<ItemBuilder> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _authorRow(_note.author.nickname, _note.author.acct,
-                    Row(children: <Widget>[_date(), _visibilityIcon()])),
+                _authorRow(
+                    _note.author.nickname,
+                    _note.author.acct,
+                    Row(children: <Widget>[
+                      _date(),
+                      VisibilityIcon(_note.visibility)
+                    ])),
               ],
             )),
           ],
@@ -672,14 +683,26 @@ class Nickname extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(right: 8.0),
-        child: Text(
-          nickname,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Text(
+        nickname,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
-      );
+      ),
+    );
+  }
+}
+
+class VisibilityIcon extends StatelessWidget {
+  final String visibility;
+  VisibilityIcon(this.visibility);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Icon(visIcon(visibility), size: 16.0));
   }
 }
