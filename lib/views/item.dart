@@ -320,17 +320,6 @@ class ItemBuilderState extends State<ItemBuilder> {
 
   _accountName(String name) => Text(name);
 
-  _avatar(User user) => Container(
-        alignment: FractionalOffset.topCenter,
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
-        child: GestureDetector(
-          child: CircleAvatar(
-            backgroundImage: new CachedNetworkImageProvider(user.avatarUrl),
-          ),
-          onTap: () => _showUserPage(user.id),
-        ),
-      );
-
   _showUserPage(String targetUserId) async {
     Navigator.push(
         context,
@@ -416,7 +405,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author),
+            Avatar(_note.author, _showUserPage),
 
             // Content
             Expanded(
@@ -431,9 +420,16 @@ class ItemBuilderState extends State<ItemBuilder> {
                       VisibilityIcon(_note.visibility)
                     ])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
-                    _favouriteColour, _moreButtonAction, _menuButtonItems),
+                _files(
+                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(
+                    _note,
+                    _replyAction,
+                    _renoteAction,
+                    _toggleFavouriteAction,
+                    _favouriteColour,
+                    _moreButtonAction,
+                    _menuButtonItems),
               ],
             )),
           ],
@@ -446,7 +442,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author),
+            Avatar(_note.author, _showUserPage),
 
             // Content
             Expanded(
@@ -456,9 +452,16 @@ class ItemBuilderState extends State<ItemBuilder> {
                 _authorRow(_note.author.nickname, _note.author.acct,
                     Row(children: <Widget>[_date()])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
-                    _favouriteColour, _moreButtonAction, _menuButtonItems),
+                _files(
+                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(
+                    _note,
+                    _replyAction,
+                    _renoteAction,
+                    _toggleFavouriteAction,
+                    _favouriteColour,
+                    _moreButtonAction,
+                    _menuButtonItems),
               ],
             )),
           ],
@@ -475,7 +478,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author),
+            Avatar(_note.author, _showUserPage),
 
             // Content
             Expanded(
@@ -490,9 +493,16 @@ class ItemBuilderState extends State<ItemBuilder> {
                       VisibilityIcon(_note.visibility)
                     ])),
                 _body(_note.body),
-                _files(StatusFiles(widget.isContext, _showContextAction, _note)),
-                ButtonRow(_note, _replyAction, _renoteAction, _toggleFavouriteAction,
-                    _favouriteColour, _moreButtonAction, _menuButtonItems),
+                _files(
+                    StatusFiles(widget.isContext, _showContextAction, _note)),
+                ButtonRow(
+                    _note,
+                    _replyAction,
+                    _renoteAction,
+                    _toggleFavouriteAction,
+                    _favouriteColour,
+                    _moreButtonAction,
+                    _menuButtonItems),
               ],
             )),
           ],
@@ -504,7 +514,7 @@ class ItemBuilderState extends State<ItemBuilder> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _avatar(_note.author),
+            Avatar(_note.author, _showUserPage),
 
             // Content
             Expanded(
@@ -704,5 +714,26 @@ class VisibilityIcon extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.only(right: 16.0),
         child: Icon(visIcon(visibility), size: 16.0));
+  }
+}
+
+class Avatar extends StatelessWidget {
+  final User user;
+  final Function showUserPage;
+
+  Avatar(this.user, this.showUserPage);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: FractionalOffset.topCenter,
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
+      child: GestureDetector(
+        child: CircleAvatar(
+          backgroundImage: new CachedNetworkImageProvider(user.avatarUrl),
+        ),
+        onTap: () => showUserPage(user.id),
+      ),
+    );
   }
 }
