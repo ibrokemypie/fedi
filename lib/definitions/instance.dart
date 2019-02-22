@@ -48,7 +48,7 @@ class Instance {
         json["emojis"].map<Emoji>((emoji) => Emoji.fromMisskey(emoji)).toList();
   }
 
-  Instance.fromMastodon(Map json, Uri originalUri) {
+  Instance.fromMastodon(Map json, List<Emoji> instanceEmoji, Uri originalUri) {
     this.type = "mastodon";
     this.uri = originalUri.toString();
     this.title = json["title"];
@@ -57,7 +57,7 @@ class Instance {
     this.protocol = originalUri.scheme;
     this.host = originalUri.host;
     this.maxChars = json["max_toot_chars"] ?? json["maxNoteTextLength"] ?? 500;
-    this.emojiList = null;
+    this.emojiList = instanceEmoji ?? null;
   }
 
   static Future<Instance> fromUrl(String instanceUrl) async {
@@ -81,18 +81,33 @@ class Instance {
         newInstance = Instance.fromMisskey(instanceJson);
 
         // If error is 404, try mastodon
-      } else if (misskeyResponse.statusCode == 404) {
+      } else if (misskeyResponse.statusCode == 404 ||
+          misskeyResponse.statusCode == 422) {
         final mastodonResponse =
             await http.get(instanceUri.toString() + "/api/v1/instance");
+
         if (mastodonResponse.statusCode == 200) {
+          List<Emoji> instanceEmoji;
+
           Map<String, dynamic> instanceJson =
               json.decode(mastodonResponse.body);
-          newInstance = Instance.fromMastodon(instanceJson, instanceUri);
+
+          final emojiResponse =
+              await http.get(instanceUri.toString() + "/api/v1/custom_emojis");
+          if (emojiResponse.statusCode == 200) {
+            List emojiJsonJson = json.decode(emojiResponse.body);
+            instanceEmoji = emojiJsonJson
+                .map<Emoji>((emoji) => Emoji.fromMastodon(emoji))
+                .toList();
+          }
+
+          newInstance =
+              Instance.fromMastodon(instanceJson, instanceEmoji, instanceUri);
         } else {
-          throw Exception(mastodonResponse.body);
+          throw Exception(mastodonResponse);
         }
       } else {
-        throw Exception(misskeyResponse.body);
+        throw Exception(misskeyResponse);
       }
 
       return (newInstance);
