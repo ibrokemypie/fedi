@@ -70,33 +70,29 @@ class Instance {
       }
 
       Uri instanceUri = Uri.parse(protocol + instanceUrl);
+      Instance newInstance;
 
-      try {
-        final response = await http.post(instanceUri.toString() + "/api/meta");
+      final response = await http.post(instanceUri.toString() + "/api/meta");
 
+      if (response.statusCode == 200) {
+        Map<String, dynamic> returned = json.decode(response.body);
+        // If server returns an OK response, parse the JSON
+        newInstance = Instance.fromMisskey(returned);
+      } else if (response.statusCode == 404) {
+        final response =
+            await http.get(instanceUri.toString() + "/api/v1/instance");
         if (response.statusCode == 200) {
           Map<String, dynamic> returned = json.decode(response.body);
           // If server returns an OK response, parse the JSON
-          return Instance.fromMisskey(returned);
+          newInstance = Instance.fromMastodon(returned, instanceUri);
         } else {
           throw Exception(response.body);
         }
-      } catch (e) {
-        try {
-          final response =
-              await http.get(instanceUri.toString() + "/api/v1/instance");
-
-          if (response.statusCode == 200) {
-            Map<String, dynamic> returned = json.decode(response.body);
-            // If server returns an OK response, parse the JSON
-            return Instance.fromMastodon(returned, instanceUri);
-          } else {
-            throw Exception(response.body);
-          }
-        } catch (e) {
-          throw e;
-        }
+      } else {
+        throw Exception(response.body);
       }
+
+      return (newInstance);
     } catch (exception) {
       throw exception;
     }
