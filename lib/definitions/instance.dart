@@ -35,6 +35,19 @@ class Instance {
     }
   }
 
+  Instance.fromMisskey(Map json) {
+    this.type = "misskey";
+    this.uri = json["uri"];
+    this.title = json["name"];
+    this.description = json["description"];
+    this.version = json["version"];
+    this.protocol = Uri.parse(this.uri).scheme;
+    this.host = Uri.parse(this.uri).host;
+    this.maxChars = json["maxNoteTextLength"] ?? 500;
+    this.emojiList =
+        json["emojis"].map<Emoji>((emoji) => Emoji.fromMisskey(emoji)).toList();
+  }
+
   static Future<Instance> fromUrl(String instanceUrl) async {
     try {
       String protocol;
@@ -51,17 +64,8 @@ class Instance {
 
         if (response.statusCode == 200) {
           Map<String, dynamic> returned = json.decode(response.body);
-          returned.addAll({
-            "protocol": Uri.parse(returned["uri"]).scheme,
-            "host": Uri.parse(returned["uri"]).host,
-            "maxChars": returned["maxNoteTextLength"] ?? 500,
-            "type": "misskey",
-            "emojiList": returned["emojis"]
-                .map((emoji) => Emoji.fromMisskey(emoji).toJson())
-                .toList(),
-          });
           // If server returns an OK response, parse the JSON
-          return Instance.fromJson(returned);
+          return Instance.fromMisskey(returned);
         } else {
           throw Exception(response.body);
         }
