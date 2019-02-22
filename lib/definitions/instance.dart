@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:fedi/definitions/emoji.dart';
 
 part 'instance.g.dart';
 
@@ -15,6 +16,7 @@ class Instance {
   String protocol;
   String host;
   int maxChars;
+  List<Emoji> emojiList;
 
   Instance(this.uri, this.protocol, this.host, this.title, this.description,
       this.version,
@@ -54,6 +56,9 @@ class Instance {
             "host": Uri.parse(returned["uri"]).host,
             "maxChars": returned["maxNoteTextLength"] ?? 500,
             "type": "misskey",
+            "emojiList": returned["emojis"]
+                .map((emoji) => Emoji.fromMisskey(emoji).toJson())
+                .toList(),
           });
           // If server returns an OK response, parse the JSON
           return Instance.fromJson(returned);

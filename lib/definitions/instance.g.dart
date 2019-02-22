@@ -15,7 +15,10 @@ Instance _$InstanceFromJson(Map<String, dynamic> json) {
       json['description'] as String,
       json['version'] as String,
       json['type'] as String)
-    ..maxChars = json['maxChars'] as int;
+    ..maxChars = json['maxChars'] as int
+    ..emojiList = (json['emojiList'] as List)
+        ?.map((e) => e == null ? null : Emoji.fromJson(e as Map))
+        ?.toList();
 }
 
 Map<String, dynamic> _$InstanceToJson(Instance instance) => <String, dynamic>{
@@ -26,5 +29,6 @@ Map<String, dynamic> _$InstanceToJson(Instance instance) => <String, dynamic>{
       'version': instance.version,
       'protocol': instance.protocol,
       'host': instance.host,
-      'maxChars': instance.maxChars
+      'maxChars': instance.maxChars,
+      'emojiList': instance.emojiList
     };
