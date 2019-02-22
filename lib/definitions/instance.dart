@@ -48,6 +48,18 @@ class Instance {
         json["emojis"].map<Emoji>((emoji) => Emoji.fromMisskey(emoji)).toList();
   }
 
+  Instance.fromMastodon(Map json, Uri originalUri) {
+    this.type = "mastodon";
+    this.uri = originalUri.toString();
+    this.title = json["title"];
+    this.description = json["description"];
+    this.version = json["version"];
+    this.protocol = originalUri.scheme;
+    this.host = originalUri.host;
+    this.maxChars = json["max_toot_chars"] ?? json["maxNoteTextLength"] ?? 500;
+    this.emojiList = null;
+  }
+
   static Future<Instance> fromUrl(String instanceUrl) async {
     try {
       String protocol;
@@ -76,16 +88,8 @@ class Instance {
 
           if (response.statusCode == 200) {
             Map<String, dynamic> returned = json.decode(response.body);
-            returned.addAll({
-              "protocol": instanceUri.scheme,
-              "uri": instanceUri.toString(),
-              "host": instanceUri.host,
-              "maxChars": returned["max_toot_chars"] ??
-                  returned["maxNoteTextLength"] ??
-                  500,
-            });
             // If server returns an OK response, parse the JSON
-            return Instance.fromJson(returned);
+            return Instance.fromMastodon(returned, instanceUri);
           } else {
             throw Exception(response.body);
           }
