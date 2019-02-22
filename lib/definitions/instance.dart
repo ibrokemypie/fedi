@@ -72,24 +72,27 @@ class Instance {
       Uri instanceUri = Uri.parse(protocol + instanceUrl);
       Instance newInstance;
 
-      final response = await http.post(instanceUri.toString() + "/api/meta");
+      // First try misskey
+      final misskeyResponse =
+          await http.post(instanceUri.toString() + "/api/meta");
 
-      if (response.statusCode == 200) {
-        Map<String, dynamic> returned = json.decode(response.body);
-        // If server returns an OK response, parse the JSON
-        newInstance = Instance.fromMisskey(returned);
-      } else if (response.statusCode == 404) {
-        final response =
+      if (misskeyResponse.statusCode == 200) {
+        Map<String, dynamic> instanceJson = json.decode(misskeyResponse.body);
+        newInstance = Instance.fromMisskey(instanceJson);
+
+        // If error is 404, try mastodon
+      } else if (misskeyResponse.statusCode == 404) {
+        final mastodonResponse =
             await http.get(instanceUri.toString() + "/api/v1/instance");
-        if (response.statusCode == 200) {
-          Map<String, dynamic> returned = json.decode(response.body);
-          // If server returns an OK response, parse the JSON
-          newInstance = Instance.fromMastodon(returned, instanceUri);
+        if (mastodonResponse.statusCode == 200) {
+          Map<String, dynamic> instanceJson =
+              json.decode(mastodonResponse.body);
+          newInstance = Instance.fromMastodon(instanceJson, instanceUri);
         } else {
-          throw Exception(response.body);
+          throw Exception(mastodonResponse.body);
         }
       } else {
-        throw Exception(response.body);
+        throw Exception(misskeyResponse.body);
       }
 
       return (newInstance);
