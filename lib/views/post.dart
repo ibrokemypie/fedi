@@ -30,43 +30,43 @@ class Post extends StatefulWidget {
 }
 
 class PostState extends State<Post> with WidgetsBindingObserver {
-  var submitAction;
-  int maxLines = 10;
-  int chars = 0;
-  String visibility;
-  Widget contentWarningField;
-  Widget mediaRow;
-  bool hasCw;
-  String contentWarning;
-  String replyTo;
-  TextEditingController bodyTextController;
-  TextEditingController cwTextController;
+  var _submitAction;
+  int _maxLines = 10;
+  int _chars = 0;
+  String _visibility;
+  Widget _contentWarningField;
+  Widget _mediaRow;
+  bool _hasCw;
+  String _contentWarning;
+  String _replyTo;
+  TextEditingController _bodyTextController;
+  TextEditingController _cwTextController;
   List<Attachment> _attachmentList = new List();
   List<File> _mediaList = new List();
   bool _posted = false;
   FocusNode _focusNode = new FocusNode();
   double _bottomHeight = 48.0;
 
-  textUpdated(String currentText) {
+  _textUpdated(String currentText) {
     int currentLines = 1 + '\n'.allMatches(currentText).length;
     setState(() {
-      maxLines = currentLines + 1;
-      chars = currentText.length;
+      _maxLines = currentLines + 1;
+      _chars = currentText.length;
     });
   }
 
   _contentWarningUpdated(String currentCw) {
     setState(() {
-      contentWarning = currentCw;
+      _contentWarning = currentCw;
     });
   }
 
   _toggleContentWarning() {
     if (!_posted) {
-      if (hasCw != true) {
+      if (_hasCw != true) {
         setState(() {
-          hasCw = true;
-          contentWarningField = new Container(
+          _hasCw = true;
+          _contentWarningField = new Container(
               child: FormField(
             builder: (FormFieldState<int> state) => TextField(
                   onChanged: _contentWarningUpdated,
@@ -78,9 +78,9 @@ class PostState extends State<Post> with WidgetsBindingObserver {
         });
       } else {
         setState(() {
-          hasCw = false;
-          contentWarning = null;
-          contentWarningField = new Container();
+          _hasCw = false;
+          _contentWarning = null;
+          _contentWarningField = new Container();
         });
       }
     }
@@ -89,7 +89,7 @@ class PostState extends State<Post> with WidgetsBindingObserver {
   _setVisibility(String newVisibility) {
     if (!_posted) {
       setState(() {
-        visibility = newVisibility;
+        _visibility = newVisibility;
       });
     }
   }
@@ -133,7 +133,7 @@ class PostState extends State<Post> with WidgetsBindingObserver {
   _updateMediaRow() {
     if (_mediaList.length == 0) {
       setState(() {
-        mediaRow = new Container(
+        _mediaRow = new Container(
           height: 0,
         );
         _bottomHeight = 48.0;
@@ -155,7 +155,7 @@ class PostState extends State<Post> with WidgetsBindingObserver {
               _removeMediaButton(file),
             ])));
       }
-      mediaRow = new Container(
+      _mediaRow = new Container(
           height: 95,
           margin: EdgeInsets.only(top: 8.0),
           child: ListView(
@@ -179,30 +179,30 @@ class PostState extends State<Post> with WidgetsBindingObserver {
     return true;
   }
 
-  void newPost() async {
+  void _newPost() async {
     setState(() {
-      submitAction = null;
+      _submitAction = null;
       _posted = true;
     });
     try {
-      if (chars <= widget.instance.maxChars) {
+      if (_chars <= widget.instance.maxChars) {
         await _uploadAttachments();
-        NewPost post = NewPost(visibility,
-            content: bodyTextController.text,
-            contentWarning: contentWarning,
-            replyTo: replyTo,
+        NewPost post = NewPost(_visibility,
+            content: _bodyTextController.text,
+            contentWarning: _contentWarning,
+            replyTo: _replyTo,
             attachments: _attachmentList);
         var createdNote =
             await submitPost(widget.instance, widget.authCode, post);
         Navigator.pop(context, createdNote);
       } else {
         setState(() {
-          submitAction = newPost;
+          _submitAction = _newPost;
           _posted = false;
         });
       }
     } catch (e) {
-      submitAction = newPost;
+      _submitAction = _newPost;
       _posted = false;
     }
   }
@@ -218,22 +218,22 @@ class PostState extends State<Post> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    replyTo = widget.replyTo;
-    bodyTextController = TextEditingController(text: widget.preFillBody ?? "");
-    cwTextController =
+    _replyTo = widget.replyTo;
+    _bodyTextController = TextEditingController(text: widget.preFillBody ?? "");
+    _cwTextController =
         TextEditingController(text: widget.preFillContentWarning ?? "");
-    submitAction = newPost;
-    visibility = widget.visibility ?? "public";
+    _submitAction = _newPost;
+    _visibility = widget.visibility ?? "public";
     _focusNode.addListener(_focusNodeListener);
     WidgetsBinding.instance.addObserver(this);
 
     if (widget.preFillContentWarning != null) {
-      hasCw = true;
-      contentWarning = widget.preFillContentWarning;
-      contentWarningField = new Container(
+      _hasCw = true;
+      _contentWarning = widget.preFillContentWarning;
+      _contentWarningField = new Container(
           child: FormField(
         builder: (FormFieldState<int> state) => TextField(
-              controller: cwTextController,
+              controller: _cwTextController,
               onChanged: _contentWarningUpdated,
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(16),
@@ -241,9 +241,9 @@ class PostState extends State<Post> with WidgetsBindingObserver {
             ),
       ));
     } else {
-      contentWarningField = new Container();
+      _contentWarningField = new Container();
     }
-    mediaRow = new Container(
+    _mediaRow = new Container(
       height: 0,
     );
   }
@@ -255,8 +255,132 @@ class PostState extends State<Post> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  void didChangeMetrics() {}
+  Widget _visibilityButton() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: PopupMenuButton<String>(
+        child: Material(
+          elevation: 3,
+          type: MaterialType.button,
+          color: Colors.blue,
+          child: Container(
+            child: Icon(
+              visIcon(_visibility),
+              size: 16,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          ),
+        ),
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: "public",
+                child: Text('Public'),
+              ),
+              const PopupMenuItem<String>(
+                value: "home",
+                child: Text('Home'),
+              ),
+              const PopupMenuItem<String>(
+                value: "followers",
+                child: Text('Followers only'),
+              ),
+              const PopupMenuItem<String>(
+                value: "specified",
+                child: Text('Direct'),
+              ),
+            ],
+        onSelected: _setVisibility,
+      ));
+
+  Widget _contentWarningButton() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: RaisedButton(
+        child: Text(
+          "CW",
+          style: TextStyle(fontSize: 10),
+        ),
+        onPressed: _toggleContentWarning,
+      ));
+
+  Widget _emojiSelectionButton() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: RaisedButton(
+        child: Icon(
+          Icons.face,
+          size: 16,
+        ),
+        // TODO: emoji selection
+        onPressed: () => {},
+      ));
+
+  Widget _addMediaButton() => Container(
+      padding: const EdgeInsets.only(right: 4),
+      child: RaisedButton(
+        child: Icon(
+          Icons.image,
+          size: 16,
+        ),
+        onPressed: () => _addMedia(),
+      ));
+
+  Widget _currentCharCount() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child:
+          Text(_chars.toString() + "/" + widget.instance.maxChars.toString()));
+
+  Widget _submitPostButton() => Container(
+      padding: const EdgeInsets.only(right: 16),
+      child: RaisedButton(
+        child: Text("Submit"),
+        onPressed: _submitAction,
+      ));
+
+  Widget _formText() => Expanded(
+      child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(16),
+          child: FormField(
+              builder: (FormFieldState<int> state) =>
+                  new EnsureVisibleWhenFocused(
+                      focusNode: _focusNode,
+                      child: TextField(
+                        autofocus: true,
+                        focusNode: _focusNode,
+                        maxLength: widget.instance.maxChars,
+                        controller: _bodyTextController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        onChanged: _textUpdated,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Write away!',
+                          counterText: "",
+                        ),
+                      )))));
+
+  Widget _buttonRow() => ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: 50),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+              child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: <Widget>[
+                  _addMediaButton(),
+                  _visibilityButton(),
+                  _contentWarningButton(),
+                  _emojiSelectionButton(),
+                ],
+              ),
+            ),
+          )),
+          _currentCharCount(),
+          // Spacer(),
+          _submitPostButton(),
+        ],
+      ));
 
   @override
   Widget build(BuildContext context) {
@@ -270,29 +394,8 @@ class PostState extends State<Post> with WidgetsBindingObserver {
             ),
             body: Form(
                 child: Column(children: <Widget>[
-              contentWarningField,
-              Expanded(
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      padding: EdgeInsets.all(16),
-                      child: FormField(
-                          builder: (FormFieldState<int> state) =>
-                              new EnsureVisibleWhenFocused(
-                                  focusNode: _focusNode,
-                                  child: TextField(
-                                    autofocus: true,
-                                    focusNode: _focusNode,
-                                    maxLength: widget.instance.maxChars,
-                                    controller: bodyTextController,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: null,
-                                    onChanged: textUpdated,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'Write away!',
-                                      counterText: "",
-                                    ),
-                                  ))))),
+              _contentWarningField,
+              _formText(),
               SizedBox(
                 height: _bottomHeight,
               )
@@ -302,113 +405,11 @@ class PostState extends State<Post> with WidgetsBindingObserver {
                     Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
                 child: BottomAppBar(
                     color: Colors.red,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: <
-                        Widget>[
-                      mediaRow,
-                      ConstrainedBox(
-                          constraints: BoxConstraints(maxHeight: 50),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                          padding:
-                                              const EdgeInsets.only(right: 4),
-                                          child: RaisedButton(
-                                            child: Icon(
-                                              Icons.image,
-                                              size: 16,
-                                            ),
-                                            onPressed: () => _addMedia(),
-                                          )),
-                                      Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4),
-                                          child: PopupMenuButton<String>(
-                                            child: Material(
-                                              elevation: 3,
-                                              type: MaterialType.button,
-                                              color: Colors.blue,
-                                              child: Container(
-                                                child: Icon(
-                                                  visIcon(visibility),
-                                                  size: 16,
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 16),
-                                              ),
-                                            ),
-                                            itemBuilder: (BuildContext
-                                                    context) =>
-                                                <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem<String>(
-                                                    value: "public",
-                                                    child: Text('Public'),
-                                                  ),
-                                                  const PopupMenuItem<String>(
-                                                    value: "home",
-                                                    child: Text('Home'),
-                                                  ),
-                                                  const PopupMenuItem<String>(
-                                                    value: "followers",
-                                                    child:
-                                                        Text('Followers only'),
-                                                  ),
-                                                  const PopupMenuItem<String>(
-                                                    value: "specified",
-                                                    child: Text('Direct'),
-                                                  ),
-                                                ],
-                                            onSelected: _setVisibility,
-                                          )),
-                                      Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4),
-                                          child: RaisedButton(
-                                            child: Text(
-                                              "CW",
-                                              style: TextStyle(fontSize: 10),
-                                            ),
-                                            onPressed: _toggleContentWarning,
-                                          )),
-                                      Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4),
-                                          child: RaisedButton(
-                                            child: Icon(
-                                              Icons.face,
-                                              size: 16,
-                                            ),
-                                            // TODO: emoji selection
-                                            onPressed: () => {},
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                              Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Text(chars.toString() +
-                                      "/" +
-                                      widget.instance.maxChars.toString())),
-                              // Spacer(),
-                              Container(
-                                padding: const EdgeInsets.only(right: 16),
-                                child: RaisedButton(
-                                  child: Text("Submit"),
-                                  onPressed: submitAction,
-                                ),
-                              )
-                            ],
-                          ))
-                    ])))));
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _mediaRow,
+                          _buttonRow(),
+                        ])))));
   }
 }
